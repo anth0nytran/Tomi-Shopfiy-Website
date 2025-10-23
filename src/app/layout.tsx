@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import '../styles/legacy.css'
 import { ClientInit } from '@/components/ClientInit'
+import { Providers } from '@/components/Providers'
 
 export const metadata: Metadata = {
   title: 'Tomi - Solid Gold Jewelry in Houston',
@@ -21,8 +22,10 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Reckless+Neue:wght@400;500;600&family=Neue+Haas+Grotesk+Display:wght@300;400;500&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body text-ink bg-white antialiased">
-        <ClientInit />
-        {children}
+        <Providers>
+          <ClientInit />
+          {children}
+        </Providers>
       </body>
     </html>
   )

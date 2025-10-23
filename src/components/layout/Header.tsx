@@ -1,4 +1,5 @@
 import React from 'react'
+import { AccountLink } from './AccountLink'
 
 export function Header() {
   return (
@@ -47,12 +48,7 @@ export function Header() {
           </div>
 
           <div className="nav-right">
-            <button className="nav-icon" aria-label="Account">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
+            <AccountLink />
             <button className="nav-icon" aria-label="Search">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
