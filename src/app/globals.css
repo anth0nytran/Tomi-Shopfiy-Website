@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-heading: 'Reckless Neue', serif;
+    --font-body: 'Neue Haas Grotesk Display', sans-serif;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    color: theme('colors.ink');
+    background-color: theme('colors.white');
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 500;
+    line-height: 1.2;
+    color: theme('colors.primary');
+  }
+}
+
+@layer components {
+  .container {
+    @apply max-w-7xl mx-auto px-10;
+  }
+  
+  .btn {
+    @apply inline-flex items-center justify-center px-8 py-3 border-0 rounded-none font-body font-normal no-underline uppercase tracking-wider cursor-pointer transition-all duration-300 relative overflow-hidden text-sm;
+  }
+  
+  .btn--primary {
+    @apply bg-white/10 text-white border border-white/40 text-xs tracking-widest px-9 py-3 rounded-full backdrop-blur-sm font-medium;
+  }
+  
+  .btn--primary:hover {
+    @apply bg-white text-primary transform -translate-y-0.5;
+  }
+  
+  .btn--outline-light {
+    @apply inline-flex items-center justify-center bg-transparent border border-black/35 text-ink px-6 py-3.5 uppercase tracking-wider rounded-full text-xs transition-colors duration-300;
+  }
+  
+  .btn--outline-light:hover {
+    @apply bg-ink text-white;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
