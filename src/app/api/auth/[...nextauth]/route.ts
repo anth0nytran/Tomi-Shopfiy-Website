@@ -1,10 +1,39 @@
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import OAuthProvider from 'next-auth/providers/oauth'
 import { loginCustomer, renewCustomerAccessToken } from '@/lib/shopify'
 
-export const authOptions: NextAuthOptions = {
-  providers: [
-    CredentialsProvider({
+const providers: NextAuthOptions['providers'] = []
+
+// Optional: Shopify OIDC (New Customer Accounts) if env is configured
+if (process.env.SHOPIFY_OIDC_WELL_KNOWN && process.env.SHOPIFY_OIDC_CLIENT_ID && process.env.SHOPIFY_OIDC_CLIENT_SECRET) {
+  providers.push(
+    // Cast to any to satisfy TS types for generic OAuth provider
+    (OAuthProvider as any)({
+      id: 'shopify-oidc',
+      name: 'Shopify',
+      wellKnown: process.env.SHOPIFY_OIDC_WELL_KNOWN,
+      clientId: process.env.SHOPIFY_OIDC_CLIENT_ID,
+      clientSecret: process.env.SHOPIFY_OIDC_CLIENT_SECRET,
+      checks: ['pkce', 'state'],
+      authorization: {
+        params: { scope: process.env.SHOPIFY_OIDC_SCOPES || 'openid email profile' },
+      },
+      profile(profile: any) {
+        // OIDC standard claims
+        return {
+          id: (profile as any).sub,
+          name: (profile as any).name || (profile as any).given_name || (profile as any).email,
+          email: (profile as any).email,
+        }
+      },
+    })
+  )
+}
+
+// Credentials fallback (Storefront API) - keep for non-OIDC dev or backup
+providers.push(
+  CredentialsProvider({
       name: 'Credentials',
       credentials: {
         email: { label: 'Email', type: 'email' },
@@ -23,11 +52,23 @@ export const authOptions: NextAuthOptions = {
           shopify: { accessToken, expiresAt, customerId: customer.id },
         } as any
       },
-    }),
-  ],
+    })
+)
+
+export const authOptions: NextAuthOptions = {
+  providers,
   session: { strategy: 'jwt' },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
+      // Shopify OIDC login: persist OAuth tokens
+      if (account && account.provider === 'shopify-oidc') {
+        ;(token as any).shopifyOidc = {
+          accessToken: (account as any).access_token,
+          refreshToken: (account as any).refresh_token,
+          expiresAt: (account as any).expires_at,
+          tokenType: (account as any).token_type,
+        }
+      }
       // initial sign in
       if (user && (user as any).shopify) {
         token.shopify = (user as any).shopify
@@ -46,6 +87,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if ((token as any)?.shopify) (session as any).shopify = (token as any).shopify
+      if ((token as any)?.shopifyOidc) (session as any).shopifyOidc = (token as any).shopifyOidc
       return session
     },
     async redirect({ url, baseUrl }) {

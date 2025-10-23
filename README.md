@@ -28,6 +28,11 @@ Set these in `.env.local`:
 - `NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN`: Storefront API access token
 - `SHOPIFY_ADMIN_ACCESS_TOKEN` (optional): only needed for any future Admin API usage
 - `NEXTAUTH_SECRET` and `NEXTAUTH_URL` (optional): only needed if authentication is enabled
+- OIDC (Shopify New Customer Accounts, optional):
+  - `SHOPIFY_OIDC_WELL_KNOWN` (e.g. `https://YOUR_STORE.myshopify.com/.well-known/openid-configuration/customer`)
+  - `SHOPIFY_OIDC_CLIENT_ID`
+  - `SHOPIFY_OIDC_CLIENT_SECRET`
+  - `SHOPIFY_OIDC_SCOPES` default `openid email profile`
 
 ## Scripts
 - `npm run dev`: start dev server

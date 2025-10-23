@@ -7,7 +7,7 @@ export function AccountLink() {
   const searchParams = useSearchParams()
   const query = searchParams?.toString()
   const current = query ? `${pathname}?${query}` : pathname
-  const href = `/account?callbackUrl=${encodeURIComponent(current)}`
+  const href = `/api/auth/signin?callbackUrl=${encodeURIComponent(current)}`
 
   return (
     <Link className="nav-icon" aria-label="Account" href={href} prefetch>
