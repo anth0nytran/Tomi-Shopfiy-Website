@@ -50,9 +50,9 @@ export function Footer() {
             <div className="footer-column">
               <h4 className="footer-column-title">CONNECT</h4>
               <ul className="footer-list">
-                <li><a href="#" className="footer-link" data-link-slot="footer-connect-1">Instagram</a></li>
-                <li><a href="#" className="footer-link" data-link-slot="footer-connect-2">Pinterest</a></li>
-                <li><a href="#" className="footer-link" data-link-slot="footer-connect-3">TikTok</a></li>
+                <li><a href="https://www.instagram.com/tomijewelry" className="footer-link" data-link-slot="footer-connect-1" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+                <li><a href="https://pin.it/1hAqAmari" className="footer-link" data-link-slot="footer-connect-2" target="_blank" rel="noopener noreferrer">Pinterest</a></li>
+                <li><a href="https://www.tiktok.com/@tomijewelry" className="footer-link" data-link-slot="footer-connect-3" target="_blank" rel="noopener noreferrer">TikTok</a></li>
               </ul>
             </div>
           </div>

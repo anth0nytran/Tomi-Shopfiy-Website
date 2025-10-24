@@ -137,3 +137,137 @@ export const GET_COLLECTIONS = `
     }
   }
 `
+
+// Product by handle
+export const GET_PRODUCT_BY_HANDLE = gql`
+  query productByHandle($handle: String!) {
+    product(handle: $handle) {
+      id
+      title
+      description
+      handle
+      images(first: 6) {
+        edges { node { url altText } }
+      }
+      variants(first: 10) {
+        edges {
+          node {
+            id
+            title
+            availableForSale
+            price { amount currencyCode }
+          }
+        }
+      }
+    }
+  }
+`
+
+export async function fetchProducts(first: number) {
+  const client = getStorefrontClient()
+  const res = await client.request(GET_PRODUCTS, { first }) as any
+  return res?.products?.edges?.map((e: any) => e.node) ?? []
+}
+
+export async function fetchProductByHandle(handle: string) {
+  const client = getStorefrontClient()
+  const res = await client.request(GET_PRODUCT_BY_HANDLE, { handle }) as any
+  return res?.product ?? null
+}
+
+// Cart operations
+export const CART_FRAGMENT = gql`
+  fragment CartFields on Cart {
+    id
+    checkoutUrl
+    totalQuantity
+    cost { subtotalAmount { amount currencyCode } }
+    lines(first: 50) {
+      edges {
+        node {
+          id
+          quantity
+          cost { subtotalAmount { amount currencyCode } }
+          merchandise {
+            __typename
+            ... on ProductVariant {
+              id
+              title
+              price { amount currencyCode }
+              product {
+                id
+                title
+                handle
+                images(first: 1) { edges { node { url altText } } }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
+export const CART_CREATE = gql`
+  ${CART_FRAGMENT}
+  mutation cartCreate($input: CartInput) {
+    cartCreate(input: $input) { cart { ...CartFields } userErrors { field message } }
+  }
+`
+
+export const CART_QUERY = gql`
+  ${CART_FRAGMENT}
+  query cart($id: ID!) { cart(id: $id) { ...CartFields } }
+`
+
+export const CART_LINES_ADD = gql`
+  ${CART_FRAGMENT}
+  mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
+    cartLinesAdd(cartId: $cartId, lines: $lines) { cart { ...CartFields } userErrors { field message } }
+  }
+`
+
+export const CART_LINES_REMOVE = gql`
+  ${CART_FRAGMENT}
+  mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
+    cartLinesRemove(cartId: $cartId, lineIds: $lineIds) { cart { ...CartFields } userErrors { field message } }
+  }
+`
+
+export type ShopifyCart = {
+  id: string
+  checkoutUrl: string
+  totalQuantity: number
+  cost: { subtotalAmount: { amount: string; currencyCode: string } }
+  lines: { edges: Array<{ node: any }> }
+}
+
+export async function createCart(): Promise<ShopifyCart> {
+  const client = getStorefrontClient()
+  const res = await client.request(CART_CREATE, { input: {} }) as any
+  const cart = res?.cartCreate?.cart
+  if (!cart) throw new Error('Failed to create cart')
+  return cart
+}
+
+export async function getCart(cartId: string): Promise<ShopifyCart | null> {
+  const client = getStorefrontClient()
+  const res = await client.request(CART_QUERY, { id: cartId }) as any
+  return (res?.cart ?? null) as ShopifyCart | null
+}
+
+export async function addLinesToCart(cartId: string, lines: Array<{ merchandiseId: string; quantity: number }>): Promise<ShopifyCart> {
+  const client = getStorefrontClient()
+  const res = await client.request(CART_LINES_ADD, { cartId, lines }) as any
+  const cart = res?.cartLinesAdd?.cart
+  if (!cart) throw new Error('Failed to add lines')
+  return cart
+}
+
+export async function removeLinesFromCart(cartId: string, lineIds: string[]): Promise<ShopifyCart> {
+  const client = getStorefrontClient()
+  const res = await client.request(CART_LINES_REMOVE, { cartId, lineIds }) as any
+  const cart = res?.cartLinesRemove?.cart
+  if (!cart) throw new Error('Failed to remove lines')
+  return cart
+}

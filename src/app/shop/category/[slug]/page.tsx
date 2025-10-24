@@ -9,6 +9,7 @@ type CategoryKey =
 	| 'new-arrivals'
 	| 'best-sellers'
 	| 'all'
+	| 'rings'
 	| 'necklaces'
 	| 'bracelets'
 	| 'earrings'
@@ -59,6 +60,12 @@ const CATEGORY_META: Record<
 		title: 'REFINED',
 		subtitle: 'The essence of minimalism, crafted in solid gold',
 		heroClass: 'shop-hero--refined',
+	},
+	// Map Rings to the same background as Shop All until a dedicated image is available
+	rings: {
+		title: 'RINGS',
+		subtitle: 'A band that doesn’t cost a band.',
+		heroClass: 'shop-hero--all',
 	},
 	'jade-jewelry': {
 		title: 'JADE JEWELRY',
@@ -129,7 +136,7 @@ export default function CategoryPage({ params }: { params: { slug: CategoryKey }
 		<main className="shop-main">
 			<AnnouncementBar />
 			<Header />
-			<ShopHero title={meta.title} subtitle={meta.subtitle} heroClass={meta.heroClass} />
+			<ShopHero title={meta?.title || ''} subtitle={meta?.subtitle} heroClass={meta?.heroClass || 'shop-hero--all'} />
 			{isJade ? (
 				<section className="jade-instore" aria-label="Jade Jewelry notice">
 					<div className="jade-instore-inner">

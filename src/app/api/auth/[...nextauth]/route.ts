@@ -1,6 +1,6 @@
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import OAuthProvider from 'next-auth/providers/oauth'
+// Using a custom OAuth provider object to avoid importing provider modules
 import { loginCustomer, renewCustomerAccessToken } from '@/lib/shopify'
 
 const providers: NextAuthOptions['providers'] = []
@@ -8,8 +8,8 @@ const providers: NextAuthOptions['providers'] = []
 // Optional: Shopify OIDC (New Customer Accounts) if env is configured
 if (process.env.SHOPIFY_OIDC_WELL_KNOWN && process.env.SHOPIFY_OIDC_CLIENT_ID && process.env.SHOPIFY_OIDC_CLIENT_SECRET) {
   providers.push(
-    // Cast to any to satisfy TS types for generic OAuth provider
-    (OAuthProvider as any)({
+    ({
+      type: 'oauth',
       id: 'shopify-oidc',
       name: 'Shopify',
       wellKnown: process.env.SHOPIFY_OIDC_WELL_KNOWN,
@@ -27,7 +27,7 @@ if (process.env.SHOPIFY_OIDC_WELL_KNOWN && process.env.SHOPIFY_OIDC_CLIENT_ID &&
           email: (profile as any).email,
         }
       },
-    })
+    } as any)
   )
 }
 
