@@ -13,7 +13,7 @@ export default function JadeBarPage() {
       <section className="jade-hero" aria-labelledby="jade-heading">
         <div className="jade-hero-inner">
           <div className="jade-hero-head">
-            <p className="jade-overline">Houston's first ever customizable</p>
+            <p className="jade-overline">Houston&#39;s first ever customizable</p>
             <h1 id="jade-heading" className="jade-title">Jade Bar</h1>
             <p className="jade-subtitle">why we wear jade</p>
           </div>

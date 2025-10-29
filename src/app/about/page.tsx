@@ -20,11 +20,11 @@ export default function AboutPage() {
 
           <div className="about-hero-copy" data-anim="fade-in" data-delay="320">
             <p>At tomi, we believe that fine jewelry should be both timeless and attainable. Our mission is to create gold jewelry that honors sustainable practices, responsible sourcing, and craftsmanship that lasts for generations-all at an accessible price point.</p>
-            <p>We don't chase fast-moving trends. Instead, we design pieces that are unique, versatile, and meant to become part of your personal story-treasures you'll cherish today and pass on tomorrow. Each piece is thoughtfully crafted with care for the planet, using responsibly sourced materials and ethical production methods.</p>
-            <p>By rethinking what luxury means, we make quality gold jewelry available without the traditional markups. The result? Jewelry that's affordable, meaningful, and enduring-made to shine for this generation and the next.</p>
+            <p>We don&#39;t chase fast-moving trends. Instead, we design pieces that are unique, versatile, and meant to become part of your personal story-treasures you&#39;ll cherish today and pass on tomorrow. Each piece is thoughtfully crafted with care for the planet, using responsibly sourced materials and ethical production methods.</p>
+            <p>By rethinking what luxury means, we make quality gold jewelry available without the traditional markups. The result? Jewelry that&#39;s affordable, meaningful, and enduring-made to shine for this generation and the next.</p>
           </div>
 
-          <p className="about-hero-tagline" data-anim="slide-up" data-delay="480">today's gem, tomorrow's gift</p>
+          <p className="about-hero-tagline" data-anim="slide-up" data-delay="480">today&#39;s gem, tomorrow&#39;s gift</p>
         </div>
       </section>
 
@@ -49,10 +49,10 @@ export default function AboutPage() {
               At tomi, we believe that fine jewelry should be both timeless and attainable. Our mission is to create gold jewelry that honors sustainable practices, responsible sourcing, and craftsmanship that lasts for generations—all at an accessible price point.
             </p>
             <p>
-              We don't chase fast‑moving trends. Instead, we design pieces that are unique, versatile, and meant to become part of your personal story—treasures you'll cherish today and pass on tomorrow. Each piece is thoughtfully crafted with care for the planet, using responsibly sourced materials and ethical production methods.
+              We don&#39;t chase fast‑moving trends. Instead, we design pieces that are unique, versatile, and meant to become part of your personal story—treasures you&#39;ll cherish today and pass on tomorrow. Each piece is thoughtfully crafted with care for the planet, using responsibly sourced materials and ethical production methods.
             </p>
             <p>
-              By rethinking what luxury means, we make quality gold jewelry available without the traditional markups. The result? Jewelry that's affordable, meaningful, and enduring—made to shine for this generation and the next.
+              By rethinking what luxury means, we make quality gold jewelry available without the traditional markups. The result? Jewelry that&#39;s affordable, meaningful, and enduring—made to shine for this generation and the next.
             </p>
           </div>
         </div>

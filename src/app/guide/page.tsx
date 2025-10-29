@@ -18,7 +18,7 @@ export default function GuidePage() {
           <div className="guide-content">
             <h1 className="guide-heading" data-anim="fade-in" data-delay="160">jewelry care guide</h1>
             <p className="guide-intro" data-anim="fade-in" data-delay="240">
-              your jewelry is made with real solid gold. it's made to last and designed for everyday wear,
+              your jewelry is made with real solid gold. it&#39;s made to last and designed for everyday wear,
               but requires a little love to stay looking brand new.
             </p>
             <h2 className="guide-section-title" data-anim="fade-in" data-delay="320">our tips</h2>

@@ -13,7 +13,7 @@ export default function ReturnsPage() {
         <div className="returns-layout">
           <div className="returns-intro" data-anim="fade-in" data-delay="120">
             <h1 className="returns-heading">returns</h1>
-            <p className="returns-copy">We stand behind every product that we sell. If you aren't 100% satisfied, we’re here to help.</p>
+            <p className="returns-copy">We stand behind every product that we sell. If you aren&#39;t 100% satisfied, we’re here to help.</p>
             <p className="returns-copy">We try to make the return process as painless as possible.</p>
           </div>
           <div className="returns-details" data-anim="slide-up" data-delay="220">
