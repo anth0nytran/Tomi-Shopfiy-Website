@@ -94,6 +94,17 @@ export const GET_PRODUCTS = `
           title
           description
           handle
+          productType
+          tags
+          collections(first: 10) {
+            edges {
+              node {
+                id
+                title
+                handle
+              }
+            }
+          }
           images(first: 1) {
             edges {
               node {
@@ -173,6 +184,12 @@ export async function fetchProductByHandle(handle: string) {
   const client = getStorefrontClient()
   const res = await client.request(GET_PRODUCT_BY_HANDLE, { handle }) as any
   return res?.product ?? null
+}
+
+export async function fetchCollections(first: number) {
+  const client = getStorefrontClient()
+  const res = await client.request(GET_COLLECTIONS, { first }) as any
+  return res?.collections?.edges?.map((e: any) => e.node) ?? []
 }
 
 // Cart operations

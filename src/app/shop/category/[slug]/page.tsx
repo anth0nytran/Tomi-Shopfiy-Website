@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar'
 import { Header } from '@/components/layout/Header'
@@ -118,7 +119,7 @@ function ProductCard({ product }: { product: Product }) {
 	return (
 		<Link href={`/shop/${product.id}`} className={`product-card${product.featured ? ' is-featured' : ''}`}>
 			<div className="product-media">
-				<img src={product.image} alt="" className="product-img" />
+				<Image src={product.image} alt="" className="product-img" width={800} height={800} />
 			</div>
 			<div className="product-info">
 				<div className="product-title">{product.title}</div>

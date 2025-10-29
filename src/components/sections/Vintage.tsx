@@ -1,5 +1,6 @@
 "use client"
 import React, { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 
 export function Vintage() {
   const images = [
@@ -16,7 +17,7 @@ export function Vintage() {
     const tick = () => setIndex((i) => (i + 1) % images.length)
     timer.current = window.setInterval(tick, 3500)
     return () => { if (timer.current) window.clearInterval(timer.current) }
-  }, [])
+  }, [images.length])
 
   return (
     <section id="vintage" className="section section--vintage-collage" data-section-type="vintage" data-anim="fade-in" data-delay="0">
@@ -32,7 +33,7 @@ export function Vintage() {
         <div className="vintage-canvas" aria-live="polite">
           {images.map((img, i) => (
             <figure key={i} className={`vintage-slide${i === index ? ' is-active' : ''}`} aria-hidden={i !== index}>
-              <img src={img.src} alt={img.alt} />
+              <Image src={img.src} alt={img.alt} width={800} height={800} />
             </figure>
           ))}
         </div>
