@@ -6,6 +6,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { fetchProducts } from '@/lib/shopify'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 // data now imported from ./mock
 
 function ShopHero({ heroClass = 'shop-hero--all' }: { heroClass?: string }) {

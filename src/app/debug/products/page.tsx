@@ -2,6 +2,9 @@ import React from 'react'
 import Image from 'next/image'
 import { fetchProducts } from '@/lib/shopify'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 type Price = { amount: string; currencyCode: string }
 type Variant = { id: string; price: Price }
 type ProductNode = {
@@ -83,6 +86,11 @@ export default async function DebugProductsPage() {
       <p style={{ marginBottom: 12 }}>
         This view lists products from your live Shopify store using your .env. Use it to decide how to map categories.
       </p>
+      {(!process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || !process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN) && (
+        <div style={{ padding: 12, background: '#fff6e5', border: '1px solid #ffe8b3', borderRadius: 8, marginBottom: 16 }}>
+          <strong>Note:</strong> Shopify env not configured. Set <code>NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN</code> and <code>NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN</code> to see products here.
+        </div>
+      )}
 
       <Summary products={products} />
 

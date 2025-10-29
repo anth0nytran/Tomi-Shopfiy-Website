@@ -175,18 +175,30 @@ export const GET_PRODUCT_BY_HANDLE = gql`
 `
 
 export async function fetchProducts(first: number) {
+  if (!shopifyConfig.storeDomain || !shopifyConfig.publicAccessToken) {
+    if (process.env.NODE_ENV !== 'production') console.warn('Shopify env missing: NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN or NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN')
+    return []
+  }
   const client = getStorefrontClient()
   const res = await client.request(GET_PRODUCTS, { first }) as any
   return res?.products?.edges?.map((e: any) => e.node) ?? []
 }
 
 export async function fetchProductByHandle(handle: string) {
+  if (!shopifyConfig.storeDomain || !shopifyConfig.publicAccessToken) {
+    if (process.env.NODE_ENV !== 'production') console.warn('Shopify env missing: cannot fetch product by handle')
+    return null
+  }
   const client = getStorefrontClient()
   const res = await client.request(GET_PRODUCT_BY_HANDLE, { handle }) as any
   return res?.product ?? null
 }
 
 export async function fetchCollections(first: number) {
+  if (!shopifyConfig.storeDomain || !shopifyConfig.publicAccessToken) {
+    if (process.env.NODE_ENV !== 'production') console.warn('Shopify env missing: cannot fetch collections')
+    return []
+  }
   const client = getStorefrontClient()
   const res = await client.request(GET_COLLECTIONS, { first }) as any
   return res?.collections?.edges?.map((e: any) => e.node) ?? []
