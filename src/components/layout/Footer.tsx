@@ -42,7 +42,7 @@ export function Footer() {
               <h4 className="footer-column-title">SERVICES</h4>
               <ul className="footer-list">
                 <li><a href="/repair" className="footer-link" data-link-slot="footer-services-1">Repairs</a></li>
-                <li><a href="#" className="footer-link" data-link-slot="footer-services-2">Recycle</a></li>
+                <li><a href="/recycle" className="footer-link" data-link-slot="footer-services-2">Recycle</a></li>
                 <li><a href="/returns" className="footer-link" data-link-slot="footer-services-3">Returns</a></li>
               </ul>
             </div>
