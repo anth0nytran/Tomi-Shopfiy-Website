@@ -1,5 +1,43 @@
 import React from 'react'
 import { AccountLink } from './AccountLink'
+import { CATALOG_ENTRIES, CatalogEntry } from '@/app/shop/catalog'
+
+type NavGroupKey = 'featured' | 'categories' | 'collections' | 'custom'
+
+type NavGroup = {
+  key: NavGroupKey
+  title: string
+  entries: CatalogEntry[]
+}
+
+const navGroups: NavGroup[] = [
+  {
+    key: 'featured',
+    title: 'Featured',
+    entries: CATALOG_ENTRIES.filter((entry) => entry.navGroup === 'featured'),
+  },
+  {
+    key: 'categories',
+    title: 'Categories',
+    entries: CATALOG_ENTRIES.filter(
+      (entry) => entry.navGroup === 'categories' && ['all', 'necklaces', 'bracelets', 'rings', 'earrings'].includes(entry.slug),
+    ),
+  },
+  {
+    key: 'collections',
+    title: 'Collections',
+    entries: CATALOG_ENTRIES.filter((entry) => entry.navGroup === 'collections'),
+  },
+  {
+    key: 'custom',
+    title: 'Designed by you',
+    entries: CATALOG_ENTRIES.filter((entry) => entry.navGroup === 'custom'),
+  },
+]
+
+function toHref(entry: CatalogEntry) {
+  return entry.slug === 'all' ? '/shop' : `/shop/category/${entry.slug}`
+}
 
 export function Header() {
   return (
@@ -11,28 +49,21 @@ export function Header() {
               <a href="/shop" className="nav-link nav-link--dropdown" aria-haspopup="true" aria-expanded="false">SHOP</a>
               <div className="nav-dropdown" role="menu" aria-label="Shop menu">
                 <div className="nav-dropdown-inner">
-                  <div className="nav-dd-group">
-                    <h4 className="nav-dd-title">Featured</h4>
-                    <a href="/shop/category/new-arrivals" className="nav-dd-link" role="menuitem">New Arrivals</a>
-                    <a href="/shop/category/best-sellers" className="nav-dd-link" role="menuitem">Best Sellers</a>
-                  </div>
-                  <div className="nav-dd-group">
-                    <h4 className="nav-dd-title">Categories</h4>
-                    <a href="/shop/category/all" className="nav-dd-link" role="menuitem">Shop All</a>
-                    <a href="/shop/category/necklaces" className="nav-dd-link" role="menuitem">Necklaces</a>
-                    <a href="/shop/category/bracelets" className="nav-dd-link" role="menuitem">Bracelets</a>
-                    <a href="/shop" className="nav-dd-link" role="menuitem">Rings</a>
-                    <a href="/shop/category/earrings" className="nav-dd-link" role="menuitem">Earrings</a>
-                  </div>
-                  <div className="nav-dd-group">
-                    <h4 className="nav-dd-title">Collections</h4>
-                    <a href="/shop/category/flutter" className="nav-dd-link" role="menuitem">Flutter</a>
-                    <a href="/shop/category/refined" className="nav-dd-link" role="menuitem">Refined</a>
-                  </div>
-                  <div className="nav-dd-group">
-                    <h4 className="nav-dd-title">Designed by you</h4>
-                    <a href="/shop/category/jade-jewelry" className="nav-dd-link" role="menuitem">Jade Jewelry</a>
-                  </div>
+                  {navGroups.map((group) => (
+                    <div className="nav-dd-group" key={group.key}>
+                      <h4 className="nav-dd-title">{group.title}</h4>
+                      {group.entries.map((entry) => (
+                        <a
+                          key={entry.slug}
+                          href={toHref(entry)}
+                          className="nav-dd-link"
+                          role="menuitem"
+                        >
+                          {entry.navLabel || entry.title}
+                        </a>
+                      ))}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

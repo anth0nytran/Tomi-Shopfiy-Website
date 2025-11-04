@@ -94,6 +94,7 @@ export const GET_PRODUCTS = `
           title
           description
           handle
+          createdAt
           productType
           tags
           collections(first: 10) {
