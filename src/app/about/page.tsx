@@ -17,14 +17,6 @@ export default function AboutPage() {
             <span className="about-hero-divider" aria-hidden="true"></span>
             <p className="about-hero-intro about-hero-intro--right" data-anim="slide-right" data-delay="200">and we are making it happen in Houston.</p>
           </div>
-
-          <div className="about-hero-copy" data-anim="fade-in" data-delay="320">
-            <p>At tomi, we believe that fine jewelry should be both timeless and attainable. Our mission is to create gold jewelry that honors sustainable practices, responsible sourcing, and craftsmanship that lasts for generations-all at an accessible price point.</p>
-            <p>We don&#39;t chase fast-moving trends. Instead, we design pieces that are unique, versatile, and meant to become part of your personal story-treasures you&#39;ll cherish today and pass on tomorrow. Each piece is thoughtfully crafted with care for the planet, using responsibly sourced materials and ethical production methods.</p>
-            <p>By rethinking what luxury means, we make quality gold jewelry available without the traditional markups. The result? Jewelry that&#39;s affordable, meaningful, and enduring-made to shine for this generation and the next.</p>
-          </div>
-
-          <p className="about-hero-tagline" data-anim="slide-up" data-delay="480">today&#39;s gem, tomorrow&#39;s gift</p>
         </div>
       </section>
 
@@ -41,49 +33,16 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="about-editorial" aria-labelledby="about-editorial-heading">
-        <div className="about-editorial-inner">
-          <h2 id="about-editorial-heading" className="sr-only">Our philosophy</h2>
-          <div className="about-columns">
-            <p className="about-lead">
-              At tomi, we believe that fine jewelry should be both timeless and attainable. Our mission is to create gold jewelry that honors sustainable practices, responsible sourcing, and craftsmanship that lasts for generations—all at an accessible price point.
-            </p>
-            <p>
-              We don&#39;t chase fast‑moving trends. Instead, we design pieces that are unique, versatile, and meant to become part of your personal story—treasures you&#39;ll cherish today and pass on tomorrow. Each piece is thoughtfully crafted with care for the planet, using responsibly sourced materials and ethical production methods.
-            </p>
-            <p>
-              By rethinking what luxury means, we make quality gold jewelry available without the traditional markups. The result? Jewelry that&#39;s affordable, meaningful, and enduring—made to shine for this generation and the next.
-            </p>
-          </div>
-        </div>
-      </section>
+      <section className="about-hero" data-anim="fade-in" data-delay="0">
+        <div className="about-hero-inner">
 
-      <section className="about-quote" aria-label="brand quote">
-        <div className="about-quote-inner">
-          <blockquote>
-            <p>“Thoughtfully made. Fairly priced. Meant to be worn—and loved—every day.”</p>
-          </blockquote>
-        </div>
-      </section>
+          <div className="about-hero-copy" data-anim="fade-in" data-delay="320">
+            <p>At tomi, we believe that fine jewelry should be both timeless and attainable. Our mission is to create gold jewelry that honors sustainable practices, responsible sourcing, and craftsmanship that lasts for generations-all at an accessible price point.</p>
+            <p>We don&#39;t chase fast-moving trends. Instead, we design pieces that are unique, versatile, and meant to become part of your personal story-treasures you&#39;ll cherish today and pass on tomorrow. Each piece is thoughtfully crafted with care for the planet, using responsibly sourced materials and ethical production methods.</p>
+            <p>By rethinking what luxury means, we make quality gold jewelry available without the traditional markups. The result? Jewelry that&#39;s affordable, meaningful, and enduring-made to shine for this generation and the next.</p>
+          </div>
 
-      <section className="about-pillars" aria-labelledby="about-pillars-heading">
-        <h2 id="about-pillars-heading" className="sr-only">What guides us</h2>
-        <div className="about-pillars-grid">
-          <div className="pillar">
-            <div className="pillar-icon" aria-hidden></div>
-            <h3 className="pillar-title">Responsible sourcing</h3>
-            <p className="pillar-desc">We partner with trusted suppliers and prioritize transparency across our materials.</p>
-          </div>
-          <div className="pillar">
-            <div className="pillar-icon" aria-hidden></div>
-            <h3 className="pillar-title">Ethical production</h3>
-            <p className="pillar-desc">Every piece is made with care, respecting the people and processes behind it.</p>
-          </div>
-          <div className="pillar">
-            <div className="pillar-icon" aria-hidden></div>
-            <h3 className="pillar-title">Accessible pricing</h3>
-            <p className="pillar-desc">No traditional markups—just quality gold jewelry designed to last.</p>
-          </div>
+          <p className="about-hero-tagline" data-anim="slide-up" data-delay="480">today&#39;s gem, tomorrow&#39;s gift</p>
         </div>
       </section>
 

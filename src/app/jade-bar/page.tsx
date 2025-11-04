@@ -53,8 +53,48 @@ export default function JadeBarPage() {
           </div>
         </div>
       </section>
+      <section className="jade-process" aria-labelledby="process-heading">
+        <div className="jade-process-inner">
+          <p className="process-eyebrow">Jade to be yours.</p>
+          <h2 id="process-heading" className="process-title">The process</h2>
+          <p className="process-subtitle">A four‑step journey to your custom jade.</p>
 
-      <section className="jade-how" aria-labelledby="how-heading">
+          <div className="jade-process-grid">
+            <div className="jade-process-row">
+              <span className="process-node" aria-hidden></span>
+              <div className="process-step process-step--right" data-anim="slide-right">
+                <h3 className="process-step-title">Select your jade</h3>
+                <p className="process-step-desc">With colors ranging from green to white, and yellow to lavender.</p>
+              </div>
+            </div>
+
+            <div className="jade-process-row">
+              <span className="process-node" aria-hidden></span>
+              <div className="process-step process-step--left" data-anim="slide-left">
+                <h3 className="process-step-title">Choose between your own chain, a satin cord, or one of our 14k solid gold chains</h3>
+              </div>
+            </div>
+
+            <div className="jade-process-row">
+              <span className="process-node" aria-hidden></span>
+              <div className="process-step process-step--right" data-anim="slide-right">
+                <h3 className="process-step-title">To bail or not to bail</h3>
+                <p className="process-step-desc">A white‑gold or yellow‑gold bail to hold your jade donut flat and add a bit more shine to your piece.</p>
+              </div>
+            </div>
+
+            <div className="jade-process-row">
+              <span className="process-node" aria-hidden></span>
+              <div className="process-step process-step--left" data-anim="slide-left">
+                <h3 className="process-step-title">Watch it get made</h3>
+                <p className="process-step-desc">We can create your jade piece in‑store in under 15 minutes. Pre‑ordered items are processed separately and are case‑by‑case.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* <section className="jade-how" aria-labelledby="how-heading">
         <div className="jade-how-inner">
           <h2 id="how-heading" className="jade-section-title">How it works</h2>
           <ol className="jade-steps">
@@ -84,7 +124,7 @@ export default function JadeBarPage() {
             </li>
           </ol>
         </div>
-      </section>
+      </section> */}
 
       
 
@@ -131,46 +171,7 @@ export default function JadeBarPage() {
         </div>
       </section>
 
-      <section className="jade-process" aria-labelledby="process-heading">
-        <div className="jade-process-inner">
-          <p className="process-eyebrow">Jade to be yours.</p>
-          <h2 id="process-heading" className="process-title">The process</h2>
-          <p className="process-subtitle">A four‑step journey to your custom jade.</p>
-
-          <div className="jade-process-grid">
-            <div className="jade-process-row">
-              <span className="process-node" aria-hidden></span>
-              <div className="process-step process-step--right" data-anim="slide-right">
-                <h3 className="process-step-title">Select your jade</h3>
-                <p className="process-step-desc">With colors ranging from green to white, and yellow to lavender.</p>
-              </div>
-            </div>
-
-            <div className="jade-process-row">
-              <span className="process-node" aria-hidden></span>
-              <div className="process-step process-step--left" data-anim="slide-left">
-                <h3 className="process-step-title">Choose between your own chain, a satin cord, or one of our 14k solid gold chains</h3>
-              </div>
-            </div>
-
-            <div className="jade-process-row">
-              <span className="process-node" aria-hidden></span>
-              <div className="process-step process-step--right" data-anim="slide-right">
-                <h3 className="process-step-title">To bail or not to bail</h3>
-                <p className="process-step-desc">A white‑gold or yellow‑gold bail to hold your jade donut flat and add a bit more shine to your piece.</p>
-              </div>
-            </div>
-
-            <div className="jade-process-row">
-              <span className="process-node" aria-hidden></span>
-              <div className="process-step process-step--left" data-anim="slide-left">
-                <h3 className="process-step-title">Watch it get made</h3>
-                <p className="process-step-desc">We can create your jade piece in‑store in under 15 minutes. Pre‑ordered items are processed separately and are case‑by‑case.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      
 
       <Footer />
     </main>
