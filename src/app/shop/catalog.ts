@@ -215,18 +215,19 @@ export const CATALOG_BY_SLUG: Record<CatalogSlug, CatalogEntry> = CATALOG_ENTRIE
 }, {} as Record<CatalogSlug, CatalogEntry>)
 
 export function filterProductsByCatalogEntry(products: ShopifyListProduct[], entry: CatalogEntry) {
-  switch (entry.filter.kind) {
+  const filter = entry.filter
+  switch (filter.kind) {
     case 'all':
       return products
     case 'productType':
       return products.filter((product) => {
         const type = product.productType?.trim() || ''
-        return entry.filter.productTypes.some((pt) => pt.toLowerCase() === type.toLowerCase())
+        return filter.productTypes.some((pt) => pt.toLowerCase() === type.toLowerCase())
       })
     case 'collection':
       return products.filter((product) => {
         const handles = product.collections?.edges?.map((edge) => edge.node.handle) || []
-        return handles.some((handle) => entry.filter.handles.includes(handle))
+        return handles.some((handle) => filter.handles.includes(handle))
       })
     default:
       return products
