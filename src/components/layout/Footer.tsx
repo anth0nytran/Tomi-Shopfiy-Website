@@ -34,7 +34,7 @@ export function Footer() {
                 <li><a href="/contact" className="footer-link" data-link-slot="footer-support-1">Contact</a></li>
                 <li><a href="#" className="footer-link" data-link-slot="footer-support-2">FAQ</a></li>
                 <li><a href="#" className="footer-link" data-link-slot="footer-support-3">Shipping</a></li>
-                <li><a href="#" className="footer-link" data-link-slot="footer-support-4">Accessibility</a></li>
+                <li><a href="/accessibility" className="footer-link" data-link-slot="footer-support-4">Accessibility</a></li>
               </ul>
             </div>
 
