@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
@@ -16,38 +16,64 @@ export function ShopHero({ entry }: { entry: CatalogEntry }) {
   return (
     <section className={`shop-hero ${entry.heroClass}`} aria-label={`${entry.title} hero`}>
       <div className="shop-hero-media" />
-      <div className="shop-hero-content">
-        <h1 className="shop-title">{entry.title}</h1>
-        {entry.subtitle ? <p className="shop-sub">{entry.subtitle}</p> : null}
-      </div>
     </section>
   )
 }
 
 export function ShopTabs({ active, onTabSelect }: { active: CatalogSlug; onTabSelect?: (slug: CatalogSlug, href: string) => void }) {
+  const trackRef = useRef<HTMLDivElement>(null)
+  const indicatorRef = useRef<HTMLSpanElement>(null)
+
+  const updateIndicator = useCallback(() => {
+    const track = trackRef.current
+    const indicator = indicatorRef.current
+    if (!track || !indicator) return
+    const activeEl = track.querySelector<HTMLElement>('[data-active="true"]')
+    if (!activeEl) return
+    const { offsetLeft, offsetWidth } = activeEl
+    indicator.style.width = `${offsetWidth}px`
+    indicator.style.transform = `translate3d(${offsetLeft}px, -50%, 0)`
+    indicator.classList.add('is-visible')
+  }, [])
+
+  useEffect(() => {
+    updateIndicator()
+    const handleResize = () => updateIndicator()
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', handleResize)
+      return () => window.removeEventListener('resize', handleResize)
+    }
+    return undefined
+  }, [active, updateIndicator])
+
   return (
-    <nav className="shop-tabs" aria-label="Shop categories">
-      {TAB_ENTRIES.map((entry) => {
-        const isAll = entry.slug === 'all'
-        const href = isAll ? '/shop' : `/shop/category/${entry.slug}`
-        const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-          if (onTabSelect) {
-            event.preventDefault()
-            onTabSelect(entry.slug, href)
+    <nav className="shop-nav" aria-label="Shop categories">
+      <div className="shop-nav-track" ref={trackRef}>
+        {TAB_ENTRIES.map((entry) => {
+          const isAll = entry.slug === 'all'
+          const href = isAll ? '/shop' : `/shop/category/${entry.slug}`
+          const isActive = active === entry.slug
+          const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+            if (onTabSelect) {
+              event.preventDefault()
+              onTabSelect(entry.slug, href)
+            }
           }
-        }
-        return (
-          <Link
-            key={entry.slug}
-            className={`shop-tab ${active === entry.slug ? 'shop-tab--active' : ''}`}
-            href={href}
-            scroll={false}
-            onClick={handleClick}
-          >
-            {entry.navLabel || entry.title}
-          </Link>
-        )
-      })}
+          return (
+            <Link
+              key={entry.slug}
+              className={`shop-nav-pill${isActive ? ' is-active' : ''}`}
+              href={href}
+              scroll={false}
+              onClick={handleClick}
+              data-active={isActive ? 'true' : 'false'}
+            >
+              <span>{entry.navLabel || entry.title}</span>
+            </Link>
+          )
+        })}
+        <span ref={indicatorRef} className="shop-nav-indicator" aria-hidden="true" />
+      </div>
     </nav>
   )
 }
