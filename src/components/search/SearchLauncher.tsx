@@ -173,3 +173,5 @@ export function SearchLauncher() {
     </>
   )
 }
+
+export default SearchLauncher

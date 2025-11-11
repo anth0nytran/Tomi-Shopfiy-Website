@@ -3,7 +3,11 @@ import { AccountLink } from './AccountLink'
 import { CATALOG_ENTRIES, CatalogEntry } from '@/app/shop/catalog'
 import { env } from '@/lib/env'
 import { getCustomerAccessToken } from '@/lib/auth/session'
-import { SearchLauncher } from '@/components/search/SearchLauncher'
+import dynamic from 'next/dynamic'
+const SearchLauncher = dynamic(() => import('@/components/search/SearchLauncher'), {
+  ssr: false,
+  loading: () => null,
+})
 
 type NavGroupKey = 'featured' | 'categories' | 'collections' | 'custom'
 
