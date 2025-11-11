@@ -1,6 +1,5 @@
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
-import { env } from '@/lib/env'
 import { getCart, attachBuyerIdentity } from '@/lib/shopify'
 import { getCustomerAccessToken } from '@/lib/auth/session'
 
@@ -14,14 +13,12 @@ export async function GET(req: NextRequest) {
   const cart = await getCart(cartId)
   if (!cart?.checkoutUrl) return fallback
 
-  if (env.customerAccountsEnabled) {
-    const token = await getCustomerAccessToken()
-    if (token) {
-      try {
-        await attachBuyerIdentity(cart.id, token)
-      } catch (error) {
-        console.error('Failed to attach buyer identity', error)
-      }
+  const token = await getCustomerAccessToken()
+  if (token) {
+    try {
+      await attachBuyerIdentity(cart.id, token)
+    } catch (error) {
+      console.error('Failed to attach buyer identity', error)
     }
   }
 

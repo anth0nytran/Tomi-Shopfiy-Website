@@ -68,12 +68,16 @@ export async function fetchCustomerOverview(token: string): Promise<CustomerOver
   if (!env.customerAccountsEnabled) return null
   const endpoint = env.customerAccount.apiUrl
   if (!endpoint) return null
+  const url = new URL(endpoint)
+  const isGlobalEndpoint = !url.hostname.includes('myshopify.com')
+  const storeDomain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN
 
   const res = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
+      ...(isGlobalEndpoint && storeDomain ? { 'Shopify-Store-Domain': storeDomain } : {}),
     },
     body: JSON.stringify({ query: CUSTOMER_QUERY }),
     next: { revalidate: 0 },

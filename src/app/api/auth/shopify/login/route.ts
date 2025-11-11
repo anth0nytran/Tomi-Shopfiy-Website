@@ -25,7 +25,6 @@ export async function GET(req: NextRequest) {
   authUrl.searchParams.set('code_challenge', challenge)
   authUrl.searchParams.set('code_challenge_method', 'S256')
   authUrl.searchParams.set('state', state)
-  authUrl.searchParams.set('scope', env.customerAccount.scopes)
 
   return NextResponse.redirect(authUrl)
 }

@@ -3,16 +3,18 @@ export const shopifyConfig = {
   storeDomain: process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN!,
   apiVersion: '2024-01',
   publicAccessToken: process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN!,
+  serverAccessToken: process.env.SHOPIFY_STOREFRONT_TOKEN || process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN!,
+  serverEndpoint: process.env.SHOPIFY_STOREFRONT_API_URL || '',
 }
 
 import { GraphQLClient, gql } from 'graphql-request'
 
 export function getStorefrontClient() {
-  const endpoint = `https://${shopifyConfig.storeDomain}/api/${shopifyConfig.apiVersion}/graphql.json`
+  const endpoint = shopifyConfig.serverEndpoint || `https://${shopifyConfig.storeDomain}/api/${shopifyConfig.apiVersion}/graphql.json`
   return new GraphQLClient(endpoint, {
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': shopifyConfig.publicAccessToken,
+      'X-Shopify-Storefront-Access-Token': shopifyConfig.serverAccessToken,
     },
   })
 }
@@ -186,8 +188,8 @@ export const GET_PRODUCT_BY_HANDLE = gql`
 `
 
 export async function fetchProducts(first: number) {
-  if (!shopifyConfig.storeDomain || !shopifyConfig.publicAccessToken) {
-    if (process.env.NODE_ENV !== 'production') console.warn('Shopify env missing: NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN or NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN')
+  if (!shopifyConfig.storeDomain || !shopifyConfig.serverAccessToken) {
+    if (process.env.NODE_ENV !== 'production') console.warn('Shopify env missing: SHOPIFY_STOREFRONT_API_URL or token')
     return []
   }
   const client = getStorefrontClient()
