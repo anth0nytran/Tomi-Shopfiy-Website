@@ -157,7 +157,9 @@ export const GET_PRODUCT_BY_HANDLE = gql`
       id
       title
       description
+      descriptionHtml
       handle
+      productType
       images(first: 6) {
         edges { node { url altText } }
       }
@@ -168,6 +170,14 @@ export const GET_PRODUCT_BY_HANDLE = gql`
             title
             availableForSale
             price { amount currencyCode }
+          }
+        }
+      }
+      collections(first: 6) {
+        edges {
+          node {
+            handle
+            title
           }
         }
       }

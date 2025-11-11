@@ -6,26 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { fetchProductByHandle } from '@/lib/shopify'
 import { AddToCartButton } from '@/components/cart/AddToCartButton'
-
-async function addToCart(formData: FormData) {
-  'use server'
-  const merchandiseId = String(formData.get('merchandiseId') || '')
-  const qtyRaw = String(formData.get('quantity') || '1')
-  const quantity = Math.max(1, parseInt(qtyRaw, 10) || 1)
-  if (!merchandiseId) return
-  const res = await fetch(`${process.env.NEXTAUTH_URL || ''}/api/cart/lines`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ lines: [{ merchandiseId, quantity }] }),
-    cache: 'no-store',
-  })
-  if (!res.ok) return
-  const cart = await res.json()
-  if (cart?.checkoutUrl) {
-    // Redirect user to Shopify checkout now
-    // Server actions cannot redirect to external URLs directly; return the URL and let client handle if needed.
-  }
-}
+import { CATALOG_BY_SLUG } from '../catalog'
 
 export default async function ProductPage({ params }: { params: { handle: string } }) {
   const product = await fetchProductByHandle(params.handle)
@@ -47,13 +28,26 @@ export default async function ProductPage({ params }: { params: { handle: string
   const primaryImage = product.images?.edges?.[0]?.node
   const firstVariant = product.variants?.edges?.[0]?.node
   const price = firstVariant?.price
+  const collections = product.collections?.edges?.map((edge: any) => edge.node) ?? []
+  const primaryCollection = collections[0]
+  const collectionEntry = primaryCollection?.handle && CATALOG_BY_SLUG[primaryCollection.handle as keyof typeof CATALOG_BY_SLUG]
+  const descriptionHtml = product.descriptionHtml || product.description || ''
+  const priceLabel = price ? new Intl.NumberFormat(undefined, { style: 'currency', currency: price.currencyCode }).format(parseFloat(price.amount)) : null
+  const stockLabel = firstVariant?.availableForSale ? 'In stock' : 'Out of stock'
+  const metaEntries = [
+    product.productType ? { label: 'Category', value: product.productType } : null,
+    collections.length ? { label: 'Collections', value: collections.map((collection: any) => collection.title).join(', ') } : null,
+    product.vendor ? { label: 'Maker', value: product.vendor } : null,
+    firstVariant?.sku ? { label: 'SKU', value: firstVariant.sku } : null,
+    product.tags?.length ? { label: 'Tags', value: product.tags.join(', ') } : null,
+  ].filter(Boolean) as { label: string; value: string }[]
 
   return (
-    <main className="product-main">
+    <main className="product-main" data-skip-header-offset="true">
       <AnnouncementBar />
       <Header />
       <div className="product-topbar">
-        <Link className="back-link" href="/shop">← Back to shop</Link>
+        <Link className="back-link" href="/shop">Back to shop</Link>
       </div>
       <section className="product-layout" aria-label={`${product.title} details`}>
         <div className="product-gallery">
@@ -72,25 +66,48 @@ export default async function ProductPage({ params }: { params: { handle: string
         </div>
         <div className="product-panel">
           <nav className="product-breadcrumbs" aria-label="breadcrumbs">
-            <a href="#">Products</a> / <a href="#">All</a>
+            <Link href="/shop">Shop</Link>
+            {primaryCollection ? (
+              <>
+                <span>/</span>
+                <Link href={collectionEntry ? `/shop/category/${collectionEntry.slug}` : '/shop'}>{primaryCollection.title}</Link>
+              </>
+            ) : null}
           </nav>
           <h1 className="product-title-lg">{product.title}</h1>
-          <div className="product-price-lg">
-            {price ? new Intl.NumberFormat(undefined, { style: 'currency', currency: price.currencyCode }).format(parseFloat(price.amount)) : null}
+          <div className="product-summary">
+            <div className="product-summary-top">
+              <div>
+                <p className="product-price-label">Price</p>
+                <p className="product-price-lg">{priceLabel}</p>
+              </div>
+              <div className={`product-stock ${firstVariant?.availableForSale ? 'product-stock--in' : 'product-stock--out'}`}>
+                <span className="dot" />
+                {stockLabel}
+              </div>
+            </div>
+            <AddToCartButton merchandiseId={firstVariant?.id || ''} available={!!firstVariant?.availableForSale} />
           </div>
-          <div className="product-stock"><span className="dot" />{firstVariant?.availableForSale ? 'In stock' : 'Out of stock'}</div>
-          <AddToCartButton merchandiseId={firstVariant?.id || ''} available={!!firstVariant?.availableForSale} />
-          <div className="product-tabs">
-            <details open>
-              <summary>Details & Specs</summary>
-              <p>{product.description}</p>
-            </details>
-          </div>
-          <div className="product-benefits" aria-label="policies">
-            <div className="benefit"><span className="benefit-ico">●</span> 14k solid gold—Always</div>
-            <div className="benefit"><span className="benefit-ico">●</span> Free shipping on all orders</div>
-            <div className="benefit"><span className="benefit-ico">●</span> 6‑month warranty</div>
-            <div className="benefit"><span className="benefit-ico">●</span> Easy US returns & exchanges</div>
+          <div className="product-info-grid">
+            <section className="product-info-card product-info-card--details">
+              <h2 className="product-info-title">Details &amp; Specs</h2>
+              <div className="product-spec-richtext" dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
+            </section>
+            <section className="product-info-card product-info-card--notes" aria-label="Product metadata">
+              <h2 className="product-info-title">Product Notes</h2>
+              {metaEntries.length ? (
+                <dl className="product-meta-grid">
+                  {metaEntries.map((entry) => (
+                    <div className="product-meta-item" key={entry.label}>
+                      <dt>{entry.label}</dt>
+                      <dd>{entry.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : (
+                <p className="product-meta-empty">More details coming soon.</p>
+              )}
+            </section>
           </div>
         </div>
       </section>
@@ -98,5 +115,3 @@ export default async function ProductPage({ params }: { params: { handle: string
     </main>
   )
 }
-
-

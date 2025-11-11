@@ -1,14 +1,16 @@
 "use client"
-import React, { useState, useTransition } from 'react'
+import React, { useId, useState, useTransition } from 'react'
 
 type Props = {
   merchandiseId: string
   available?: boolean
+  className?: string
 }
 
-export function AddToCartButton({ merchandiseId, available = true }: Props) {
+export function AddToCartButton({ merchandiseId, available = true, className = '' }: Props) {
   const [qty, setQty] = useState<number>(1)
   const [pending, startTransition] = useTransition()
+  const qtyInputId = useId()
   const disabled = !available || !merchandiseId || qty < 1 || pending
 
   async function add() {
@@ -26,16 +28,16 @@ export function AddToCartButton({ merchandiseId, available = true }: Props) {
   }
 
   return (
-    <div style={{ display: 'grid', gap: 8, alignItems: 'center', gridTemplateColumns: 'auto 1fr' }}>
-      <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span>Qty</span>
+    <div className={['product-action', className].filter(Boolean).join(' ').trim()}>
+      <label className="product-qty" htmlFor={qtyInputId}>
+        <span className="product-qty-label">Quantity</span>
         <input
-          className="contact-input"
+          id={qtyInputId}
+          className="product-qty-input"
           type="number"
           min={1}
           value={qty}
           onChange={(e) => setQty(Math.max(1, parseInt(e.target.value || '1', 10) || 1))}
-          style={{ width: 80 }}
         />
       </label>
       <button className="product-add" type="button" onClick={() => startTransition(add)} disabled={disabled}>
@@ -44,5 +46,4 @@ export function AddToCartButton({ merchandiseId, available = true }: Props) {
     </div>
   )
 }
-
 
