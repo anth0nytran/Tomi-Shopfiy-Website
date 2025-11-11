@@ -9,6 +9,7 @@ type Env = {
     redirectUri: string
     redirectUriLocal: string
     apiUrl: string
+    scopes: string
   }
 }
 
@@ -30,6 +31,7 @@ const env: Env = {
     redirectUri: process.env.SHOPIFY_CA_REDIRECT_URI || '',
     redirectUriLocal: process.env.SHOPIFY_CA_REDIRECT_URI_LOCAL || '',
     apiUrl: process.env.SHOPIFY_CA_CUSTOMER_API_URL || process.env.SHOPIFY_STOREFRONT_API_URL || '',
+    scopes: process.env.SHOPIFY_CA_SCOPES || 'openid email profile',
   },
 }
 
@@ -41,6 +43,7 @@ if (customerAccountsEnabled) {
   env.customerAccount.logoutUrl = ensure('SHOPIFY_CA_LOGOUT_URL', env.customerAccount.logoutUrl)
   env.customerAccount.redirectUri = ensure('SHOPIFY_CA_REDIRECT_URI', env.customerAccount.redirectUri)
   env.customerAccount.apiUrl = ensure('SHOPIFY_CA_CUSTOMER_API_URL', env.customerAccount.apiUrl)
+  env.customerAccount.scopes = ensure('SHOPIFY_CA_SCOPES', env.customerAccount.scopes)
 }
 
 export function getCustomerAccountRedirectUri() {
