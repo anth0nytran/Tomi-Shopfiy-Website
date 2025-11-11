@@ -1,6 +1,9 @@
 import React from 'react'
 import { AccountLink } from './AccountLink'
 import { CATALOG_ENTRIES, CatalogEntry } from '@/app/shop/catalog'
+import { env } from '@/lib/env'
+import { getCustomerAccessToken } from '@/lib/auth/session'
+import { SearchLauncher } from '@/components/search/SearchLauncher'
 
 type NavGroupKey = 'featured' | 'categories' | 'collections' | 'custom'
 
@@ -39,7 +42,8 @@ function toHref(entry: CatalogEntry) {
   return entry.slug === 'all' ? '/shop' : `/shop/category/${entry.slug}`
 }
 
-export function Header() {
+export async function Header() {
+  const token = env.customerAccountsEnabled ? await getCustomerAccessToken() : null
   return (
     <>
       <header className="header" data-section-type="header">
@@ -80,11 +84,21 @@ export function Header() {
 
           <div className="nav-right">
             <AccountLink />
-            <button className="nav-icon" aria-label="Search">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
+            <SearchLauncher />
+            {env.customerAccountsEnabled ? (
+              <>
+                {token ? (
+                  <>
+                    <a href="/account" className="nav-link nav-link--small">My Account</a>
+                    <form method="POST" action="/api/auth/shopify/logout">
+                      <button type="submit" className="nav-link nav-link--small nav-link--button">Sign out</button>
+                    </form>
+                  </>
+                ) : (
+                  <a href="/api/auth/shopify/login?returnTo=/account" className="nav-link nav-link--small">Sign in</a>
+                )}
+              </>
+            ) : null}
             <button className="nav-icon js-cart-open" aria-label="Shopping Bag" data-cart-trigger type="button" title="Open cart">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

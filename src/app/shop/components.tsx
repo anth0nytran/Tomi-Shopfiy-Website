@@ -161,9 +161,7 @@ export function LoadMoreButton({ onClick, disabled }: { onClick: () => void; dis
   return (
     <button type="button" className="load-more" onClick={onClick} disabled={disabled}>
       Show more
-      <span aria-hidden="true" className="load-more-arrow">↘</span>
     </button>
   )
 }
-
 

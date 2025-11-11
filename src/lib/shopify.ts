@@ -205,6 +205,77 @@ export async function fetchProductByHandle(handle: string) {
   return res?.product ?? null
 }
 
+const SEARCH_PRODUCTS = gql`
+  query searchProducts($query: String!, $first: Int!) {
+    products(first: $first, query: $query) {
+      edges {
+        node {
+          id
+          title
+          handle
+          productType
+          description
+          images(first: 1) {
+            edges {
+              node {
+                url
+                altText
+              }
+            }
+          }
+          variants(first: 1) {
+            edges {
+              node {
+                price {
+                  amount
+                  currencyCode
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
+export type SearchResult = {
+  id: string
+  title: string
+  handle: string
+  productType?: string | null
+  description?: string | null
+  image?: { url: string; altText?: string | null } | null
+  price?: { amount: string; currencyCode: string } | null
+}
+
+export async function searchProducts(query: string, first = 8): Promise<SearchResult[]> {
+  if (!query.trim()) return []
+  if (!shopifyConfig.storeDomain || !shopifyConfig.publicAccessToken) return []
+  const client = getStorefrontClient()
+  try {
+    const res = await client.request(SEARCH_PRODUCTS, { query, first }) as any
+    const edges = res?.products?.edges ?? []
+    return edges.map((edge: any) => {
+      const node = edge?.node
+      const image = node?.images?.edges?.[0]?.node ?? null
+      const variant = node?.variants?.edges?.[0]?.node ?? null
+      return {
+        id: node?.id,
+        title: node?.title,
+        handle: node?.handle,
+        productType: node?.productType,
+        description: node?.description,
+        image,
+        price: variant?.price ?? null,
+      } as SearchResult
+    })
+  } catch (error) {
+    if (process.env.NODE_ENV !== 'production') console.error('Search error', error)
+    return []
+  }
+}
+
 export async function fetchCollections(first: number) {
   if (!shopifyConfig.storeDomain || !shopifyConfig.publicAccessToken) {
     if (process.env.NODE_ENV !== 'production') console.warn('Shopify env missing: cannot fetch collections')
@@ -274,6 +345,15 @@ export const CART_LINES_REMOVE = gql`
   }
 `
 
+const CART_BUYER_IDENTITY_UPDATE = gql`
+  mutation cartBuyerIdentityUpdate($cartId: ID!, $identity: CartBuyerIdentityInput!) {
+    cartBuyerIdentityUpdate(cartId: $cartId, buyerIdentity: $identity) {
+      cart { id }
+      userErrors { field message }
+    }
+  }
+`
+
 export type ShopifyCart = {
   id: string
   checkoutUrl: string
@@ -310,4 +390,16 @@ export async function removeLinesFromCart(cartId: string, lineIds: string[]): Pr
   const cart = res?.cartLinesRemove?.cart
   if (!cart) throw new Error('Failed to remove lines')
   return cart
+}
+
+export async function attachBuyerIdentity(cartId: string, customerAccessToken: string) {
+  const client = getStorefrontClient()
+  const res = await client.request(CART_BUYER_IDENTITY_UPDATE, {
+    cartId,
+    identity: { customerAccessToken, countryCode: 'US' },
+  }) as any
+  const errors = res?.cartBuyerIdentityUpdate?.userErrors
+  if (errors?.length) {
+    console.warn('cartBuyerIdentityUpdate errors', errors)
+  }
 }

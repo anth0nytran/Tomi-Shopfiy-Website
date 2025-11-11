@@ -365,9 +365,11 @@ function setCheckoutUrl(url?: string) {
   const cta = cartFooterEl?.querySelector('.cart-cta') as HTMLAnchorElement | null
   if (!cta) return
   if (url) {
-    cta.href = url
+    cta.href = '/api/cart/checkout'
+    cta.dataset.checkoutUrl = url
     cta.removeAttribute('aria-disabled')
   } else {
+    delete cta.dataset.checkoutUrl
     cta.href = '#'
     cta.setAttribute('aria-disabled', 'true')
   }

@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 
 export function Hero() {
   return (
@@ -21,7 +22,9 @@ export function Hero() {
             <span className="hero-title-line">tomorrow&#39;s gift</span>
           </h1>
           <p className="hero-subtitle" data-anim="slide-up" data-delay="400">solid gold jewelry that shines best on you</p>
-          <a href="#categories" className="btn btn--primary" data-anim="slide-up" data-delay="600">SHOP NOW</a>
+          <Link href="/shop" className="btn btn--primary" data-anim="slide-up" data-delay="600">
+            SHOP NOW
+          </Link>
         </div>
       </div>
     </section>

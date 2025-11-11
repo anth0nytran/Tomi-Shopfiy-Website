@@ -1,4 +1,3 @@
-"use client"
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar'
 import { Header } from '@/components/layout/Header'
 import { Hero } from '@/components/sections/Hero'

@@ -1,35 +1,47 @@
-"use client"
-import React, { useState } from 'react'
-import { signIn, signOut, useSession } from 'next-auth/react'
-import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import { env } from '@/lib/env'
+import { fetchCustomerOverview } from '@/lib/customer-account'
+import { getCustomerAccessToken } from '@/lib/auth/session'
+import { formatPrice } from '@/lib/utils'
 
-export default function AccountPage() {
-  const { data: session, status } = useSession()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-
-  const searchParams = useSearchParams()
-  const callbackUrl = searchParams?.get('callbackUrl') || '/'
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setError(null)
-    const res = await signIn('credentials', { email, password, redirect: false, callbackUrl })
-    if (res?.error) setError('Invalid email or password')
-    else if (res?.ok) window.location.href = callbackUrl
+export default async function AccountPage() {
+  if (!env.customerAccountsEnabled) {
+    return (
+      <main className="service-main">
+        <section className="service-hero">
+          <div className="service-card">
+            <h1>Customer accounts are disabled</h1>
+            <p>Enable CUSTOMER_ACCOUNTS_ENABLED in your environment to use this page.</p>
+          </div>
+        </section>
+      </main>
+    )
   }
 
-  if (status === 'loading') return null
-
-  if (session?.shopify?.accessToken) {
+  const token = await getCustomerAccessToken()
+  if (!token) {
     return (
-      <main className="about-main">
-        <section className="about-hero" aria-label="Account">
-          <div className="about-hero-inner">
-            <p className="about-hero-intro">Welcome back</p>
-            <p className="about-hero-tagline">{(session as any).user?.email}</p>
-            <button className="about-cta-btn" onClick={() => signOut({ callbackUrl: '/' })}>Sign out</button>
+      <main className="service-main">
+        <section className="service-hero">
+          <div className="service-card">
+            <h1>Welcome back</h1>
+            <p>Sign in to view your orders, saved addresses, and more.</p>
+            <Link className="service-link" href="/api/auth/shopify/login?returnTo=/account">Sign in</Link>
+          </div>
+        </section>
+      </main>
+    )
+  }
+
+  const overview = await fetchCustomerOverview(token)
+  if (!overview) {
+    return (
+      <main className="service-main">
+        <section className="service-hero">
+          <div className="service-card">
+            <h1>We couldn’t load your account</h1>
+            <p>Please try signing in again.</p>
+            <Link className="service-link" href="/api/auth/shopify/login?returnTo=/account">Sign in</Link>
           </div>
         </section>
       </main>
@@ -37,34 +49,58 @@ export default function AccountPage() {
   }
 
   return (
-    <main className="about-main">
-      <section className="about-hero" aria-label="Sign in">
-        <div className="about-hero-inner" style={{ maxWidth: 520 }}>
-          <p className="about-hero-intro">Sign in to your account</p>
-          <form onSubmit={onSubmit} style={{ width: '100%', display: 'grid', gap: '0.75rem' }}>
-            <input
-              className="contact-input"
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <input
-              className="contact-input"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            {error && <p style={{ color: '#b00020', margin: 0 }}>{error}</p>}
-            <button className="about-cta-btn" type="submit">Sign in</button>
-          </form>
+    <main className="service-main">
+      <section className="service-hero" aria-label="Account overview">
+        <div className="service-card">
+          <div className="service-top">
+            <div>
+              <p className="service-eyebrow">Account</p>
+              <h1 className="service-heading">{overview.firstName ? `${overview.firstName} ${overview.lastName ?? ''}`.trim() : overview.email}</h1>
+            </div>
+            <form method="POST" action="/api/auth/shopify/logout">
+              <button type="submit" className="service-link" style={{ border: 0, background: 'transparent' }}>Sign out</button>
+            </form>
+          </div>
+
+          <div className="service-divider" />
+
+          <section>
+            <h2 className="service-eyebrow">Email</h2>
+            <p className="service-copy">{overview.email || '—'}</p>
+          </section>
+
+          <section>
+            <h2 className="service-eyebrow">Addresses</h2>
+            {overview.addresses.length === 0 ? (
+              <p className="service-copy">No saved addresses yet.</p>
+            ) : (
+              <ul className="service-points">
+                {overview.addresses.map((address: any) => (
+                  <li key={address.id}>{address.formatted?.join?.(', ') || address.address1}</li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section>
+            <h2 className="service-eyebrow">Recent orders</h2>
+            {overview.orders.length === 0 ? (
+              <p className="service-copy">No orders just yet.</p>
+            ) : (
+              <ul className="service-points">
+                {overview.orders.map((order: any) => {
+                  const price = order.totalPriceSet?.shopMoney
+                  return (
+                    <li key={order.id}>
+                      Order {order.name || order.id} • {new Date(order.processedAt).toLocaleDateString()} • {price ? formatPrice(price.amount, price.currencyCode) : '—'}
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </section>
         </div>
       </section>
     </main>
   )
 }
-
-

@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export function Vintage() {
   const images = [
@@ -27,7 +28,9 @@ export function Vintage() {
             <span className="vintage-title-line">add your story</span>
             <span className="vintage-title-line">to a vintage piece</span>
           </h2>
-          <a href="#" className="vintage-link" aria-label="Shop our vintage collection">shop the collection</a>
+          <Link href="/shop/category/one-of-a-kind-vintage" className="vintage-link" aria-label="Shop our vintage collection">
+            shop the collection
+          </Link>
         </aside>
 
         <div className="vintage-canvas" aria-live="polite">
