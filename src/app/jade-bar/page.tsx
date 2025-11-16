@@ -19,7 +19,7 @@ export default function JadeBarPage() {
           </div>
         </div>
         <div className="jade-hero-banner" aria-hidden>
-          <Image src="/assets/jade%20bar.jpg" alt="Jade Bar" fill priority sizes="100vw" className="jade-hero-banner-img" />
+          <Image src="/assets/jade%20bar.JPG" alt="Jade Bar" fill priority sizes="100vw" className="jade-hero-banner-img" />
         </div>
         <div className="jade-hero-strip" aria-label="why we wear jade">
           <div className="jade-strip">
@@ -141,7 +141,15 @@ export default function JadeBarPage() {
               </div>
             </div>
             <div className="jade-source-visual" aria-hidden>
-              <div className="jade-source-map"></div>
+              <div className="jade-source-map">
+                <Image
+                  src="/assets/jade%20bar%20supplemental.JPG"
+                  alt="Supplemental imagery of jade sourced for tomi"
+                  fill
+                  sizes="(max-width: 860px) 100vw, 480px"
+                  className="jade-source-img"
+                />
+              </div>
             </div>
           </div>
 

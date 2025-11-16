@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 import { AccountLink } from './AccountLink'
 import { CATALOG_ENTRIES, CatalogEntry } from '@/app/shop/catalog'
 import { env } from '@/lib/env'
@@ -82,7 +83,15 @@ export async function Header() {
 
           <div className="nav-center">
             <a href="/" className="logo-link" aria-label="Tomi home">
-              <span className="logo-text">tomi</span>
+              <Image
+                src="/assets/large%20tomi%20logo.png"
+                alt="Tomi logo"
+                width={200}
+                height={250}
+                sizes="(max-width: 768px) 120px, 180px"
+                className="logo-text"
+                priority
+              />
             </a>
           </div>
 

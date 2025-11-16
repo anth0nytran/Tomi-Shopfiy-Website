@@ -12,10 +12,38 @@ import {
 
 const TAB_ENTRIES = CATALOG_ENTRIES.filter((entry) => entry.tab)
 
+const SHOP_HEADING_FOLDER = '/assets/shop%20headings'
+const shopHeadingSrc = (name: string) => `${SHOP_HEADING_FOLDER}/${encodeURIComponent(name)}.png`
+
+const SHOP_HEADING_IMAGES: Partial<Record<CatalogSlug, string>> = {
+  'new-arrivals': shopHeadingSrc('new arrivals'),
+  'best-sellers': shopHeadingSrc('best sellers'),
+  all: shopHeadingSrc('shop all'),
+  rings: shopHeadingSrc('rings'),
+  necklaces: shopHeadingSrc('necklaces'),
+  bracelets: shopHeadingSrc('bracelets'),
+  earrings: shopHeadingSrc('earrings'),
+  flutter: shopHeadingSrc('flutter'),
+  refined: shopHeadingSrc('refined'),
+}
+
+const DEFAULT_HERO_IMAGE = '/assets/events.JPG'
+
 export function ShopHero({ entry }: { entry: CatalogEntry }) {
+  const heroImage = SHOP_HEADING_IMAGES[entry.slug] ?? DEFAULT_HERO_IMAGE
+
   return (
     <section className={`shop-hero ${entry.heroClass}`} aria-label={`${entry.title} hero`}>
-      <div className="shop-hero-media" />
+      <div className="shop-hero-media">
+        <Image
+          src={heroImage}
+          alt={`${entry.title} hero`}
+          fill
+          sizes="100vw"
+          className="shop-hero-img"
+          priority
+        />
+      </div>
     </section>
   )
 }
@@ -164,4 +192,3 @@ export function LoadMoreButton({ onClick, disabled }: { onClick: () => void; dis
     </button>
   )
 }
-

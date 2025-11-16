@@ -12,7 +12,7 @@ export default function VisitPage() {
 
       <section className="visit-hero visit-hero--photo" data-anim="fade-in" data-delay="0">
         <Image
-          src="/assets/visit us.jpg"
+          src="/assets/visit us.png"
           alt="Tomi Jewelry showroom"
           fill
           priority
