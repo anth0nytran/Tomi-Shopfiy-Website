@@ -12,6 +12,12 @@ let cartPanelEl: HTMLElement | null = null
 let cartBodyEl: HTMLElement | null = null
 let cartFooterEl: HTMLElement | null = null
 
+const CART_CACHE_KEY = 'tomi:last-cart'
+
+type CartNoticeTone = 'info' | 'warning' | 'error'
+type CartNotice = { message: string; tone?: CartNoticeTone }
+type RenderCartOptions = { notices?: CartNotice[] }
+
 let headerResizeObserver: ResizeObserver | null = null
 let announcementResizeObserver: ResizeObserver | null = null
 let mainResizeObserver: ResizeObserver | null = null
@@ -78,6 +84,36 @@ function refreshDomRefs() {
   if (mainEl) mainResizeObserver.observe(mainEl)
 
   updateCachedHeights(true)
+}
+
+function readCartSnapshot() {
+  if (typeof window === 'undefined' || typeof window.sessionStorage === 'undefined') return null
+  try {
+    const raw = window.sessionStorage.getItem(CART_CACHE_KEY)
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+function persistCartSnapshot(cart: any | null) {
+  if (typeof window === 'undefined' || typeof window.sessionStorage === 'undefined') return
+  try {
+    if (cart && cart?.lines?.edges?.length) {
+      window.sessionStorage.setItem(CART_CACHE_KEY, JSON.stringify(cart))
+    } else {
+      window.sessionStorage.removeItem(CART_CACHE_KEY)
+    }
+  } catch {
+    // ignore storage errors (private mode, quota, etc.)
+  }
+}
+
+function cartNoticesHtml(notices: CartNotice[]) {
+  if (!notices.length) return ''
+  return notices
+    .map((notice) => `<div class="cart-status cart-status--${notice.tone ?? 'info'}">${notice.message}</div>`)
+    .join('')
 }
 
 function getGroupContainer(el: Element): Element | null {
@@ -375,16 +411,65 @@ function setCheckoutUrl(url?: string) {
   }
 }
 
-async function renderCart() {
+function attachCartRetryHandlers() {
   if (!cartBodyEl) return
-  const cart = await fetchCart()
-  if (!cart || !cart?.lines?.edges?.length) {
-    cartBodyEl.innerHTML = '<p class="cart-empty">Your bag is empty.</p>'
+  cartBodyEl.querySelectorAll('[data-cart-refresh]').forEach((btn) => {
+    btn.addEventListener(
+      'click',
+      () => {
+        ;(btn as HTMLButtonElement).setAttribute('disabled', 'true')
+        renderCart()
+      },
+      { once: true },
+    )
+  })
+}
+
+async function renderCart(options?: RenderCartOptions) {
+  if (!cartBodyEl) return
+  const notices: CartNotice[] = [...(options?.notices ?? [])]
+  const freshCart = await fetchCart()
+  let cart = freshCart
+  let servedFromCache = false
+
+  if (!cart) {
+    const cached = readCartSnapshot()
+    if (cached) {
+      cart = cached
+      servedFromCache = true
+      notices.unshift({
+        tone: 'warning',
+        message: "We couldn't refresh your bag. Showing the last saved items - refresh to continue.",
+      })
+    }
+  }
+
+  if (!cart) {
+    cartBodyEl.innerHTML = `
+      <div class="cart-status cart-status--error">
+        <p>We can't load your bag right now. Check your connection and try again.</p>
+        <button type="button" class="cart-refresh" data-cart-refresh>Retry</button>
+      </div>
+    `
     const summaryValue = cartFooterEl?.querySelector('.cart-summary span:last-child') as HTMLElement | null
     if (summaryValue) summaryValue.textContent = '$0.00'
     setCheckoutUrl(undefined)
+    attachCartRetryHandlers()
     return
   }
+
+  const hasLines = cart?.lines?.edges?.length > 0
+  if (!hasLines) {
+    cartBodyEl.innerHTML = '<p class="cart-empty">Your bag is empty.</p>'
+    const summaryValue = cartFooterEl?.querySelector('.cart-summary span:last-child') as HTMLElement | null
+    if (summaryValue) summaryValue.textContent = '$0.00'
+    if (!servedFromCache) persistCartSnapshot(null)
+    setCheckoutUrl(undefined)
+    attachCartRetryHandlers()
+    return
+  }
+
+  if (!servedFromCache) persistCartSnapshot(cart)
 
   const itemsHtml = cart.lines.edges.map((edge: any) => {
     const n = edge.node
@@ -393,11 +478,13 @@ async function renderCart() {
     const price = n.cost?.subtotalAmount
     return `
       <div class="cart-item" data-line-id="${n.id}">
-        <div class="cart-item-media">${img?.url ? `<img src="${img.url}" alt="${img?.altText || ''}" />` : ''}</div>
-        <div class="cart-item-info">
-          <div class="cart-item-title">${p?.title || ''}</div>
-          <div class="cart-item-sub">Qty ${n.quantity}</div>
-        </div>
+        <a class="cart-item-link" href="/shop/${p?.handle || ''}" aria-label="View ${p?.title || 'product'}">
+          <div class="cart-item-media">${img?.url ? `<img src="${img.url}" alt="${img?.altText || ''}" />` : ''}</div>
+          <div class="cart-item-info">
+            <div class="cart-item-title">${p?.title || ''}</div>
+            <div class="cart-item-sub">Qty ${n.quantity}</div>
+          </div>
+        </a>
         <div class="cart-item-price">${price ? formatMoney(parseFloat(price.amount), price.currencyCode) : ''}</div>
         <button class="cart-item-remove" aria-label="Remove item" data-remove-line="${n.id}" title="Remove">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -406,16 +493,21 @@ async function renderCart() {
     `
   }).join('')
 
-  cartBodyEl.innerHTML = itemsHtml
+  const noticeHtml = cartNoticesHtml(notices)
+  cartBodyEl.innerHTML = `${noticeHtml}${itemsHtml}`
   const sub = cart.cost?.subtotalAmount
   const summaryValue = cartFooterEl?.querySelector('.cart-summary span:last-child') as HTMLElement | null
   if (summaryValue) summaryValue.textContent = sub ? formatMoney(parseFloat(sub.amount), sub.currencyCode) : '$0.00'
-  setCheckoutUrl(cart.checkoutUrl)
+  setCheckoutUrl(servedFromCache ? undefined : cart.checkoutUrl)
+  attachCartRetryHandlers()
 
   cartBodyEl.querySelectorAll('[data-remove-line]').forEach((btn) => {
     btn.addEventListener('click', async (e) => {
       const lineId = (e.currentTarget as HTMLElement).getAttribute('data-remove-line')
       if (!lineId) return
+      const itemEl = (e.currentTarget as HTMLElement).closest('.cart-item')
+      if (itemEl) itemEl.classList.add('is-removing')
+      ;(e.currentTarget as HTMLButtonElement).setAttribute('disabled', 'true')
       try {
         const res = await fetch('/api/cart/lines', {
           method: 'DELETE',
@@ -424,8 +516,16 @@ async function renderCart() {
         })
         if (res.ok) {
           await renderCart()
+        } else {
+          await renderCart({
+            notices: [{ tone: 'error', message: "We couldn't update your bag. Please try again." }],
+          })
         }
-      } catch {}
+      } catch {
+        await renderCart({
+          notices: [{ tone: 'error', message: 'Something went wrong removing that item. Please retry.' }],
+        })
+      }
     })
   })
 }

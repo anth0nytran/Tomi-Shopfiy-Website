@@ -143,7 +143,7 @@ export default function JadeBarPage() {
             <div className="jade-source-visual" aria-hidden>
               <div className="jade-source-map">
                 <Image
-                  src="/assets/jade%20bar%20supplemental.JPG"
+                  src="/assets/jade-bar-supplemental.jpg"
                   alt="Supplemental imagery of jade sourced for tomi"
                   fill
                   sizes="(max-width: 860px) 100vw, 480px"
@@ -185,3 +185,4 @@ export default function JadeBarPage() {
     </main>
   )
 }
+
