@@ -4,6 +4,33 @@ import { AnnouncementBar } from '@/components/layout/AnnouncementBar'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 
+const jadeProcessSteps = [
+  {
+    title: 'Select your jade',
+    description: 'Explore shades that range from rich, traditional greens to milky whites, warm yellows, and lavender hues until you find the one that calls to you.',
+    imageSrc: '/assets/select_your_jade.JPG',
+    imageAlt: 'Selecting jade options at the bar',
+  },
+  {
+    title: 'Choosing your chain',
+    description: 'Bring your own chain for a small welding fee or opt for one of our satin cords or 14k solid gold chains to complement your jade donut.',
+    imageSrc: '/assets/choosing_your_chain.jpg',
+    imageAlt: 'Assorted chains and cords available for the jade bar',
+  },
+  {
+    title: 'To bail or not to bail',
+    description: 'Pick a white-gold or yellow-gold bail to hold your jade donut flat and add an extra glimmer, or keep it minimal and let the stone shine on its own.',
+    imageSrc: '/assets/to_bail_not_bail.jpeg',
+    imageAlt: 'Close-up of a jade donut pendant with a bail',
+  },
+  {
+    title: 'Get excited, not jaded',
+    description: "Your custom jade now heads to our jeweler with a turnaround time of roughly 2-3 weeks from creation. We'll notify you the moment it's ready for pick-up.",
+    imageSrc: '/assets/not_jaded.png',
+    imageAlt: 'Jeweler finishing touches on a custom jade piece',
+  },
+]
+
 export default function JadeBarPage() {
   return (
     <main className="jade-main">
@@ -19,7 +46,7 @@ export default function JadeBarPage() {
           </div>
         </div>
         <div className="jade-hero-banner" aria-hidden>
-          <Image src="/assets/jade%20bar.JPG" alt="Jade Bar" fill priority sizes="100vw" className="jade-hero-banner-img" />
+          <Image src="/assets/jade%20bar%20hero.png" alt="Jade Bar" fill priority sizes="100vw" className="jade-hero-banner-img" />
         </div>
         <div className="jade-hero-strip" aria-label="why we wear jade">
           <div className="jade-strip">
@@ -57,39 +84,43 @@ export default function JadeBarPage() {
         <div className="jade-process-inner">
           <p className="process-eyebrow">Jade to be yours.</p>
           <h2 id="process-heading" className="process-title">The process</h2>
-          <p className="process-subtitle">A four‑step journey to your custom jade.</p>
+          <p className="process-subtitle">A four-step journey to your custom jade.</p>
 
-          <div className="jade-process-grid">
-            <div className="jade-process-row">
-              <span className="process-node" aria-hidden></span>
-              <div className="process-step process-step--right" data-anim="slide-right">
-                <h3 className="process-step-title">Select your jade</h3>
-                <p className="process-step-desc">With colors ranging from green to white, and yellow to lavender.</p>
-              </div>
-            </div>
+          <div className="jade-process-steps">
+            {jadeProcessSteps.map((step, index) => {
+              const mediaLeft = index % 2 === 0
+              const mediaAnim = mediaLeft ? 'slide-right' : 'slide-left'
+              const copyAnim = mediaLeft ? 'slide-left' : 'slide-right'
 
-            <div className="jade-process-row">
-              <span className="process-node" aria-hidden></span>
-              <div className="process-step process-step--left" data-anim="slide-left">
-                <h3 className="process-step-title">Choose between your own chain, a satin cord, or one of our 14k solid gold chains</h3>
-              </div>
-            </div>
+              return (
+                <article
+                  className={`jade-process-item ${mediaLeft ? 'is-media-left' : 'is-media-right'}`}
+                  style={{ '--step-index': index } as React.CSSProperties}
+                  key={step.title}
+                >
+                  <div className="jade-process-cell jade-process-cell--media">
+                    <div className="jade-process-media">
+                      <Image
+                        src={step.imageSrc}
+                        alt={step.imageAlt}
+                        width={520}
+                        height={360}
+                        sizes="(max-width: 900px) 100vw, 460px"
+                        className="jade-process-img"
+                      />
+                    </div>
+                  </div>
 
-            <div className="jade-process-row">
-              <span className="process-node" aria-hidden></span>
-              <div className="process-step process-step--right" data-anim="slide-right">
-                <h3 className="process-step-title">To bail or not to bail</h3>
-                <p className="process-step-desc">A white‑gold or yellow‑gold bail to hold your jade donut flat and add a bit more shine to your piece.</p>
-              </div>
-            </div>
+                  <div className="jade-process-cell jade-process-cell--copy">
+                    <p className="jade-process-step-index">Step {String(index + 1).padStart(2, '0')}</p>
+                    <h3 className="jade-process-step-title">{step.title}</h3>
+                    <p className="jade-process-step-desc">{step.description}</p>
+                  </div>
 
-            <div className="jade-process-row">
-              <span className="process-node" aria-hidden></span>
-              <div className="process-step process-step--left" data-anim="slide-left">
-                <h3 className="process-step-title">Watch it get made</h3>
-                <p className="process-step-desc">We can create your jade piece in‑store in under 15 minutes. Pre‑ordered items are processed separately and are case‑by‑case.</p>
-              </div>
-            </div>
+                  <span className="jade-process-pin" aria-hidden />
+                </article>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -143,7 +174,7 @@ export default function JadeBarPage() {
             <div className="jade-source-visual" aria-hidden>
               <div className="jade-source-map">
                 <Image
-                  src="/assets/jade-bar-supplemental.jpg"
+                  src="/assets/source_jade.png"
                   alt="Supplemental imagery of jade sourced for tomi"
                   fill
                   sizes="(max-width: 860px) 100vw, 480px"
@@ -185,4 +216,5 @@ export default function JadeBarPage() {
     </main>
   )
 }
+
 

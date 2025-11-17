@@ -6,7 +6,7 @@ export function Footer() {
       <div className="container">
         <div className="footer-content">
           <div className="footer-section footer-newsletter">
-            <h3 className="footer-title">Join The Legacy Club</h3>
+            <h3 className="footer-title">Join Our Mailing List</h3>
             <p className="footer-description">Sign up to be the first to know about new arrivals &amp; exclusive offers.</p>
             <form className="newsletter-form" data-newsletter-form>
               <input type="email" placeholder="ENTER EMAIL ADDRESS" className="newsletter-input" />

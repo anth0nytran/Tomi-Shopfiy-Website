@@ -15,8 +15,8 @@ export default function Home() {
       <Header />
       <Hero />
       <Categories />
-      <MissionBanner />
       <Vintage />
+      <MissionBanner />
       <Values />
       <Social />
       <Footer />

@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { AccountLink } from './AccountLink'
 import { CATALOG_ENTRIES, CatalogEntry } from '@/app/shop/catalog'
 import { env } from '@/lib/env'
@@ -55,44 +56,54 @@ export async function Header() {
         <nav className="nav">
           <div className="nav-left">
             <div className="nav-item nav-item--dropdown">
-              <a href="/shop" className="nav-link nav-link--dropdown" aria-haspopup="true" aria-expanded="false">SHOP</a>
+              <Link href="/shop" className="nav-link nav-link--dropdown" aria-haspopup="true" aria-expanded="false">SHOP</Link>
               <div className="nav-dropdown" role="menu" aria-label="Shop menu">
                 <div className="nav-dropdown-inner">
                   {navGroups.map((group) => (
                     <div className="nav-dd-group" key={group.key}>
                       <h4 className="nav-dd-title">{group.title}</h4>
                       {group.entries.map((entry) => (
-                        <a
+                        <Link
                           key={entry.slug}
                           href={toHref(entry)}
                           className="nav-dd-link"
                           role="menuitem"
                         >
                           {entry.navLabel || entry.title}
-                        </a>
+                        </Link>
                       ))}
                     </div>
                   ))}
                 </div>
               </div>
             </div>
-            <a href="/about" className="nav-link">ABOUT US</a>
-            <a href="/visit" className="nav-link">VISIT US</a>
-            <a href="/jade-bar" className="nav-link">JADE BAR</a>
+            <Link href="/about" className="nav-link">ABOUT US</Link>
+            <Link href="/visit" className="nav-link">VISIT US</Link>
+            <Link href="/jade-bar" className="nav-link">JADE BAR</Link>
           </div>
 
           <div className="nav-center">
-            <a href="/" className="logo-link" aria-label="Tomi home">
+            <Link href="/" className="logo-link" aria-label="Tomi home">
               <Image
                 src="/assets/large%20tomi%20logo.png"
                 alt="Tomi logo"
                 width={200}
                 height={250}
                 sizes="(max-width: 768px) 120px, 180px"
-                className="logo-text"
+                className="logo-text logo-text--dark"
                 priority
               />
-            </a>
+              <Image
+                src="/assets/white_tomi_logo.png"
+                alt=""
+                aria-hidden="true"
+                width={200}
+                height={250}
+                sizes="(max-width: 768px) 120px, 180px"
+                className="logo-text logo-text--light"
+                priority
+              />
+            </Link>
           </div>
 
           <div className="nav-right">
@@ -102,7 +113,7 @@ export async function Header() {
               <>
                 {token ? (
                   <>
-                    <a href="/account" className="nav-link nav-link--small">My Account</a>
+                    <Link href="/account" className="nav-link nav-link--small">My Account</Link>
                     <form method="POST" action="/api/auth/shopify/logout">
                       <button type="submit" className="nav-link nav-link--small nav-link--button">Sign out</button>
                     </form>

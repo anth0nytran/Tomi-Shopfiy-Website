@@ -23,6 +23,7 @@ let announcementResizeObserver: ResizeObserver | null = null
 let mainResizeObserver: ResizeObserver | null = null
 let animationObserver: IntersectionObserver | null = null
 let animationContainers: Element[] = []
+let jadeTimelineObserver: IntersectionObserver | null = null
 
 let lastAnnouncementHeight = 44
 let lastHeaderHeight = 72
@@ -180,16 +181,7 @@ function applyHeaderModeByPage() {
 
   if (!mainEl) return
   const skipAutoOffset = mainEl.dataset.skipHeaderOffset === 'true'
-  const firstSection = Array.from(mainEl.children).find((child) =>
-    child instanceof HTMLElement && child.matches('.section, section'),
-  ) as HTMLElement | undefined
-
-  if (!firstSection) return
-  if (!hasHero && !skipAutoOffset) {
-    firstSection.style.paddingTop = `calc(var(--header-offset))`
-  } else {
-    firstSection.style.paddingTop = ''
-  }
+  mainEl.classList.toggle('skip-header-offset', skipAutoOffset)
 }
 
 function applyNoScrollState() {
@@ -282,6 +274,7 @@ function handleResize() {
     applyHeaderModeByPage()
     syncHeaderVars()
     revealVisibleContainers()
+    initJadeTimeline()
   })
 }
 
@@ -349,6 +342,45 @@ function hydrateDom() {
   applyNoScrollState()
   syncHeaderVars()
   revealVisibleContainers()
+  initJadeTimeline(true)
+}
+
+function initJadeTimeline(resetItems = false) {
+  const items = document.querySelectorAll<HTMLElement>('.jade-process-item')
+  if (!items.length) {
+    if (jadeTimelineObserver) {
+      jadeTimelineObserver.disconnect()
+      jadeTimelineObserver = null
+    }
+    return
+  }
+  if (typeof IntersectionObserver === 'undefined') {
+    items.forEach((item) => item.classList.add('is-visible'))
+    return
+  }
+  if (!jadeTimelineObserver) {
+    jadeTimelineObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible')
+            jadeTimelineObserver?.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.2, rootMargin: '-10% 0px -20%' },
+    )
+  } else {
+    jadeTimelineObserver.disconnect()
+  }
+  items.forEach((item) => {
+    if (resetItems) {
+      item.classList.remove('is-visible')
+    }
+    if (!item.classList.contains('is-visible')) {
+      jadeTimelineObserver!.observe(item)
+    }
+  })
 }
 
 function computeHeaderBottom(): number {

@@ -64,11 +64,11 @@ export function AddToCartButton({ merchandiseId, available = true, className = '
           onChange={(e) => setQty(Math.max(1, parseInt(e.target.value || '1', 10) || 1))}
         />
       </label>
-      <div>
+      <div className="product-add-wrap">
         <button className="product-add" type="button" onClick={add} disabled={disabled}>
           {buttonLabel}
         </button>
-        <p
+        <span
           className={[
             'product-add-status',
             feedback ? `product-add-status--${feedback.type}` : '',
@@ -77,7 +77,7 @@ export function AddToCartButton({ merchandiseId, available = true, className = '
           aria-live="polite"
         >
           {feedback?.message || (!available ? 'Temporarily unavailable.' : '')}
-        </p>
+        </span>
       </div>
     </div>
   )
