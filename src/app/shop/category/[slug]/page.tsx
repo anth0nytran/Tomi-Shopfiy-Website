@@ -3,29 +3,37 @@ import { notFound } from 'next/navigation'
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
-import { fetchProducts } from '@/lib/shopify'
 import {
-	CATALOG_BY_SLUG,
-	CatalogSlug,
-	ShopifyListProduct,
+  CATALOG_BY_SLUG,
+  CATALOG_ENTRIES,
+  CatalogSlug,
+  ShopifyListProduct,
 } from '../../catalog'
 import { ShopExperience } from '../../ShopExperience'
+import { getCatalogProducts } from '../../productLoader'
+
+export const revalidate = 300
+export const dynamicParams = false
+
+export function generateStaticParams() {
+  return CATALOG_ENTRIES.map((entry) => ({ slug: entry.slug }))
+}
 
 export default async function CategoryPage({ params }: { params: { slug: CatalogSlug } }) {
-	const entry = CATALOG_BY_SLUG[params.slug]
-	if (!entry) {
-		notFound()
-	}
+  const entry = CATALOG_BY_SLUG[params.slug]
+  if (!entry) {
+    notFound()
+  }
 
-	const products = (await fetchProducts(150)) as ShopifyListProduct[]
+  const products = (await getCatalogProducts()) as ShopifyListProduct[]
 
-	return (
-		<main className="shop-main">
-			<AnnouncementBar />
-			<Header />
-			<ShopExperience initialSlug={entry.slug} products={products} />
-			<Footer />
-		</main>
-	)
+  return (
+    <main className="shop-main">
+      <AnnouncementBar />
+      <Header />
+      <ShopExperience initialSlug={entry.slug} products={products} />
+      <Footer />
+    </main>
+  )
 }
 

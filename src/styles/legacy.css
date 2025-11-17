@@ -15,7 +15,7 @@
 .product-main > footer, .product-main > .footer { margin-top: auto; }
 .product-topbar { padding: 0.35rem clamp(1.25rem, 6vw, 3rem) 0; }
 .back-link { color: #2f4338; text-decoration: none; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.72rem; display: inline-flex; align-items: center; gap: 0.35rem; opacity: 0.75; transition: opacity 0.2s ease, transform 0.2s ease; }
-.back-link::before { content: 'â†'; font-size: 0.8rem; }
+.back-link::before { content: '←'; font-size: 0.8rem; }
 .back-link:hover { opacity: 1; transform: translateY(-1px); }
 .product-layout { display: grid; grid-template-columns: 0.9fr 1fr; gap: clamp(1.25rem, 4vw, 2rem); padding: clamp(1rem, 4vw, 2rem) clamp(1.25rem, 6vw, 3rem) clamp(2rem, 6vw, 3rem); align-items: start; }
 .product-gallery { display: grid; gap: 0.6rem; align-content: start; }

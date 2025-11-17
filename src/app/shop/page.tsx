@@ -2,15 +2,14 @@ import React from 'react'
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
-import { fetchProducts } from '@/lib/shopify'
 import { ShopifyListProduct } from './catalog'
 import { ShopExperience } from './ShopExperience'
+import { getCatalogProducts } from './productLoader'
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+export const revalidate = 300
 
 export default async function ShopPage() {
-  const products = (await fetchProducts(150)) as ShopifyListProduct[]
+  const products = (await getCatalogProducts()) as ShopifyListProduct[]
   return (
     <main className="shop-main">
       <AnnouncementBar />
