@@ -3,6 +3,7 @@
 import React, { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
+import Image from 'next/image'
 
 type Result = {
   id: string
@@ -138,7 +139,14 @@ export function SearchLauncher() {
                 <li key={result.id}>
                   <Link href={`/shop/${result.handle}`} className="search-result-item" onClick={() => setOpen(false)}>
                     {result.image?.url ? (
-                      <img src={result.image.url} alt={result.image.altText || ''} className="search-result-thumb" loading="lazy" />
+                      <Image
+                        src={result.image.url}
+                        alt={result.image.altText || result.title}
+                        width={56}
+                        height={56}
+                        className="search-result-thumb"
+                        loading="lazy"
+                      />
                     ) : (
                       <div className="search-result-thumb placeholder" aria-hidden="true" />
                     )}

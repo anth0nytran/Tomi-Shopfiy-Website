@@ -15,7 +15,7 @@
 .product-main > footer, .product-main > .footer { margin-top: auto; }
 .product-topbar { padding: 0.35rem clamp(1.25rem, 6vw, 3rem) 0; }
 .back-link { color: #2f4338; text-decoration: none; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.72rem; display: inline-flex; align-items: center; gap: 0.35rem; opacity: 0.75; transition: opacity 0.2s ease, transform 0.2s ease; }
-.back-link::before { content: '←'; font-size: 0.8rem; }
+.back-link::before { content: 'â†'; font-size: 0.8rem; }
 .back-link:hover { opacity: 1; transform: translateY(-1px); }
 .product-layout { display: grid; grid-template-columns: 0.9fr 1fr; gap: clamp(1.25rem, 4vw, 2rem); padding: clamp(1rem, 4vw, 2rem) clamp(1.25rem, 6vw, 3rem) clamp(2rem, 6vw, 3rem); align-items: start; }
 .product-gallery { display: grid; gap: 0.6rem; align-content: start; }
@@ -254,7 +254,7 @@
     backdrop-filter 0.65s ease;
   will-change: top, background-color, box-shadow, backdrop-filter;
 }
-/* Translucent mode (on top of media) — use light text */
+/* Translucent mode (on top of media) â€” use light text */
 /* Only apply translucent header colors when a hero exists */
 .has-hero .header:not(.scrolled) .logo-text,
 .has-hero .header:not(.scrolled) .nav-link,
@@ -585,7 +585,7 @@ body:not(.has-hero) .header { background: rgba(255,255,255,0.94); -webkit-backdr
 .visit-map-embed { padding: clamp(1.5rem, 5vw, 3rem) clamp(1.5rem, 6vw, 5rem) clamp(1.25rem, 4vw, 2rem); }
 .visit-map-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(1rem, 3vw, 1.5rem); align-items: stretch; }
 .visit-map-frame { position: relative; border-radius: 14px; overflow: hidden; box-shadow: 0 18px 50px rgba(0,0,0,0.12); border: 1px solid rgba(47,67,56,0.12); background: #ffffff; }
-.visit-map-frame::after { content: '2810 Riverby Rd • Suite 104'; position: absolute; left: 12px; bottom: 12px; padding: 0.35rem 0.55rem; border-radius: 8px; background: rgba(255,255,255,0.9); color: #2f4338; font-size: 0.8rem; letter-spacing: 0.02em; box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+.visit-map-frame::after { content: '2810 Riverby Rd â€¢ Suite 104'; position: absolute; left: 12px; bottom: 12px; padding: 0.35rem 0.55rem; border-radius: 8px; background: rgba(255,255,255,0.9); color: #2f4338; font-size: 0.8rem; letter-spacing: 0.02em; box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
 .visit-map-frame .visit-cta-map { position: absolute; right: 12px; bottom: 12px; padding: 0.5rem 0.8rem; border-radius: 999px; background: #2f4338; color: #fff; text-decoration: none; border: 1px solid rgba(47,67,56,0.22); letter-spacing: 0.12em; text-transform: uppercase; }
 .visit-iframe { width: 100%; height: min(540px, 60vh); border: 0; display: block; }
 .visit-hours { align-self: center; display: grid; gap: 0.6rem; }
@@ -748,7 +748,7 @@ body:not(.has-hero) .header { background: rgba(255,255,255,0.94); -webkit-backdr
 .service-subcopy a { color: var(--color-primary); text-decoration: underline; text-decoration-color: rgba(56,71,59,0.25); text-underline-offset: 3px; transition: text-decoration-color 0.3s ease; }
 .service-subcopy a:hover { text-decoration-color: var(--color-primary); }
 .service-link { justify-self: flex-start; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.58rem 1.35rem; border-radius: 999px; border: 1px solid rgba(47,67,56,0.18); background: linear-gradient(135deg, #2f4338 0%, #3a5545 100%); color: #ffffff; text-decoration: none; letter-spacing: 0.16em; text-transform: uppercase; font-size: 0.74rem; transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease; }
-.service-link::after { content: '→'; font-size: 0.82rem; letter-spacing: 0; }
+.service-link::after { content: 'â†’'; font-size: 0.82rem; letter-spacing: 0; }
 .service-link:hover { transform: translateY(-1px); box-shadow: 0 16px 34px rgba(24,33,28,0.16); filter: brightness(1.05); }
 @keyframes service-card-rise {
   0% { opacity: 0; transform: translateY(14px); }
