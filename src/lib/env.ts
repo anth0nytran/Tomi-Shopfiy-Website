@@ -31,7 +31,7 @@ const env: Env = {
     redirectUri: process.env.SHOPIFY_CA_REDIRECT_URI || '',
     redirectUriLocal: process.env.SHOPIFY_CA_REDIRECT_URI_LOCAL || '',
     apiUrl: process.env.SHOPIFY_CA_CUSTOMER_API_URL || process.env.SHOPIFY_STOREFRONT_API_URL || '',
-    scopes: process.env.SHOPIFY_CA_SCOPES || 'openid email profile',
+    scopes: process.env.SHOPIFY_CA_SCOPES ?? 'openid email customer-account-api:full',
   },
 }
 
