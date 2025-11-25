@@ -22,6 +22,10 @@ export async function GET(req: NextRequest) {
   authUrl.searchParams.set('response_type', 'code')
   authUrl.searchParams.set('client_id', env.customerAccount.clientId)
   authUrl.searchParams.set('redirect_uri', redirectUri)
+  authUrl.searchParams.set(
+    'scope',
+    env.customerAccount.scopes ?? 'openid email customer-account-api:full'
+  )
   authUrl.searchParams.set('code_challenge', challenge)
   authUrl.searchParams.set('code_challenge_method', 'S256')
   authUrl.searchParams.set('state', state)

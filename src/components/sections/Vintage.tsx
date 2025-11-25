@@ -47,7 +47,7 @@ export function Vintage() {
 
   return (
     <>
-      {/* <section id="vintage" className="section section--vintage-collage" data-section-type="vintage" data-anim="fade-in" data-delay="0">
+      <section id="vintage" className="section section--vintage-collage" data-section-type="vintage" data-anim="fade-in" data-delay="0">
         <div className="container vintage-collage">
           <aside className="vintage-aside" data-anim="slide-left" data-delay="80">
             <h2 className="vintage-title">
@@ -67,7 +67,7 @@ export function Vintage() {
             ))}
           </div>
         </div>
-      </section> */}
+      </section>
 
       <section className="section section--vintage-lens" data-anim="fade-in" data-delay="60" aria-label="Vintage magnification detail">
         <div className="container vintage-lens__wrap">
