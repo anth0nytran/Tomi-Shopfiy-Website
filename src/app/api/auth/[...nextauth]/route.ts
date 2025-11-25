@@ -17,7 +17,7 @@ if (process.env.SHOPIFY_OIDC_WELL_KNOWN && process.env.SHOPIFY_OIDC_CLIENT_ID &&
       clientSecret: process.env.SHOPIFY_OIDC_CLIENT_SECRET,
       checks: ['pkce', 'state'],
       authorization: {
-        params: { scope: process.env.SHOPIFY_OIDC_SCOPES || 'openid email profile' },
+        params: { scope: process.env.SHOPIFY_OIDC_SCOPES || 'openid email https://api.customers.com/auth/customer.graphql' },
       },
       profile(profile: any) {
         // OIDC standard claims
