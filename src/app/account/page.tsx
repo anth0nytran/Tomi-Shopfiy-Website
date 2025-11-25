@@ -18,7 +18,27 @@ export default async function AccountPage() {
     )
   }
 
-  const token = await getCustomerAccessToken()
+  let token: string | null = null
+  try {
+    token = await getCustomerAccessToken()
+  } catch (err) {
+    console.error('getCustomerAccessToken failed:', err)
+    // Fallback to sign-in UI instead of white screen
+    return (
+      <main className="service-main">
+        <section className="service-hero">
+          <div className="service-card">
+            <h1>Welcome back</h1>
+            <p>Sign in to view your orders, saved addresses, and more.</p>
+            <Link className="service-link" href="/api/auth/shopify/login?returnTo=/account">
+              Sign in
+            </Link>
+          </div>
+        </section>
+      </main>
+    )
+  }
+
   if (!token) {
     return (
       <main className="service-main">
@@ -26,14 +46,35 @@ export default async function AccountPage() {
           <div className="service-card">
             <h1>Welcome back</h1>
             <p>Sign in to view your orders, saved addresses, and more.</p>
-            <Link className="service-link" href="/api/auth/shopify/login?returnTo=/account">Sign in</Link>
+            <Link className="service-link" href="/api/auth/shopify/login?returnTo=/account">
+              Sign in
+            </Link>
           </div>
         </section>
       </main>
     )
   }
 
-  const overview = await fetchCustomerOverview(token)
+  let overview: any = null
+  try {
+    overview = await fetchCustomerOverview(token)
+  } catch (err) {
+    console.error('fetchCustomerOverview failed:', err)
+    return (
+      <main className="service-main">
+        <section className="service-hero">
+          <div className="service-card">
+            <h1>We couldn’t load your account</h1>
+            <p>Please try signing in again.</p>
+            <Link className="service-link" href="/api/auth/shopify/login?returnTo=/account">
+              Sign in
+            </Link>
+          </div>
+        </section>
+      </main>
+    )
+  }
+
   if (!overview) {
     return (
       <main className="service-main">
@@ -41,13 +82,16 @@ export default async function AccountPage() {
           <div className="service-card">
             <h1>We couldn’t load your account</h1>
             <p>Please try signing in again.</p>
-            <Link className="service-link" href="/api/auth/shopify/login?returnTo=/account">Sign in</Link>
+            <Link className="service-link" href="/api/auth/shopify/login?returnTo=/account">
+              Sign in
+            </Link>
           </div>
         </section>
       </main>
     )
   }
 
+  // ... your existing render stays exactly the same below ...
   return (
     <main className="service-main">
       <section className="service-hero" aria-label="Account overview">
@@ -55,10 +99,20 @@ export default async function AccountPage() {
           <div className="service-top">
             <div>
               <p className="service-eyebrow">Account</p>
-              <h1 className="service-heading">{overview.firstName ? `${overview.firstName} ${overview.lastName ?? ''}`.trim() : overview.email}</h1>
+              <h1 className="service-heading">
+                {overview.firstName
+                  ? `${overview.firstName} ${overview.lastName ?? ''}`.trim()
+                  : overview.email}
+              </h1>
             </div>
             <form method="POST" action="/api/auth/shopify/logout">
-              <button type="submit" className="service-link" style={{ border: 0, background: 'transparent' }}>Sign out</button>
+              <button
+                type="submit"
+                className="service-link"
+                style={{ border: 0, background: 'transparent' }}
+              >
+                Sign out
+              </button>
             </form>
           </div>
 
@@ -76,7 +130,9 @@ export default async function AccountPage() {
             ) : (
               <ul className="service-points">
                 {overview.addresses.map((address: any) => (
-                  <li key={address.id}>{address.formatted?.join?.(', ') || address.address1}</li>
+                  <li key={address.id}>
+                    {address.formatted?.join?.(', ') || address.address1}
+                  </li>
                 ))}
               </ul>
             )}
@@ -92,7 +148,9 @@ export default async function AccountPage() {
                   const price = order.totalPriceSet?.shopMoney
                   return (
                     <li key={order.id}>
-                      Order {order.name || order.id} • {new Date(order.processedAt).toLocaleDateString()} • {price ? formatPrice(price.amount, price.currencyCode) : '—'}
+                      Order {order.name || order.id} •{' '}
+                      {new Date(order.processedAt).toLocaleDateString()} •{' '}
+                      {price ? formatPrice(price.amount, price.currencyCode) : '—'}
                     </li>
                   )
                 })}
