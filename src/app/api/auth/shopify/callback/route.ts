@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { env, getCustomerAccountRedirectUri } from '@/lib/env'
+import { buildAbsoluteUrl } from '@/lib/http'
 import {
   consumeCodeVerifier,
   consumeOAuthState,
@@ -10,14 +11,16 @@ import { verifyState } from '@/lib/auth/state'
 
 type TokenPayload = {
   access_token: string
+  customer_access_token?: string
   expires_in?: number
   refresh_token?: string
+  customer_refresh_token?: string
   refresh_token_expires_in?: number
 }
 
 export async function GET(req: NextRequest) {
   if (!env.customerAccountsEnabled) {
-    return NextResponse.redirect(new URL('/', req.url))
+    return NextResponse.redirect(buildAbsoluteUrl(req, '/'))
   }
 
   const url = new URL(req.url)
@@ -28,7 +31,7 @@ export async function GET(req: NextRequest) {
   const returnTo = consumeReturnTo() || '/account'
 
   if (!code || !state || !storedState || !verifier || !verifyState(state, storedState)) {
-    return NextResponse.redirect(new URL('/account?error=auth', req.url))
+    return NextResponse.redirect(buildAbsoluteUrl(req, '/account?error=auth'))
   }
 
   try {
@@ -53,20 +56,23 @@ export async function GET(req: NextRequest) {
     if (!response.ok) {
       const text = await response.text()
       console.error('Shopify token exchange failed:', response.status, text)
-      return NextResponse.redirect(new URL('/account?error=token', req.url))
+      return NextResponse.redirect(buildAbsoluteUrl(req, '/account?error=token'))
     }
 
     const payload = (await response.json()) as TokenPayload
-    if (!payload?.access_token) {
-      console.error('Shopify token response missing access_token:', payload)
-      return NextResponse.redirect(new URL('/account?error=token', req.url))
+    const accessToken = payload.customer_access_token ?? payload.access_token
+    const refreshToken = payload.customer_refresh_token ?? payload.refresh_token
+
+    if (!accessToken) {
+      console.error('Shopify token response missing usable access token', payload)
+      return NextResponse.redirect(buildAbsoluteUrl(req, '/account?error=token'))
     }
 
     const now = Date.now()
     const session = {
-      token: payload.access_token,
+      token: accessToken,
       expiresAt: payload.expires_in ? now + payload.expires_in * 1000 : undefined,
-      refreshToken: payload.refresh_token,
+      refreshToken,
       refreshExpiresAt: payload.refresh_token_expires_in
         ? now + payload.refresh_token_expires_in * 1000
         : undefined,
@@ -74,9 +80,9 @@ export async function GET(req: NextRequest) {
 
     setCustomerSession(session, Math.max(60, payload.expires_in ?? 3600))
 
-    return NextResponse.redirect(new URL(returnTo, req.url))
+    return NextResponse.redirect(buildAbsoluteUrl(req, returnTo))
   } catch (err) {
     console.error('Customer Account callback error:', err)
-    return NextResponse.redirect(new URL('/account?error=token', req.url))
+    return NextResponse.redirect(buildAbsoluteUrl(req, '/account?error=token'))
   }
 }

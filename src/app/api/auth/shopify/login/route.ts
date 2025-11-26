@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { env, getCustomerAccountRedirectUri } from '@/lib/env'
+import { buildAbsoluteUrl } from '@/lib/http'
 import { generateCodeVerifier, challengeFromVerifier } from '@/lib/auth/pkce'
 import { generateState } from '@/lib/auth/state'
 import { setCodeVerifier, setOAuthState, setReturnTo } from '@/lib/auth/cookies'
 
 export async function GET(req: NextRequest) {
   if (!env.customerAccountsEnabled) {
-    return NextResponse.redirect(new URL('/', req.url))
+    return NextResponse.redirect(buildAbsoluteUrl(req, '/'))
   }
   const verifier = generateCodeVerifier()
   const challenge = await challengeFromVerifier(verifier)

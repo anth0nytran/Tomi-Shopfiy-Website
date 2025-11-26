@@ -1,6 +1,61 @@
-import React from 'react'
+'use client'
+
+import React, { useState } from 'react'
+
+type FooterLink = {
+  label: string
+  href: string
+  external?: boolean
+}
+
+type FooterColumn = {
+  title: string
+  links: FooterLink[]
+}
+
+const footerColumns: FooterColumn[] = [
+  {
+    title: 'INFO',
+    links: [
+      { label: 'Account', href: '#' },
+      { label: 'Jewelry Care Guide', href: '/guide' },
+      { label: 'Terms & Privacy', href: '#' },
+    ],
+  },
+  {
+    title: 'SUPPORT',
+    links: [
+      { label: 'Contact', href: '/contact' },
+      { label: 'FAQ', href: '#' },
+      { label: 'Shipping', href: '#' },
+      { label: 'Accessibility', href: '/accessibility' },
+    ],
+  },
+  {
+    title: 'SERVICES',
+    links: [
+      { label: 'Repairs', href: '/repair' },
+      { label: 'Recycle', href: '/recycle' },
+      { label: 'Returns', href: '/returns' },
+    ],
+  },
+  {
+    title: 'CONNECT',
+    links: [
+      { label: 'Instagram', href: 'https://www.instagram.com/tomijewelry', external: true },
+      { label: 'Pinterest', href: 'https://pin.it/1hAqAmari', external: true },
+      { label: 'TikTok', href: 'https://www.tiktok.com/@tomijewelry', external: true },
+    ],
+  },
+]
 
 export function Footer() {
+  const [openColumn, setOpenColumn] = useState<string | null>(null)
+
+  const toggleColumn = (title: string) => {
+    setOpenColumn((prev) => (prev === title ? null : title))
+  }
+
   return (
     <footer className="footer" data-section-type="footer" data-anim="fade-in" data-delay="400">
       <div className="container">
@@ -19,42 +74,39 @@ export function Footer() {
           </div>
 
           <div className="footer-links">
-            <div className="footer-column">
-              <h4 className="footer-column-title">INFO</h4>
-              <ul className="footer-list">
-                <li><a href="#" className="footer-link" data-link-slot="footer-info-1">Account</a></li>
-                <li><a href="/guide" className="footer-link" data-link-slot="footer-info-2">Jewelry Care Guide</a></li>
-                <li><a href="#" className="footer-link" data-link-slot="footer-info-3">Terms &amp; Privacy</a></li>
-              </ul>
-            </div>
-
-            <div className="footer-column">
-              <h4 className="footer-column-title">SUPPORT</h4>
-              <ul className="footer-list">
-                <li><a href="/contact" className="footer-link" data-link-slot="footer-support-1">Contact</a></li>
-                <li><a href="#" className="footer-link" data-link-slot="footer-support-2">FAQ</a></li>
-                <li><a href="#" className="footer-link" data-link-slot="footer-support-3">Shipping</a></li>
-                <li><a href="/accessibility" className="footer-link" data-link-slot="footer-support-4">Accessibility</a></li>
-              </ul>
-            </div>
-
-            <div className="footer-column">
-              <h4 className="footer-column-title">SERVICES</h4>
-              <ul className="footer-list">
-                <li><a href="/repair" className="footer-link" data-link-slot="footer-services-1">Repairs</a></li>
-                <li><a href="/recycle" className="footer-link" data-link-slot="footer-services-2">Recycle</a></li>
-                <li><a href="/returns" className="footer-link" data-link-slot="footer-services-3">Returns</a></li>
-              </ul>
-            </div>
-
-            <div className="footer-column">
-              <h4 className="footer-column-title">CONNECT</h4>
-              <ul className="footer-list">
-                <li><a href="https://www.instagram.com/tomijewelry" className="footer-link" data-link-slot="footer-connect-1" target="_blank" rel="noopener noreferrer">Instagram</a></li>
-                <li><a href="https://pin.it/1hAqAmari" className="footer-link" data-link-slot="footer-connect-2" target="_blank" rel="noopener noreferrer">Pinterest</a></li>
-                <li><a href="https://www.tiktok.com/@tomijewelry" className="footer-link" data-link-slot="footer-connect-3" target="_blank" rel="noopener noreferrer">TikTok</a></li>
-              </ul>
-            </div>
+            {footerColumns.map((column) => {
+              const isOpen = openColumn === column.title
+              return (
+                <div key={column.title} className={`footer-column ${isOpen ? 'is-open' : ''}`}>
+                  <button
+                    type="button"
+                    className="footer-column-title"
+                    aria-expanded={isOpen}
+                    onClick={() => toggleColumn(column.title)}
+                  >
+                    {column.title}
+                    <span className="footer-column-icon" aria-hidden="true">
+                      {isOpen ? '−' : '+'}
+                    </span>
+                  </button>
+                  <ul className="footer-list">
+                    {column.links.map((link) => (
+                      <li key={link.label}>
+                        <a
+                          href={link.href}
+                          className="footer-link"
+                          data-link-slot={`footer-${column.title.toLowerCase()}-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
+                          target={link.external ? '_blank' : undefined}
+                          rel={link.external ? 'noopener noreferrer' : undefined}
+                        >
+                          {link.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>

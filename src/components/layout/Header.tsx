@@ -2,6 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { AccountLink } from './AccountLink'
+import { MobileNav } from './MobileNav'
 import { CATALOG_ENTRIES, CatalogEntry } from '@/app/shop/catalog'
 import { env } from '@/lib/env'
 import { getCustomerAccessToken } from '@/lib/auth/session'
@@ -44,6 +45,25 @@ const navGroups: NavGroup[] = [
   },
 ]
 
+const mobileShopSections = navGroups.map((group) => ({
+  title: group.title,
+  links: group.entries.map((entry) => ({
+    href: toHref(entry),
+    label: entry.navLabel || entry.title,
+  })),
+}))
+
+const mobileNavLinks = [
+  {
+    href: '/shop',
+    label: 'Shop',
+    sections: mobileShopSections,
+  },
+  { href: '/about', label: 'About Us' },
+  { href: '/visit', label: 'Visit Us' },
+  { href: '/jade-bar', label: 'Jade Bar' },
+]
+
 function toHref(entry: CatalogEntry) {
   return entry.slug === 'all' ? '/shop' : `/shop/category/${entry.slug}`
 }
@@ -55,31 +75,34 @@ export async function Header() {
       <header className="header" data-section-type="header">
         <nav className="nav">
           <div className="nav-left">
-            <div className="nav-item nav-item--dropdown">
-              <Link href="/shop" className="nav-link nav-link--dropdown" aria-haspopup="true" aria-expanded="false">SHOP</Link>
-              <div className="nav-dropdown" role="menu" aria-label="Shop menu">
-                <div className="nav-dropdown-inner">
-                  {navGroups.map((group) => (
-                    <div className="nav-dd-group" key={group.key}>
-                      <h4 className="nav-dd-title">{group.title}</h4>
-                      {group.entries.map((entry) => (
-                        <Link
-                          key={entry.slug}
-                          href={toHref(entry)}
-                          className="nav-dd-link"
-                          role="menuitem"
-                        >
-                          {entry.navLabel || entry.title}
-                        </Link>
-                      ))}
-                    </div>
-                  ))}
+            <MobileNav links={mobileNavLinks} />
+            <div className="nav-left-desktop">
+              <div className="nav-item nav-item--dropdown">
+                <Link href="/shop" className="nav-link nav-link--dropdown" aria-haspopup="true" aria-expanded="false">SHOP</Link>
+                <div className="nav-dropdown" role="menu" aria-label="Shop menu">
+                  <div className="nav-dropdown-inner">
+                    {navGroups.map((group) => (
+                      <div className="nav-dd-group" key={group.key}>
+                        <h4 className="nav-dd-title">{group.title}</h4>
+                        {group.entries.map((entry) => (
+                          <Link
+                            key={entry.slug}
+                            href={toHref(entry)}
+                            className="nav-dd-link"
+                            role="menuitem"
+                          >
+                            {entry.navLabel || entry.title}
+                          </Link>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
+              <Link href="/about" className="nav-link">ABOUT US</Link>
+              <Link href="/visit" className="nav-link">VISIT US</Link>
+              <Link href="/jade-bar" className="nav-link">JADE BAR</Link>
             </div>
-            <Link href="/about" className="nav-link">ABOUT US</Link>
-            <Link href="/visit" className="nav-link">VISIT US</Link>
-            <Link href="/jade-bar" className="nav-link">JADE BAR</Link>
           </div>
 
           <div className="nav-center">
@@ -107,22 +130,8 @@ export async function Header() {
           </div>
 
           <div className="nav-right">
-            <AccountLink />
+            <AccountLink enabled={env.customerAccountsEnabled} isLoggedIn={Boolean(token)} />
             <SearchLauncher />
-            {env.customerAccountsEnabled ? (
-              <>
-                {token ? (
-                  <>
-                    <Link href="/account" className="nav-link nav-link--small">My Account</Link>
-                    <form method="POST" action="/api/auth/shopify/logout">
-                      <button type="submit" className="nav-link nav-link--small nav-link--button">Sign out</button>
-                    </form>
-                  </>
-                ) : (
-                  <a href="/api/auth/shopify/login?returnTo=/account" className="nav-link nav-link--small">Sign in</a>
-                )}
-              </>
-            ) : null}
             <button className="nav-icon js-cart-open" aria-label="Shopping Bag" data-cart-trigger type="button" title="Open cart">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
