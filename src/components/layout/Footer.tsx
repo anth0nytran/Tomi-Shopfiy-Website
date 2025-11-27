@@ -89,7 +89,7 @@ export function Footer() {
                       {isOpen ? '−' : '+'}
                     </span>
                   </button>
-                  <ul className="footer-list">
+              <ul className="footer-list">
                     {column.links.map((link) => (
                       <li key={link.label}>
                         <a
@@ -103,8 +103,8 @@ export function Footer() {
                         </a>
                       </li>
                     ))}
-                  </ul>
-                </div>
+              </ul>
+            </div>
               )
             })}
           </div>

@@ -77,31 +77,31 @@ export async function Header() {
           <div className="nav-left">
             <MobileNav links={mobileNavLinks} />
             <div className="nav-left-desktop">
-              <div className="nav-item nav-item--dropdown">
-                <Link href="/shop" className="nav-link nav-link--dropdown" aria-haspopup="true" aria-expanded="false">SHOP</Link>
-                <div className="nav-dropdown" role="menu" aria-label="Shop menu">
-                  <div className="nav-dropdown-inner">
-                    {navGroups.map((group) => (
-                      <div className="nav-dd-group" key={group.key}>
-                        <h4 className="nav-dd-title">{group.title}</h4>
-                        {group.entries.map((entry) => (
-                          <Link
-                            key={entry.slug}
-                            href={toHref(entry)}
-                            className="nav-dd-link"
-                            role="menuitem"
-                          >
-                            {entry.navLabel || entry.title}
-                          </Link>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
+            <div className="nav-item nav-item--dropdown">
+              <Link href="/shop" className="nav-link nav-link--dropdown" aria-haspopup="true" aria-expanded="false">SHOP</Link>
+              <div className="nav-dropdown" role="menu" aria-label="Shop menu">
+                <div className="nav-dropdown-inner">
+                  {navGroups.map((group) => (
+                    <div className="nav-dd-group" key={group.key}>
+                      <h4 className="nav-dd-title">{group.title}</h4>
+                      {group.entries.map((entry) => (
+                        <Link
+                          key={entry.slug}
+                          href={toHref(entry)}
+                          className="nav-dd-link"
+                          role="menuitem"
+                        >
+                          {entry.navLabel || entry.title}
+                        </Link>
+                      ))}
+                    </div>
+                  ))}
                 </div>
               </div>
-              <Link href="/about" className="nav-link">ABOUT US</Link>
-              <Link href="/visit" className="nav-link">VISIT US</Link>
-              <Link href="/jade-bar" className="nav-link">JADE BAR</Link>
+            </div>
+            <Link href="/about" className="nav-link">ABOUT US</Link>
+            <Link href="/visit" className="nav-link">VISIT US</Link>
+            <Link href="/jade-bar" className="nav-link">JADE BAR</Link>
             </div>
           </div>
 

@@ -2,6 +2,7 @@ import { AnnouncementBar } from '@/components/layout/AnnouncementBar'
 import { Header } from '@/components/layout/Header'
 import { Hero } from '@/components/sections/Hero'
 import { Categories } from '@/components/sections/Categories'
+import { JewelryBoxReveal } from '@/components/sections/JewelryBoxReveal'
 import { MissionBanner } from '@/components/sections/MissionBanner'
 import { Vintage } from '@/components/sections/Vintage'
 import { Values } from '@/components/sections/Values'
@@ -15,6 +16,7 @@ export default function Home() {
       <Header />
       <Hero />
       <Categories />
+      <JewelryBoxReveal />
       <Vintage />
       <MissionBanner />
       <Values />
