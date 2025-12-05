@@ -7,6 +7,12 @@
     --font-heading: 'Reckless Neue', serif;
     --font-body: 'Neue Haas Grotesk Display', sans-serif;
   }
+  
+  html, body {
+    height: 100%;
+    min-height: 100%;
+  }
+  
   html {
     scroll-behavior: smooth;
   }
@@ -17,6 +23,41 @@
     color: theme('colors.ink');
     background-color: theme('colors.white');
     overflow-x: hidden;
+  }
+
+  /* 
+   * Sticky Footer using CSS Grid - most reliable approach
+   * Works by making the wrapper a grid with 3 rows:
+   * 1. Auto height for header/content above footer
+   * 2. 1fr for main content (grows to fill space)
+   * 3. Auto height for footer
+   */
+  #__next,
+  body > div:first-child {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    min-height: 100vh;
+  }
+
+  /* Main element fills available space */
+  main {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  /* Footer always at bottom - uses margin-top: auto in flex container */
+  .footer,
+  footer,
+  main > .footer,
+  main > footer {
+    margin-top: auto !important;
+    flex-shrink: 0;
+  }
+  
+  /* Ensure flex-1 wrappers expand */
+  .flex-1 {
+    flex-grow: 1 !important;
   }
 
   h1, h2, h3, h4, h5, h6 {

@@ -2,12 +2,12 @@ import React from 'react'
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
-import Image from 'next/image'
 import Link from 'next/link'
 import { fetchProductByHandle } from '@/lib/shopify'
 import { AddToCartButton } from '@/components/cart/AddToCartButton'
 import { CATALOG_BY_SLUG } from '../catalog'
 import { ChevronLeft } from 'lucide-react'
+import { ProductGallery } from '../ProductGallery'
 
 export default async function ProductPage({ params }: { params: { handle: string } }) {
   const product = await fetchProductByHandle(params.handle)
@@ -29,7 +29,7 @@ export default async function ProductPage({ params }: { params: { handle: string
     )
   }
 
-  const primaryImage = product.images?.edges?.[0]?.node
+  const galleryImages = product.images?.edges?.map((edge: any) => edge.node) ?? []
   const firstVariant = product.variants?.edges?.[0]?.node
   const price = firstVariant?.price
   const collections = product.collections?.edges?.map((edge: any) => edge.node) ?? []
@@ -63,39 +63,8 @@ export default async function ProductPage({ params }: { params: { handle: string
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
           
           {/* Product Gallery - Large & Clean */}
-          <div className="lg:col-span-7 flex flex-col gap-4">
-            <div className="relative w-full aspect-square bg-stone-100 overflow-hidden">
-              {primaryImage?.url ? (
-                <Image 
-                  src={primaryImage.url} 
-                  alt={primaryImage.altText || product.title} 
-                  fill
-                  className="object-cover object-center hover:scale-105 transition-transform duration-700"
-                  priority
-                  quality={90}
-                  sizes="(max-width: 1024px) 100vw, 60vw"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-stone-300">No Image</div>
-              )}
-            </div>
-            
-            {/* Thumbnails if multiple images exist */}
-            {(product.images?.edges?.length || 0) > 1 && (
-              <div className="grid grid-cols-4 gap-4">
-                 {product.images?.edges?.slice(0, 4).map((e: any, i: number) => (
-                   <div key={i} className="relative aspect-square bg-stone-100 cursor-pointer hover:opacity-80 transition-opacity">
-                      <Image 
-                        src={e.node.url} 
-                        alt={e.node.altText || ''} 
-                        fill 
-                        className="object-cover"
-                        sizes="20vw"
-                      />
-                   </div>
-                 ))}
-              </div>
-            )}
+          <div className="lg:col-span-7">
+            <ProductGallery images={galleryImages} title={product.title} />
           </div>
 
           {/* Product Details - Sticky & Editorial */}

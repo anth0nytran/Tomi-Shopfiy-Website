@@ -44,6 +44,13 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        {/* Critical CSS for sticky footer - prevents layout shift */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          html, body { height: 100%; min-height: 100vh; margin: 0; }
+          body > div:first-child { display: flex; flex-direction: column; min-height: 100vh; }
+          main { display: flex; flex-direction: column; flex: 1 0 auto; min-height: 100vh; }
+          .footer, footer { margin-top: auto !important; flex-shrink: 0; }
+        ` }} />
         <Script id="set-header-vars" strategy="beforeInteractive">
           {`(function(){function setVars(){try{var s=document.getElementById('tomi-root-vars');if(!s){s=document.createElement('style');s.id='tomi-root-vars';document.head.appendChild(s);}var b=document.querySelector('.announcement-bar');var h=document.querySelector('.header');var bh=b?Math.round(b.getBoundingClientRect().height)||0:0;var hh=h?Math.round(h.getBoundingClientRect().height)||72:72;s.textContent=':root{--header-top:'+bh+'px;--header-offset:'+(bh+hh+2)+'px;}';}catch(e){}} if(document.readyState!=='loading'){setVars();}else{document.addEventListener('DOMContentLoaded', setVars);} })();`}
         </Script>

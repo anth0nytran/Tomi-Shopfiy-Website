@@ -28,10 +28,12 @@ export default async function CategoryPage({ params }: { params: { slug: Catalog
   const products = (await getCatalogProducts()) as ShopifyListProduct[]
 
   return (
-    <main className="shop-main">
+    <main className="shop-main min-h-screen flex flex-col">
       <AnnouncementBar />
       <Header />
-      <ShopExperience initialSlug={entry.slug} products={products} />
+      <div className="flex-1">
+        <ShopExperience initialSlug={entry.slug} products={products} />
+      </div>
       <Footer />
     </main>
   )

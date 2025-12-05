@@ -44,13 +44,14 @@ async function refreshSession(session: CustomerSession | null) {
 
 export async function getCustomerAccessToken() {
   if (!env.customerAccountsEnabled) return null
-  let session = getCustomerSession()
+  const session = getCustomerSession()
   if (!session?.token) return null
   const now = Date.now()
+  // Do not modify cookies during render; if near expiry, require re-auth instead of refresh here
   if (session.expiresAt && session.expiresAt - now < 60 * 1000) {
-    session = await refreshSession(session)
+    return null
   }
-  return session?.token ?? null
+  return session.token
 }
 
 export function buildRedirectUri() {

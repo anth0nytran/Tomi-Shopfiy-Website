@@ -57,7 +57,7 @@ export function Footer() {
   }
 
   return (
-    <footer className="footer" data-section-type="footer" data-anim="fade-in" data-delay="400">
+    <footer className="footer mt-auto flex-shrink-0" data-section-type="footer" data-anim="fade-in" data-delay="400">
       <div className="container">
         <div className="footer-content">
           <div className="footer-section footer-newsletter">

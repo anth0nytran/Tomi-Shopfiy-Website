@@ -10,18 +10,16 @@ const FALLBACK_SLIDES = [
   { id: 'social-3', src: '/assets/social_pic3.png', alt: 'Social highlight 3' },
 ]
 
-const SHEET_CSV =
-  'https://docs.google.com/spreadsheets/d/1_9w5PvPW67LbDN2rqu8wuGDgnIaoRW8Fos_zdgo2x7c/export?format=csv'
-
-const driveDirectUrl = (url: string) => {
-  // Accept full Drive links like https://drive.google.com/file/d/<id>/view?... or ...?id=<id>
-  const idMatch = url.match(/\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/)
-  if (!idMatch) return url
-  return `https://drive.google.com/uc?id=${idMatch[1]}`
-}
-
-type Slide = { id: string; src: string; alt: string }
+type Slide = { id: string; src: string; alt: string; href?: string }
 const SOCIAL_TITLE_COPY = 'we love @tomijewelry on you'
+
+// Proxy Google Drive URLs through our API to avoid CORS/interstitial
+function proxyUrl(src: string): string {
+  if (src.includes('drive.google.com')) {
+    return `/api/image-proxy?url=${encodeURIComponent(src)}`
+  }
+  return src
+}
 
 export function Social() {
   const trackRef = React.useRef<HTMLDivElement | null>(null)
@@ -30,33 +28,16 @@ export function Social() {
   const typedText = SOCIAL_TITLE_COPY.slice(0, typingIndex)
   const [slides, setSlides] = React.useState<Slide[]>(FALLBACK_SLIDES)
 
-  // Fetch Google Sheet CSV and map drive links to direct image URLs
+  // Fetch slides via API route to avoid client-side CORS
   React.useEffect(() => {
     const fetchSlides = async () => {
       try {
-        const res = await fetch(SHEET_CSV)
+        const res = await fetch('/api/social', { cache: 'no-store' })
         if (!res.ok) throw new Error('Failed to fetch sheet')
-        const text = await res.text()
-        const rows = text.trim().split(/\r?\n/)
-        if (!rows.length) return
-        const headers = rows[0].split(',').map((h) => h.trim().toLowerCase())
-        const srcIdx = headers.findIndex((h) => h === 'src' || h === 'url' || h === 'image')
-        const altIdx = headers.findIndex((h) => h === 'alt' || h === 'caption' || h === 'description')
-        if (srcIdx === -1) return
-
-        const mapped: Slide[] = rows.slice(1).map((row, i) => {
-          const cols = row.split(',')
-          const rawSrc = cols[srcIdx]?.trim() || ''
-          const alt = altIdx !== -1 ? cols[altIdx]?.trim() || 'Social highlight' : 'Social highlight'
-          return {
-            id: `social-remote-${i + 1}`,
-            src: driveDirectUrl(rawSrc),
-            alt,
-          }
-        })
-
-        const valid = mapped.filter((s) => s.src)
-        if (valid.length) setSlides(valid)
+        const data = await res.json()
+        if (Array.isArray(data.slides) && data.slides.length) {
+          setSlides(data.slides)
+        }
       } catch (err) {
         console.error('Social slides fetch failed, using fallback', err)
       }
@@ -119,15 +100,29 @@ export function Social() {
             <div className="social-track" ref={trackRef}>
               {slides.map((slide, idx) => (
                 <div key={slide.id} className="social-slide" data-slide>
-                  <Image
-                    src={slide.src}
-                    alt={slide.alt}
-                    fill
-                    sizes="(min-width: 1024px) 220px, (min-width: 768px) 45vw, 72vw"
-                    className="social-slide-media"
-                    priority={idx === 0}
-                    unoptimized
-                  />
+                  {slide.href ? (
+                    <a href={slide.href} target="_blank" rel="noreferrer" className="block w-full h-full">
+                      <Image
+                        src={proxyUrl(slide.src)}
+                        alt={slide.alt}
+                        fill
+                        sizes="(min-width: 1024px) 220px, (min-width: 768px) 45vw, 72vw"
+                        className="social-slide-media"
+                        priority={idx === 0}
+                        unoptimized
+                      />
+                    </a>
+                  ) : (
+                    <Image
+                      src={proxyUrl(slide.src)}
+                      alt={slide.alt}
+                      fill
+                      sizes="(min-width: 1024px) 220px, (min-width: 768px) 45vw, 72vw"
+                      className="social-slide-media"
+                      priority={idx === 0}
+                      unoptimized
+                    />
+                  )}
                 </div>
               ))}
             </div>

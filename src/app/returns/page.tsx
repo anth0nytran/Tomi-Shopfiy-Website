@@ -76,11 +76,11 @@ export default function ReturnsPage() {
                   Contact Support
                 </a>
               </div>
-            </div>
+          </div>
 
           </div>
         </section>
-      </div>
+        </div>
 
       <Footer />
     </main>

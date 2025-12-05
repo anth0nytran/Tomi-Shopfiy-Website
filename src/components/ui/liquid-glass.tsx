@@ -38,7 +38,7 @@ const GlassEffect: React.FC<GlassEffectProps> = ({
     >
       {/* Glass Layers */}
       <div
-        className="absolute inset-0 z-0 overflow-hidden rounded-inherit rounded-3xl"
+        className="absolute inset-0 z-0 overflow-hidden rounded-inherit rounded-sm"
         style={{
           backdropFilter: "blur(3px)",
           filter: "url(#glass-distortion)",
@@ -50,7 +50,7 @@ const GlassEffect: React.FC<GlassEffectProps> = ({
         style={{ background: "rgba(255, 255, 255, 0.25)" }}
       />
       <div
-        className="absolute inset-0 z-20 rounded-inherit rounded-3xl overflow-hidden"
+        className="absolute inset-0 z-20 rounded-inherit rounded-sm overflow-hidden"
         style={{
           boxShadow:
             "inset 2px 2px 1px 0 rgba(255, 255, 255, 0.5), inset -1px -1px 1px 1px rgba(255, 255, 255, 0.5)",
@@ -106,7 +106,7 @@ const GlassButton: React.FC<{ children: React.ReactNode; href?: string }> = ({
 }) => (
   <GlassEffect
     href={href}
-    className="rounded-3xl px-10 py-6 hover:px-11 hover:py-7 hover:rounded-4xl overflow-hidden"
+    className="rounded-sm px-8 py-4 hover:px-9 hover:py-5 overflow-hidden"
   >
     <div
       className="transition-all duration-700 hover:scale-95"

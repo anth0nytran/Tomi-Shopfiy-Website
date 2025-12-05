@@ -22,13 +22,13 @@ export function Categories() {
             } border-b md:border-b-0`}
           >
             {/* Image Area - Dark Green Background */}
-            <div className="flex-1 relative bg-primary w-full overflow-hidden flex items-center justify-center p-8">
-              <div className="relative w-full h-full transition-transform duration-700 ease-out group-hover:scale-105">
+            <div className="flex-1 relative bg-primary w-full overflow-hidden flex items-center justify-center">
+              <div className={`relative w-full h-full transition-transform duration-700 ease-out group-hover:scale-105 ${category.label === 'NECKLACES' ? '-mt-12 scale-110' : 'p-12'}`}>
                 <Image 
                   src={category.image} 
                   alt={category.alt} 
                   fill
-                  className="object-cover" // Keep cover for now as existing assets are likely full photos, but background matches concept
+                  className={`object-contain ${category.label === 'NECKLACES' ? 'object-top' : 'object-center'}`}
                   sizes="(max-width: 768px) 100vw, 25vw"
                 />
               </div>
