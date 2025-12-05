@@ -7,7 +7,7 @@ import { Footer } from '@/components/layout/Footer'
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-white flex flex-col">
+    <main className="bg-white flex flex-col">
       <AnnouncementBar />
       <Header />
 

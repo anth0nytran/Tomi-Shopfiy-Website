@@ -13,19 +13,20 @@ import { ChevronDown } from 'lucide-react'
 
 const TAB_ENTRIES = CATALOG_ENTRIES.filter((entry) => entry.tab)
 
-const SHOP_HEADING_FOLDER = '/assets/shop%20headings'
-const shopHeadingSrc = (name: string) => `${SHOP_HEADING_FOLDER}/${encodeURIComponent(name)}.png`
-
+// Shop heading images - map slug to image file name
+// Files are in /public/assets/shop headings/
 const SHOP_HEADING_IMAGES: Partial<Record<CatalogSlug, string>> = {
-  'new-arrivals': shopHeadingSrc('new arrivals'),
-  'best-sellers': shopHeadingSrc('best sellers'),
-  all: shopHeadingSrc('shop all'),
-  rings: shopHeadingSrc('rings'),
-  necklaces: shopHeadingSrc('necklaces'),
-  bracelets: shopHeadingSrc('bracelets'),
-  earrings: shopHeadingSrc('earrings'),
-  flutter: shopHeadingSrc('flutter'),
-  refined: shopHeadingSrc('refined'),
+  'new-arrivals': '/assets/shop headings/new arrivals.png',
+  'best-sellers': '/assets/shop headings/best sellers.png',
+  all: '/assets/shop headings/shop all.png',
+  rings: '/assets/shop headings/rings.png',
+  necklaces: '/assets/shop headings/necklaces.png',
+  bracelets: '/assets/shop headings/bracelets.png',
+  earrings: '/assets/shop headings/earrings.png',
+  flutter: '/assets/shop headings/flutter.png',
+  refined: '/assets/shop headings/refined.png',
+  embellish: '/assets/shop headings/embellish.png',
+  'one-of-a-kind-vintage': '/assets/shop headings/one of a kind.png',
 }
 
 const DEFAULT_HERO_IMAGE = '/assets/events.JPG'
@@ -109,8 +110,8 @@ export function ShopTabs({ active, onTabSelect }: { active: CatalogSlug; onTabSe
 
 const SORT_OPTIONS = [
   { label: 'Featured', value: 'featured' },
-  { label: 'Price: Low → High', value: 'price-asc' },
-  { label: 'Price: High → Low', value: 'price-desc' },
+  { label: 'Price: Low to High', value: 'price-asc' },
+  { label: 'Price: High to Low', value: 'price-desc' },
   { label: 'Newest', value: 'newest' },
 ]
 
@@ -157,7 +158,13 @@ export function ShopToolbar({
              <div className="relative">
                <select 
                  id="shop-sort" 
-                 className="appearance-none bg-transparent border-b border-stone-300 pr-8 pl-2 py-1 text-sm font-medium text-stone-900 focus:outline-none focus:border-stone-900 cursor-pointer"
+                 className="bg-transparent border-b border-stone-300 pr-8 pl-2 py-1 text-sm font-medium text-stone-900 focus:outline-none focus:border-stone-900 cursor-pointer"
+                 style={{ 
+                   appearance: 'none', 
+                   WebkitAppearance: 'none', 
+                   MozAppearance: 'none',
+                   backgroundImage: 'none'
+                 }}
                  value={sort} 
                  onChange={handleSortChange}
                >

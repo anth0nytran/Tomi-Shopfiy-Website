@@ -11,7 +11,7 @@ export const revalidate = 300
 export default async function ShopPage() {
   const products = (await getCatalogProducts()) as ShopifyListProduct[]
   return (
-    <main className="shop-main min-h-screen flex flex-col">
+    <main className="shop-main flex flex-col">
       <AnnouncementBar />
       <Header />
       <div className="flex-1">

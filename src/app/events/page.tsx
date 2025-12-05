@@ -26,7 +26,7 @@ export default async function EventsPage() {
   const heroSubhead = featuredEvent ? `Next up: ${featuredEvent.title}` : fallbackSubhead
 
   return (
-    <main className="min-h-screen bg-[#F9F8F6] flex flex-col">
+    <main className="bg-[#F9F8F6] flex flex-col">
       <AnnouncementBar />
       <Header />
 

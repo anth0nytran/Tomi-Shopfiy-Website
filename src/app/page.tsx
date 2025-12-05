@@ -11,7 +11,7 @@ import { Footer } from '@/components/layout/Footer'
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col">
+    <main className="flex flex-col">
       <AnnouncementBar />
       <Header />
       <div className="flex-1 w-full">

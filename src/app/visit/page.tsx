@@ -7,7 +7,7 @@ import Link from 'next/link'
 
 export default function VisitPage() {
   return (
-    <main className="min-h-screen bg-white flex flex-col">
+    <main className="bg-white flex flex-col">
       <AnnouncementBar />
       <Header />
 
@@ -16,14 +16,14 @@ export default function VisitPage() {
         <section className="relative w-full min-h-[90vh] pt-24 md:pt-0 flex flex-col md:flex-row">
           {/* Image Side (Top on mobile, Left on desktop) */}
           <div className="relative w-full md:w-1/2 h-[50vh] md:h-auto bg-stone-100">
-          <Image
-            src="/assets/visit us.png"
-            alt="Tomi Jewelry showroom"
-            fill
+        <Image
+          src="/assets/visit us.png"
+          alt="Tomi Jewelry showroom"
+          fill
               className="object-cover"
-            priority
+          priority
               sizes="(max-width: 768px) 100vw, 50vw"
-            />
+        />
           </div>
 
           {/* Info Side */}
@@ -85,21 +85,21 @@ export default function VisitPage() {
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+        </div>
+      </section>
 
         {/* Map Section */}
         <section className="w-full h-[50vh] md:h-[60vh] relative bg-stone-100">
-              <iframe
-                title="Tomi on Google Maps"
+            <iframe
+              title="Tomi on Google Maps"
             className="w-full h-full filter grayscale opacity-90 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
-                src="https://www.google.com/maps?q=2810+Riverby+Rd+Suite+104,+Houston,+TX+77020&output=embed"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                allowFullScreen
-              />
+              src="https://www.google.com/maps?q=2810+Riverby+Rd+Suite+104,+Houston,+TX+77020&output=embed"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
         </section>
-      </div>
+        </div>
 
       <Footer />
     </main>

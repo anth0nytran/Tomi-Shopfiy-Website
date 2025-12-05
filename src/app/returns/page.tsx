@@ -5,7 +5,7 @@ import { Footer } from '@/components/layout/Footer'
 
 export default function ReturnsPage() {
   return (
-    <main className="min-h-screen bg-[#F9F8F6] flex flex-col">
+    <main className="bg-[#F9F8F6] flex flex-col">
       <AnnouncementBar />
       <Header />
 
@@ -29,7 +29,7 @@ export default function ReturnsPage() {
               <div className="flex items-center justify-between border-b border-stone-100 pb-6 mb-8">
                 <h2 className="font-heading text-2xl text-stone-900">Policy Overview</h2>
                 <span className="bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
-                  Updated 2024
+                  Updated 2025
                 </span>
               </div>
 

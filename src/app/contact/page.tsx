@@ -6,7 +6,7 @@ import FAQ from '@/components/sections/FAQ'
 
 export default function ContactPage() {
   return (
-    <main className="min-h-screen bg-[#F9F8F6] flex flex-col">
+    <main className="bg-[#F9F8F6] flex flex-col">
       <AnnouncementBar />
       <Header />
 
@@ -30,7 +30,7 @@ export default function ContactPage() {
                 <div className="space-y-8">
                   <div>
                     <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-stone-900 mb-2">Email</h3>
-                    <a href="mailto:hello@tomijewelry.com" className="text-stone-600 hover:text-stone-900 transition-colors">hello@tomijewelry.com</a>
+                    <a href="mailto:hello@tomijewelry.com" className="text-stone-600 hover:text-stone-900 transition-colors">Support@tomijewelry.com</a>
                   </div>
                   <div>
                     <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-stone-900 mb-2">Showroom</h3>
@@ -81,7 +81,7 @@ export default function ContactPage() {
                       className="w-full bg-[#F9F8F6] border border-transparent p-4 text-stone-900 focus:outline-none focus:bg-white focus:border-stone-300 transition-all text-sm resize-none"
                       placeholder="How can we help?"
                     />
-                  </div>
+            </div>
 
                   <button 
                     type="submit" 
@@ -89,16 +89,16 @@ export default function ContactPage() {
                   >
                     Send Message
                   </button>
-                </form>
+          </form>
               </div>
 
             </div>
-          </div>
-        </section>
+        </div>
+      </section>
 
         {/* FAQ Section */}
         <div id="faq">
-          <FAQ />
+      <FAQ />
         </div>
       </div>
 

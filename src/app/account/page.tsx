@@ -12,7 +12,7 @@ const SIGN_IN_URL = '/api/auth/shopify/login?returnTo=/account'
 
 function AccountShell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-screen bg-[#F9F8F6] flex flex-col">
+    <main className="bg-[#F9F8F6] flex flex-col">
       <AnnouncementBar />
       <Header />
       <div className="pt-32 pb-24 flex-1">

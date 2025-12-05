@@ -13,10 +13,10 @@ export function Categories() {
   return (
     <section id="categories" className="w-full bg-primary">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full border-t border-white">
-        {CATEGORY_LINKS.map((category, index) => (
-          <Link
-            key={category.label}
-            href={category.href}
+          {CATEGORY_LINKS.map((category, index) => (
+            <Link
+              key={category.label}
+              href={category.href}
             className={`group relative flex flex-col h-[70vh] min-h-[500px] border-white ${
               index !== CATEGORY_LINKS.length - 1 ? 'md:border-r' : ''
             } border-b md:border-b-0`}
@@ -40,8 +40,8 @@ export function Categories() {
                 {category.label}
               </span>
             </div>
-          </Link>
-        ))}
+            </Link>
+          ))}
       </div>
     </section>
   )

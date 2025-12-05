@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 export default function RecyclePage() {
   return (
-    <main className="min-h-screen bg-[#F9F8F6] flex flex-col">
+    <main className="bg-[#F9F8F6] flex flex-col">
       <AnnouncementBar />
       <Header />
 
@@ -61,7 +61,7 @@ export default function RecyclePage() {
 
           </div>
         </section>
-      </div>
+        </div>
 
       <Footer />
     </main>

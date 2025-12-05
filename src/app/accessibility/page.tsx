@@ -112,7 +112,7 @@ const websiteAccessibility = {
 
 export default function AccessibilityPage() {
   return (
-    <main className="min-h-screen bg-[#F9F8F6] flex flex-col">
+    <main className="bg-[#F9F8F6] flex flex-col">
       <AnnouncementBar />
       <Header />
 
@@ -131,11 +131,11 @@ export default function AccessibilityPage() {
                  <span className="inline-block px-4 py-1.5 bg-[#efdada] text-stone-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full">
                    Updated 2025
                  </span>
-              </div>
+            </div>
               <p className="text-stone-600 text-lg font-light leading-relaxed max-w-2xl mx-auto">
                 We are committed to diversity, inclusion, and meeting the needs of all customers. We are continually improving our site to comply with WCAG 2.0 AA guidelines.
-              </p>
-            </div>
+            </p>
+          </div>
 
             <div className="bg-white border border-stone-100 shadow-sm p-8 md:p-16 rounded-sm">
               
@@ -166,7 +166,7 @@ export default function AccessibilityPage() {
                     <div className="space-y-4 text-stone-600 font-light leading-relaxed text-sm md:text-base">
                       {section.paragraphs?.map((p, i) => (
                         <p key={i}>{p}</p>
-                      ))}
+                ))}
                     </div>
                     
                     {section.listTitle && (
@@ -178,12 +178,12 @@ export default function AccessibilityPage() {
                               <span className="w-1.5 h-1.5 rounded-full bg-[#efdada] mt-2 flex-shrink-0" />
                               <span>{item}</span>
                             </li>
-                          ))}
-                        </ul>
+                    ))}
+                  </ul>
                       </div>
                     )}
                   </div>
-                ))}
+            ))}
               </div>
 
               {/* Website Accessibility Section */}
@@ -195,7 +195,7 @@ export default function AccessibilityPage() {
                 <div className="space-y-4 text-stone-600 font-light leading-relaxed text-sm md:text-base mb-8">
                   {websiteAccessibility.paragraphs.map((p, i) => (
                     <p key={i}>{p}</p>
-                  ))}
+              ))}
                 </div>
 
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
@@ -203,9 +203,9 @@ export default function AccessibilityPage() {
                     <li key={i} className="flex gap-3 items-start bg-[#F9F8F6] p-4 rounded-sm text-sm text-stone-600">
                       <span className="text-primary font-bold">✓</span>
                       <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
+                  </li>
+                ))}
+              </ul>
 
                 <div className="bg-[#F9F8F6] p-6 md:p-8 rounded-sm">
                   <p className="font-bold uppercase tracking-widest text-xs text-stone-900 mb-4">
@@ -230,15 +230,15 @@ export default function AccessibilityPage() {
                 </div>
                 
                 <div className="mt-8 text-stone-600 font-light text-sm leading-relaxed">
-                   <p>{websiteAccessibility.closing}</p>
+              <p>{websiteAccessibility.closing}</p>
                 </div>
 
               </div>
 
             </div>
           </div>
-        </section>
-      </div>
+            </section>
+          </div>
 
       <Footer />
     </main>

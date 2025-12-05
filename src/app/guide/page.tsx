@@ -6,7 +6,7 @@ import Image from 'next/image'
 
 export default function GuidePage() {
   return (
-    <main className="min-h-screen bg-[#F9F8F6] flex flex-col">
+    <main className="bg-[#F9F8F6] flex flex-col">
       <AnnouncementBar />
       <Header />
 
@@ -18,17 +18,14 @@ export default function GuidePage() {
               {/* Left Side: Stacked Logo / Brand Element */}
               <div className="w-full md:w-1/3 flex justify-center md:justify-end md:sticky md:top-40">
                 <div className="relative w-48 h-64 md:w-64 md:h-80 opacity-20">
-                   {/* Stacked Tomi Logo Placeholder - using text if SVG not suitable or available, 
-                       but user mentioned 'stacked tomi logo' specifically. 
-                       Assuming /assets/tomi_stacked logo.svg exists based on recent files list */}
-                   <Image 
-                     src="/assets/tomi_stacked logo.svg"
-                     alt="Tomi Jewelry"
-                     fill
-                     className="object-contain"
-                   />
+                  <Image 
+                    src="/assets/pink_tomi_logo.png"
+                    alt="Tomi Jewelry"
+                    fill
+                    className="object-contain"
+                  />
                 </div>
-            </div>
+          </div>
 
               {/* Right Side: Care Guide Content */}
               <div className="w-full md:w-2/3 max-w-2xl">
@@ -41,7 +38,7 @@ export default function GuidePage() {
                 
                 <p className="text-stone-600 text-lg font-light leading-relaxed mb-12 text-balance">
                   Your jewelry is made with real solid gold. It is made to last and designed for everyday wear, but requires a little love to stay looking brand new.
-              </p>
+            </p>
 
                 <div className="space-y-10">
                   <div>
@@ -79,15 +76,15 @@ export default function GuidePage() {
                           <strong className="font-medium text-stone-900 block mb-1">Avoid Harsh Chemicals</strong>
                           Avoid prolonged exposure to salt water, chlorine, and harsh chemicals (e.g., heavy perfumes or lotions).
                         </div>
-                      </li>
-              </ul>
+              </li>
+            </ul>
                   </div>
                 </div>
 
               </div>
-            </div>
           </div>
-        </section>
+        </div>
+      </section>
       </div>
 
       <Footer />

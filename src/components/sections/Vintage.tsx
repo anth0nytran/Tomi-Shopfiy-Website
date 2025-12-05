@@ -69,7 +69,7 @@ export function Vintage() {
   const [direction, setDirection] = useState(0)
 
   const handleNext = useCallback(() => {
-    setDirection(1)
+      setDirection(1)
     setCurrentIndex((prev) => (prev + 1) % SPOTLIGHTS.length)
   }, [])
 
@@ -106,13 +106,13 @@ export function Vintage() {
   return (
     <section className="relative w-full h-[85vh] bg-[#efdada] overflow-hidden">
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
-        <motion.div
+                    <motion.div
           key={currentItem.id}
-          custom={direction}
-          variants={slideVariants}
-          initial="enter"
-          animate="center"
-          exit="exit"
+                      custom={direction}
+                      variants={slideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
           transition={{ 
             x: { type: "spring", stiffness: 200, damping: 25, mass: 1 }, // Smoother spring
             opacity: { duration: 0.4 } 

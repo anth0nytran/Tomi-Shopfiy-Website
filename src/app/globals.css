@@ -8,56 +8,59 @@
     --font-body: 'Neue Haas Grotesk Display', sans-serif;
   }
   
-  html, body {
-    height: 100%;
-    min-height: 100%;
-  }
-  
+  /* 
+   * BULLETPROOF STICKY FOOTER
+   * Uses flexbox chain from html to footer
+   * Works with dynamic content and announcement bar
+   */
   html {
+    height: 100%;
     scroll-behavior: smooth;
   }
   
   body {
+    min-height: 100%;
+    min-height: 100dvh; /* Modern dynamic viewport height */
     margin: 0;
     font-family: var(--font-body);
     color: theme('colors.ink');
     background-color: theme('colors.white');
     overflow-x: hidden;
-  }
-
-  /* 
-   * Sticky Footer using CSS Grid - most reliable approach
-   * Works by making the wrapper a grid with 3 rows:
-   * 1. Auto height for header/content above footer
-   * 2. 1fr for main content (grows to fill space)
-   * 3. Auto height for footer
-   */
-  #__next,
-  body > div:first-child {
-    display: grid;
-    grid-template-rows: 1fr auto;
-    min-height: 100vh;
-  }
-
-  /* Main element fills available space */
-  main {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
   }
   
-  /* Footer always at bottom - uses margin-top: auto in flex container */
+  /* Next.js wrapper - must also be flex column */
+  body > div:first-child {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 0 auto !important;
+    min-height: 100% !important;
+  }
+
+  /* Main element - the key to sticky footer */
+  main {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 0 auto !important;
+    /* Remove min-height: 100vh - this causes the issue! */
+    /* Instead, just grow to fill available space */
+  }
+  
+  /* Content wrapper - grows to push footer down */
+  main > .flex-1,
+  main > div.flex-1 {
+    flex: 1 0 auto !important;
+  }
+  
+  /* Footer - stays at bottom, never shrinks */
   .footer,
   footer,
   main > .footer,
   main > footer {
+    flex-shrink: 0 !important;
     margin-top: auto !important;
-    flex-shrink: 0;
-  }
-  
-  /* Ensure flex-1 wrappers expand */
-  .flex-1 {
-    flex-grow: 1 !important;
+    width: 100%;
   }
 
   h1, h2, h3, h4, h5, h6 {
