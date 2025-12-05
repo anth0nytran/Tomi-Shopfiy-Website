@@ -6,6 +6,7 @@ import {
   useState,
   ReactNode,
   useCallback,
+  useLayoutEffect,
 } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -19,10 +20,11 @@ interface ScrollExpandMediaProps {
   ctaLabel?: string
   ctaHref?: string
   children?: ReactNode
+  backgroundColor?: string
 }
 
 /**
- * ScrollExpandMedia – scroll-locked expansion effect
+ * ScrollExpandMedia - scroll-locked expansion effect
  * Locks the user in place while scrolling drives the animation.
  * Once complete, smoothly transitions to normal document flow.
  */
@@ -35,6 +37,7 @@ const ScrollExpandMedia = ({
   ctaLabel,
   ctaHref,
   children,
+  backgroundColor = '#ffffff',
 }: ScrollExpandMediaProps) => {
   const sectionRef = useRef<HTMLDivElement | null>(null)
   const contentRef = useRef<HTMLDivElement | null>(null)
@@ -48,6 +51,12 @@ const ScrollExpandMedia = ({
   const hasScrolledRef = useRef<boolean>(false)
   const animationFrameRef = useRef<number | null>(null)
   const accumulatedDeltaRef = useRef<number>(0)
+  const overlayContainerRef = useRef<HTMLDivElement | null>(null)
+  const mediaContainerRef = useRef<HTMLDivElement | null>(null)
+  const [ctaPosition, setCtaPosition] = useState<{ top: number | null; left: number | null }>({
+    top: null,
+    left: null,
+  })
 
   // Responsive check
   useEffect(() => {
@@ -287,12 +296,59 @@ const ScrollExpandMedia = ({
   const secondLine = words.slice(midpoint).join(' ')
 
   const showCta = displayProgress >= 0.9 || hasCompleted
+  const ctaOffsetY = isMobileState ? -6 : -12
+
+  // Measure the actual rendered media box so CTA follows its center/height during animation
+  const updateCtaPosition = useCallback(() => {
+    if (!overlayContainerRef.current || !mediaContainerRef.current) return
+
+    const overlayRect = overlayContainerRef.current.getBoundingClientRect()
+    const mediaRect = mediaContainerRef.current.getBoundingClientRect()
+    const nextPosition = {
+      top: mediaRect.bottom - overlayRect.top + (isMobileState ? 14 : 26),
+      left: mediaRect.left - overlayRect.left + mediaRect.width / 2,
+    }
+
+    setCtaPosition((prev) => {
+      if (
+        prev.top !== null &&
+        prev.left !== null &&
+        Math.abs(prev.top - nextPosition.top) < 0.5 &&
+        Math.abs(prev.left - nextPosition.left) < 0.5
+      ) {
+        return prev
+      }
+      return nextPosition
+    })
+  }, [isMobileState])
+
+  useLayoutEffect(() => {
+    updateCtaPosition()
+  }, [updateCtaPosition])
+
+  useEffect(() => {
+    const handleResize = () => updateCtaPosition()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [updateCtaPosition])
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(updateCtaPosition)
+    return () => cancelAnimationFrame(raf)
+  }, [displayProgress, isMobileState, updateCtaPosition])
+
+  useEffect(() => {
+    if (isActive || isTransitioning) {
+      updateCtaPosition()
+    }
+  }, [isActive, isTransitioning, updateCtaPosition])
 
   return (
     <div
       ref={sectionRef}
-      className="relative bg-white"
+      className="relative"
       style={{
+        backgroundColor,
         minHeight: hasCompleted ? 'auto' : '100vh',
         transition: 'min-height 0.7s ease-out',
       }}
@@ -301,21 +357,33 @@ const ScrollExpandMedia = ({
       <AnimatePresence>
         {(isActive || isTransitioning) && !hasCompleted && (
           <motion.div
-            className="fixed inset-0 z-40 bg-white flex items-center justify-center"
+            className="fixed inset-0 z-40 flex items-center justify-center"
+            style={{ backgroundColor }}
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+        >
+          <div
+            ref={overlayContainerRef}
+            className="relative flex flex-col items-center justify-center w-full h-full"
           >
-            <div className="relative flex flex-col items-center justify-center w-full h-full">
-              {/* Expanding media container - uses smooth displayProgress */}
+            {/* Expanding media container - uses smooth displayProgress */}
+            <div
+              ref={mediaContainerRef}
+              className="relative inline-flex flex-col items-center"
+              style={{
+                width: mediaWidth,
+                height: mediaHeight,
+                maxWidth: '95vw',
+                maxHeight: '85vh',
+              }}
+            >
               <div
                 className="relative z-10 rounded-2xl overflow-hidden"
                 style={{
-                  width: mediaWidth,
-                  height: mediaHeight,
-                  maxWidth: '95vw',
-                  maxHeight: '85vh',
+                  width: '100%',
+                  height: '100%',
                   boxShadow: `0 ${12 + displayProgress * 30}px ${30 + displayProgress * 40}px rgba(0, 0, 0, ${0.08 + displayProgress * 0.1})`,
                   transition: 'box-shadow 0.3s ease-out',
                 }}
@@ -401,8 +469,12 @@ const ScrollExpandMedia = ({
               <motion.div
                 className="absolute left-1/2 z-30 flex flex-col items-center gap-3"
                 style={{
-                  top: `calc(50% + ${mediaHeight / 2}px + 20px)`,
-                  transform: 'translateX(-50%)',
+                  top:
+                    ctaPosition.top !== null
+                      ? `${ctaPosition.top}px`
+                      : `calc(50% + ${mediaHeight / 2}px + 20px)`,
+                  left: ctaPosition.left !== null ? `${ctaPosition.left}px` : '50%',
+                  transform: `translate(-50%, ${ctaOffsetY}px)`,
                 }}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: showCta ? 1 : 0, y: showCta ? 0 : 16 }}
@@ -420,7 +492,7 @@ const ScrollExpandMedia = ({
                     }}
                   >
                     {ctaLabel}
-                    <span aria-hidden="true">→</span>
+                    <span aria-hidden="true">&rarr;</span>
                   </a>
                 )}
                 
@@ -458,18 +530,19 @@ const ScrollExpandMedia = ({
                 )}
               </motion.div>
             </div>
-          </motion.div>
+          </div>
+        </motion.div>
         )}
       </AnimatePresence>
 
       {/* Completed state - normal in-flow content */}
       <motion.div
         ref={contentRef}
-        className="relative w-full flex flex-col items-center justify-center py-16 bg-white"
+        className="relative w-full flex flex-col items-center justify-center py-16"
         initial={{ opacity: 0 }}
         animate={{ opacity: hasCompleted ? 1 : 0 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
-        style={{ minHeight: hasCompleted ? 'auto' : '100vh' }}
+        style={{ minHeight: hasCompleted ? 'auto' : '100vh', backgroundColor }}
       >
         {/* Final expanded image */}
         <div
@@ -524,7 +597,7 @@ const ScrollExpandMedia = ({
               }}
             >
               {ctaLabel}
-              <span aria-hidden="true">→</span>
+              <span aria-hidden="true">&rarr;</span>
             </a>
           </motion.div>
         )}

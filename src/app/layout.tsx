@@ -29,6 +29,10 @@ const neueHaasGrotesk = localFont({
 export const metadata: Metadata = {
   title: 'Tomi - Solid Gold Jewelry in Houston',
   description: 'Solid gold jewelry that shines best on you. Timeless designs, not microtrends.',
+  icons: {
+    icon: '/assets/tomi_stacked logo.svg',
+    shortcut: '/assets/tomi_stacked logo.svg',
+  },
 }
 
 export default function RootLayout({
