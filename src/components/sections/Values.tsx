@@ -35,7 +35,7 @@ export function Values() {
             </div>
             <h4 className="text-xs font-bold uppercase tracking-[0.2em] mb-3 text-stone-900">Lifetime Warranty</h4>
             <p className="text-stone-500 leading-relaxed font-light text-sm md:text-base max-w-[260px]">
-              We stand by our quality. If anything happens to your piece, we'll repair or replace it.
+              We stand by our quality. If anything happens to your piece, we will repair or replace it.
             </p>
           </div>
 
