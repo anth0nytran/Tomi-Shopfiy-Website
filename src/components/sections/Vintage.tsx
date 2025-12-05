@@ -104,7 +104,7 @@ export function Vintage() {
   }
 
   return (
-    <section className="relative w-full h-[85vh] bg-[#F4F1ED] overflow-hidden">
+    <section className="relative w-full h-[85vh] bg-[#efdada] overflow-hidden">
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.div
           key={currentItem.id}
@@ -117,7 +117,7 @@ export function Vintage() {
           className="absolute inset-0 w-full h-full flex flex-col md:flex-row"
         >
           {/* Content Left */}
-          <div className="flex-1 flex flex-col justify-center px-8 md:px-20 lg:px-24 bg-[#F4F1ED] z-10">
+          <div className="flex-1 flex flex-col justify-center px-8 md:px-20 lg:px-24 bg-[#efdada] z-10">
             <div className="max-w-xl">
               <motion.span 
                 initial={{ opacity: 0, y: 20 }}
