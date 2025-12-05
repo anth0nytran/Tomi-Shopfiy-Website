@@ -193,8 +193,13 @@ export async function fetchProducts(first: number) {
     return []
   }
   const client = getStorefrontClient()
-  const res = await client.request(GET_PRODUCTS, { first }) as any
-  return res?.products?.edges?.map((e: any) => e.node) ?? []
+  try {
+    const res = await client.request(GET_PRODUCTS, { first }) as any
+    return res?.products?.edges?.map((e: any) => e.node) ?? []
+  } catch (error) {
+    console.error('fetchProducts failed', error)
+    return []
+  }
 }
 
 export async function fetchProductByHandle(handle: string) {
