@@ -166,7 +166,7 @@ export default async function AccountPage() {
                 Support
               </h3>
               <p className="text-sm text-stone-600 font-light leading-relaxed mb-6">
-                Have a question about an order or need to process a return? We're here to help.
+                Have a question about an order or need to process a return? We are here to help.
               </p>
               <Link 
                 href="/contact" 
@@ -187,7 +187,7 @@ export default async function AccountPage() {
 
               {orders.length === 0 ? (
                 <div className="text-center py-20">
-                  <p className="text-stone-500 font-light mb-6">You haven't placed any orders yet.</p>
+                  <p className="text-stone-500 font-light mb-6">You have not placed any orders yet.</p>
                   <Link 
                     href="/shop" 
                     className="inline-flex items-center justify-center px-8 py-3 bg-[#efdada] text-stone-900 text-xs font-bold uppercase tracking-[0.2em] hover:bg-stone-200 transition-colors"
@@ -203,7 +203,14 @@ export default async function AccountPage() {
                       day: 'numeric',
                       year: 'numeric',
                     })
-                    const orderLabel = `Order #${order.orderNumber || order.id.slice(-4)}`
+                    // Use order.name which contains the order number (e.g., "#1234")
+                    const orderLabel = order.name.startsWith('#') ? `Order ${order.name}` : `Order #${order.name}`
+                    
+                    // Calculate order total from line items
+                    const orderTotal = order.lineItems.reduce((sum, item) => {
+                      return sum + (item.totalAmount ? parseFloat(item.totalAmount) : 0)
+                    }, 0)
+                    const currencyCode = order.lineItems[0]?.totalCurrencyCode || 'USD'
                     
                     return (
                       <details key={order.id} className="group border border-stone-100 rounded-sm open:border-stone-200 open:shadow-sm transition-all">
@@ -211,13 +218,6 @@ export default async function AccountPage() {
                           <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
                             <span className="font-heading text-xl text-stone-900">{orderLabel}</span>
                             <span className="text-xs uppercase tracking-widest text-stone-500">{date}</span>
-                            <span className={`text-[10px] font-bold uppercase tracking-[0.2em] px-2 py-1 rounded-sm ${
-                              order.fulfillmentStatus === 'FULFILLED' 
-                                ? 'bg-[#dcfce7] text-green-800' 
-                                : 'bg-stone-100 text-stone-600'
-                            }`}>
-                              {order.fulfillmentStatus || 'Processing'}
-                            </span>
                           </div>
                           <ChevronDown className="w-4 h-4 text-stone-400 transition-transform group-open:rotate-180" />
                         </summary>
@@ -247,12 +247,14 @@ export default async function AccountPage() {
                             ))}
                           </ul>
                           
-                          <div className="mt-6 pt-6 border-t border-stone-100 flex justify-between items-center">
-                            <span className="text-xs font-bold uppercase tracking-widest text-stone-500">Total</span>
-                            <span className="font-heading text-lg text-stone-900">
-                              {formatPrice(order.totalPrice.amount, order.totalPrice.currencyCode)}
-                            </span>
-                          </div>
+                          {orderTotal > 0 && (
+                            <div className="mt-6 pt-6 border-t border-stone-100 flex justify-between items-center">
+                              <span className="text-xs font-bold uppercase tracking-widest text-stone-500">Total</span>
+                              <span className="font-heading text-lg text-stone-900">
+                                {formatPrice(orderTotal.toString(), currencyCode)}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </details>
                     )

@@ -23,23 +23,23 @@ export default function AboutPage() {
               <br className="hidden md:block" />
               and we are making it happen in Houston.
             </h1>
-          </div>
-        </section>
+        </div>
+      </section>
 
         {/* Featured Image - Editorial Style */}
         <section className="w-full px-6 md:px-12 pb-20 bg-[#F9F8F6]">
           <div className="relative w-full max-w-[1400px] mx-auto aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-stone-100">
-            <Image
-              src="/assets/about%20us.jpg"
-              alt="Inside Tomi studio — craftsmanship and gold jewelry"
-              fill
+          <Image
+            src="/assets/about%20us.jpg"
+            alt="Inside Tomi studio — craftsmanship and gold jewelry"
+            fill
               className="object-cover"
-              priority
+            priority
               sizes="(max-width: 1400px) 100vw, 1400px"
               quality={95}
-            />
-          </div>
-        </section>
+          />
+        </div>
+      </section>
 
         {/* Story Content */}
         <section className="py-20 md:py-32 bg-white">
@@ -50,8 +50,8 @@ export default function AboutPage() {
                   Timeless &amp; Attainable
                 </h3>
                 <div className="h-[1px] w-12 bg-stone-300" />
-              </div>
-              
+          </div>
+
               <div className="w-full md:w-2/3 text-base md:text-lg text-stone-600 font-light leading-relaxed space-y-8 text-balance">
                 <p>
                   At tomi, we believe that fine jewelry should be both timeless and attainable. 
@@ -78,8 +78,8 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+        </div>
+      </section>
 
         {/* CTA Section - Matching MissionBanner vibe but lighter */}
         <section className="relative py-24 bg-[#F9F8F6] text-center">
@@ -93,8 +93,8 @@ export default function AboutPage() {
             >
               Visit Us
             </Link>
-          </div>
-        </section>
+        </div>
+      </section>
       </div>
 
       <Footer />

@@ -82,6 +82,7 @@ const GlassDock: React.FC<{ icons: DockIcon[]; href?: string }> = ({
   >
     <div className="flex items-center justify-center gap-2 rounded-3xl p-3 py-0 px-0.5 overflow-hidden">
       {icons.map((icon, index) => (
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           key={index}
           src={icon.src}
