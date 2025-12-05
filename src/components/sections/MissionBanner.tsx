@@ -1,5 +1,7 @@
+"use client"
+
 import React from 'react'
-import Link from 'next/link'
+import { GlassButton } from '@/components/ui/liquid-glass'
 
 export function MissionBanner() {
   return (
@@ -9,7 +11,7 @@ export function MissionBanner() {
         className="absolute inset-0 bg-cover bg-no-repeat"
         style={{ 
           backgroundImage: 'url(/assets/events_landing.png)',
-          backgroundPosition: 'center 40%' // Shift slightly up to frame the scene better
+          backgroundPosition: 'center 30%' // Shift upward to better frame the subject
         }}
       />
       
@@ -27,13 +29,13 @@ export function MissionBanner() {
             Exclusive launches, styling sessions, and community gatherings.
           </p>
           
-          <Link 
-            href="/events" 
-            className="group flex items-center gap-3 text-white text-xs font-bold uppercase tracking-[0.25em] hover:text-white/90 transition-colors mt-2"
-          >
-            <span>Be in the know</span>
-            <span className="text-lg leading-none transform transition-transform duration-300 group-hover:translate-x-1">→</span>
-          </Link>
+          <div className="mt-2">
+            <GlassButton href="/events">
+              <span className="text-white text-xs font-bold uppercase tracking-[0.25em]">
+                Be in the know
+              </span>
+            </GlassButton>
+          </div>
         </div>
       </div>
     </section>

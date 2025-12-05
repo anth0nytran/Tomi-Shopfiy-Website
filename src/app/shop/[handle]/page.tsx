@@ -47,11 +47,11 @@ export default async function ProductPage({ params }: { params: { handle: string
   ].filter(Boolean) as { label: string; value: string }[]
 
   return (
-    <main className="min-h-screen bg-[#F9F8F6]">
+    <main className="min-h-screen bg-[#F9F8F6] flex flex-col">
       <AnnouncementBar />
       <Header />
 
-      <div className="pt-44 pb-24 px-6 md:px-12 container mx-auto max-w-7xl">
+      <div className="pt-44 pb-24 px-6 md:px-12 container mx-auto max-w-7xl flex-1">
         <Link 
           href="/shop" 
           className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 hover:text-stone-900 transition-colors mb-12"

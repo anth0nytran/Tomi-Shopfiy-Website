@@ -49,7 +49,7 @@ export function JadeBuilder() {
         <div className="w-full">
           <div className="mb-8">
             <h2 className="font-heading text-3xl md:text-4xl text-primary mb-2">Option 1: Quick Build</h2>
-            <p className="text-stone-500 font-light text-sm">Select your preferences and we'll choose a beautiful jade piece for you.</p>
+            <p className="text-stone-500 font-light text-sm">Select your preferences and we will choose a beautiful jade piece for you.</p>
           </div>
 
           {/* Type Tabs */}

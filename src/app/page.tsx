@@ -11,16 +11,18 @@ import { Footer } from '@/components/layout/Footer'
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen flex flex-col">
       <AnnouncementBar />
       <Header />
-      <Hero />
-      <Categories />
-      <JewelryBoxReveal />
-      <Vintage />
-      <MissionBanner />
-      <Values />
-      <Social />
+      <div className="flex-1 w-full">
+        <Hero />
+        <Categories />
+        <JewelryBoxReveal />
+        <Vintage />
+        <MissionBanner />
+        <Values />
+        <Social />
+      </div>
       <Footer />
     </main>
   )

@@ -17,7 +17,7 @@ const footerColumns: FooterColumn[] = [
   {
     title: 'INFO',
     links: [
-      { label: 'Account', href: '#' },
+      { label: 'Account', href: '/account' },
       { label: 'Jewelry Care Guide', href: '/guide' },
       { label: 'Terms & Privacy', href: '#' },
     ],
@@ -26,7 +26,7 @@ const footerColumns: FooterColumn[] = [
     title: 'SUPPORT',
     links: [
       { label: 'Contact', href: '/contact' },
-      { label: 'FAQ', href: '#' },
+      { label: 'FAQ', href: '/contact#faq' },
       { label: 'Shipping', href: '#' },
       { label: 'Accessibility', href: '/accessibility' },
     ],

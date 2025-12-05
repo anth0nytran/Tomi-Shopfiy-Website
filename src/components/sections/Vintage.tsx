@@ -17,50 +17,50 @@ type HighlightTile = {
 }
 
 const SPOTLIGHTS: HighlightTile[] = [
-  {
-    id: 'moonlight',
-    eyebrow: 'OUR BEST SELLING COLLECTION',
-    title: 'Moonlight',
+    {
+      id: 'moonlight',
+      eyebrow: 'OUR BEST SELLING COLLECTION',
+      title: 'Moonlight',
     body: 'Soft jade tones with a luminous finish for every stack. The moonlight collection brings a subtle glow to your everyday style.',
-    ctaLabel: 'shop collection',
-    href: '/jade-bar',
-    image: { src: '/assets/moonstone.jpeg', alt: 'Moonlight collection rings' },
-  },
-  {
-    id: 'flutter',
-    eyebrow: 'DAINTY AND ETHEREAL',
-    title: 'Flutter',
+      ctaLabel: 'shop collection',
+      href: '/jade-bar',
+      image: { src: '/assets/moonstone.jpeg', alt: 'Moonlight collection rings' },
+    },
+    {
+      id: 'flutter',
+      eyebrow: 'DAINTY AND ETHEREAL',
+      title: 'Flutter',
     body: 'Airy silhouettes that float over skin like light. Inspired by the delicate movement of butterfly wings.',
-    ctaLabel: 'shop collection',
-    href: '/jade-bar',
-    image: { src: '/assets/flutter.png', alt: 'Flutter layered necklace' },
-  },
-  {
-    id: 'refine',
-    eyebrow: 'CLASSIC AND TIMELESS',
-    title: 'Refine',
+      ctaLabel: 'shop collection',
+      href: '/jade-bar',
+      image: { src: '/assets/flutter.png', alt: 'Flutter layered necklace' },
+    },
+    {
+      id: 'refine',
+      eyebrow: 'CLASSIC AND TIMELESS',
+      title: 'Refine',
     body: 'Streamlined pieces designed to polish your everyday look. The definition of modern elegance.',
-    ctaLabel: 'shop collection',
-    href: '/jade-bar',
-    image: { src: '/assets/refine.jpg', alt: 'Refine collection hoops' },
-  },
-  {
-    id: 'embellish',
-    eyebrow: 'ADORN YOURSELF',
-    title: 'Embellish',
+      ctaLabel: 'shop collection',
+      href: '/jade-bar',
+      image: { src: '/assets/refine.jpg', alt: 'Refine collection hoops' },
+    },
+    {
+      id: 'embellish',
+      eyebrow: 'ADORN YOURSELF',
+      title: 'Embellish',
     body: 'Mix-and-match accents that invite endless layering. Create a look that is uniquely yours with these versatile pieces.',
-    ctaLabel: 'shop collection',
-    href: '/jade-bar',
-    image: { src: '/assets/embellish.jpg', alt: 'Embellish collection display' },
-  },
-  {
-    id: 'one-of-a-kind',
-    eyebrow: 'VINTAGE PIECES',
-    title: 'One Of A Kind',
+      ctaLabel: 'shop collection',
+      href: '/jade-bar',
+      image: { src: '/assets/embellish.jpg', alt: 'Embellish collection display' },
+    },
+    {
+      id: 'one-of-a-kind',
+      eyebrow: 'VINTAGE PIECES',
+      title: 'One Of A Kind',
     body: 'Hand-curated heirlooms—once they’re gone, they’re gone. Own a piece of history.',
-    ctaLabel: 'shop collection',
+      ctaLabel: 'shop collection',
     href: '/shop/category/one-of-a-kind-vintage',
-    image: { src: '/assets/1kind.jpg', alt: 'One of a kind vintage watches' },
+      image: { src: '/assets/1kind.jpg', alt: 'One of a kind vintage watches' },
   },
 ]
 
@@ -69,7 +69,7 @@ export function Vintage() {
   const [direction, setDirection] = useState(0)
 
   const handleNext = useCallback(() => {
-    setDirection(1)
+      setDirection(1)
     setCurrentIndex((prev) => (prev + 1) % SPOTLIGHTS.length)
   }, [])
 
@@ -106,13 +106,13 @@ export function Vintage() {
   return (
     <section className="relative w-full h-[85vh] bg-[#efdada] overflow-hidden">
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
-        <motion.div
+                    <motion.div
           key={currentItem.id}
-          custom={direction}
-          variants={slideVariants}
-          initial="enter"
-          animate="center"
-          exit="exit"
+                      custom={direction}
+                      variants={slideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
           transition={{ x: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.2 } }}
           className="absolute inset-0 w-full h-full flex flex-col md:flex-row"
         >
@@ -132,7 +132,7 @@ export function Vintage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
                 className="font-heading text-5xl md:text-7xl mb-6 text-stone-900"
-              >
+                    >
                 {currentItem.title}
               </motion.h2>
               <motion.p 
@@ -143,7 +143,7 @@ export function Vintage() {
               >
                 {currentItem.body}
               </motion.p>
-              <motion.div
+                    <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
@@ -153,14 +153,14 @@ export function Vintage() {
                   className="inline-flex items-center justify-center h-12 px-8 text-sm uppercase tracking-widest border border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-white transition-colors duration-300"
                 >
                   {currentItem.ctaLabel}
-                </Link>
-              </motion.div>
-            </div>
-          </div>
+                      </Link>
+                    </motion.div>
+        </div>
+        </div>
 
           {/* Image Right */}
           <div className="flex-1 relative h-full bg-stone-200">
-             <Image
+            <Image
               src={currentItem.image.src}
               alt={currentItem.image.alt}
               fill
@@ -204,7 +204,7 @@ export function Vintage() {
             aria-label={`Go to slide ${idx + 1}`}
           />
         ))}
-      </div>
+        </div>
     </section>
   )
 }

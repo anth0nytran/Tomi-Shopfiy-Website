@@ -61,7 +61,7 @@ export function ShopTabs({ active, onTabSelect }: { active: CatalogSlug; onTabSe
       const activeEl = trackRef.current.querySelector<HTMLElement>('[data-active="true"]')
       if (activeEl) {
         activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
-      }
+    }
     }
   }, [active])
 
@@ -72,22 +72,22 @@ export function ShopTabs({ active, onTabSelect }: { active: CatalogSlug; onTabSe
           className="flex overflow-x-auto scrollbar-hide gap-8 md:gap-12 py-4 md:py-5 items-center justify-start md:justify-center"
           ref={trackRef}
         >
-          {TAB_ENTRIES.map((entry) => {
-            const isAll = entry.slug === 'all'
-            const href = isAll ? '/shop' : `/shop/category/${entry.slug}`
-            const isActive = active === entry.slug
-            const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-              if (onTabSelect) {
-                event.preventDefault()
-                onTabSelect(entry.slug, href)
-              }
+        {TAB_ENTRIES.map((entry) => {
+          const isAll = entry.slug === 'all'
+          const href = isAll ? '/shop' : `/shop/category/${entry.slug}`
+          const isActive = active === entry.slug
+          const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+            if (onTabSelect) {
+              event.preventDefault()
+              onTabSelect(entry.slug, href)
             }
-            return (
-              <Link
-                key={entry.slug}
-                href={href}
-                onClick={handleClick}
-                data-active={isActive ? 'true' : 'false'}
+          }
+          return (
+            <Link
+              key={entry.slug}
+              href={href}
+              onClick={handleClick}
+              data-active={isActive ? 'true' : 'false'}
                 className={`whitespace-nowrap text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 relative pb-1 ${
                   isActive ? 'text-stone-900' : 'text-stone-400 hover:text-stone-600'
                 }`}
@@ -98,9 +98,9 @@ export function ShopTabs({ active, onTabSelect }: { active: CatalogSlug; onTabSe
                     isActive ? 'scale-x-100' : 'scale-x-0'
                   }`} 
                 />
-              </Link>
-            )
-          })}
+            </Link>
+          )
+        })}
         </div>
       </div>
     </nav>
@@ -161,10 +161,10 @@ export function ShopToolbar({
                  value={sort} 
                  onChange={handleSortChange}
                >
-                 {SORT_OPTIONS.map((option) => (
-                   <option key={option.value} value={option.value}>{option.label}</option>
-                 ))}
-               </select>
+            {SORT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
                <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 pointer-events-none" />
              </div>
           </div>
@@ -234,7 +234,7 @@ export function LoadMoreButton({ onClick, disabled }: { onClick: () => void; dis
         className="inline-flex items-center justify-center px-10 py-4 border border-stone-900 text-stone-900 text-xs font-bold uppercase tracking-[0.2em] hover:bg-stone-900 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {disabled ? 'Loading...' : 'Load More'}
-      </button>
+    </button>
     </div>
   )
 }

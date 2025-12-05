@@ -112,131 +112,133 @@ const websiteAccessibility = {
 
 export default function AccessibilityPage() {
   return (
-    <main className="min-h-screen bg-[#F9F8F6]">
+    <main className="min-h-screen bg-[#F9F8F6] flex flex-col">
       <AnnouncementBar />
       <Header />
 
-      <section className="pt-40 pb-20 md:pt-52 md:pb-32 px-6 md:px-12">
-        <div className="container mx-auto max-w-4xl">
+      <div className="flex-1">
+        <section className="pt-40 pb-20 md:pt-52 md:pb-32 px-6 md:px-12">
+          <div className="container mx-auto max-w-4xl">
 
-          <div className="text-center mb-16">
-            <span className="block text-xs font-bold tracking-[0.2em] uppercase text-stone-400 mb-6">
-              Statement
-            </span>
-            <h1 className="font-heading text-4xl md:text-6xl text-stone-900 mb-6 leading-tight">
-              Accessibility
-            </h1>
-            <div className="flex justify-center mb-10">
-               <span className="inline-block px-4 py-1.5 bg-[#efdada] text-stone-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full">
-                 Updated 2025
-               </span>
-            </div>
-            <p className="text-stone-600 text-lg font-light leading-relaxed max-w-2xl mx-auto">
-              We are committed to diversity, inclusion, and meeting the needs of all customers. We are continually improving our site to comply with WCAG 2.0 AA guidelines.
-            </p>
-          </div>
-
-          <div className="bg-white border border-stone-100 shadow-sm p-8 md:p-16 rounded-sm">
-            
-            {/* Intro */}
-            <div className="mb-16 border-b border-stone-100 pb-12">
-              <p className="text-stone-600 font-light leading-relaxed mb-6 text-lg">
-                If the format of any material on our web pages interferes with your ability to access information, please contact us to request assistance.
+            <div className="text-center mb-16">
+              <span className="block text-xs font-bold tracking-[0.2em] uppercase text-stone-400 mb-6">
+                Statement
+              </span>
+              <h1 className="font-heading text-4xl md:text-6xl text-stone-900 mb-6 leading-tight">
+                Accessibility
+              </h1>
+              <div className="flex justify-center mb-10">
+                 <span className="inline-block px-4 py-1.5 bg-[#efdada] text-stone-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full">
+                   Updated 2025
+                 </span>
+              </div>
+              <p className="text-stone-600 text-lg font-light leading-relaxed max-w-2xl mx-auto">
+                We are committed to diversity, inclusion, and meeting the needs of all customers. We are continually improving our site to comply with WCAG 2.0 AA guidelines.
               </p>
-              <div className="flex flex-col md:flex-row gap-6 md:gap-12 pt-4">
-                <div>
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Call Us</h4>
-                  <a href="tel:2819945813" className="text-stone-900 hover:text-stone-600 font-medium border-b border-stone-200 pb-0.5">(281) 994-5813</a>
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Email Us</h4>
-                  <a href="mailto:support@tomijewelry.com" className="text-stone-900 hover:text-stone-600 font-medium border-b border-stone-200 pb-0.5">support@tomijewelry.com</a>
-                </div>
-              </div>
             </div>
 
-            {/* Policy Sections */}
-            <div className="space-y-16">
-              {policySections.map((section, idx) => (
-                <div key={idx}>
-                  <h3 className="font-heading text-2xl text-stone-900 mb-6">
-                    {section.title}
-                  </h3>
-                  <div className="space-y-4 text-stone-600 font-light leading-relaxed text-sm md:text-base">
-                    {section.paragraphs?.map((p, i) => (
-                      <p key={i}>{p}</p>
-                    ))}
-                  </div>
-                  
-                  {section.listTitle && (
-                    <div className="mt-6">
-                      <p className="font-medium text-stone-900 mb-4 text-sm">{section.listTitle}</p>
-                      <ul className="space-y-3">
-                        {section.listItems?.map((item, i) => (
-                          <li key={i} className="flex gap-3 items-start text-stone-600 font-light text-sm">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#efdada] mt-2 flex-shrink-0" />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* Website Accessibility Section */}
-            <div className="mt-16 pt-16 border-t border-stone-100">
-              <h3 className="font-heading text-2xl text-stone-900 mb-6">
-                {websiteAccessibility.title}
-              </h3>
+            <div className="bg-white border border-stone-100 shadow-sm p-8 md:p-16 rounded-sm">
               
-              <div className="space-y-4 text-stone-600 font-light leading-relaxed text-sm md:text-base mb-8">
-                {websiteAccessibility.paragraphs.map((p, i) => (
-                  <p key={i}>{p}</p>
+              {/* Intro */}
+              <div className="mb-16 border-b border-stone-100 pb-12">
+                <p className="text-stone-600 font-light leading-relaxed mb-6 text-lg">
+                  If the format of any material on our web pages interferes with your ability to access information, please contact us to request assistance.
+                </p>
+                <div className="flex flex-col md:flex-row gap-6 md:gap-12 pt-4">
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Call Us</h4>
+                    <a href="tel:2819945813" className="text-stone-900 hover:text-stone-600 font-medium border-b border-stone-200 pb-0.5">(281) 994-5813</a>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Email Us</h4>
+                    <a href="mailto:support@tomijewelry.com" className="text-stone-900 hover:text-stone-600 font-medium border-b border-stone-200 pb-0.5">support@tomijewelry.com</a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Policy Sections */}
+              <div className="space-y-16">
+                {policySections.map((section, idx) => (
+                  <div key={idx}>
+                    <h3 className="font-heading text-2xl text-stone-900 mb-6">
+                      {section.title}
+                    </h3>
+                    <div className="space-y-4 text-stone-600 font-light leading-relaxed text-sm md:text-base">
+                      {section.paragraphs?.map((p, i) => (
+                        <p key={i}>{p}</p>
+                      ))}
+                    </div>
+                    
+                    {section.listTitle && (
+                      <div className="mt-6">
+                        <p className="font-medium text-stone-900 mb-4 text-sm">{section.listTitle}</p>
+                        <ul className="space-y-3">
+                          {section.listItems?.map((item, i) => (
+                            <li key={i} className="flex gap-3 items-start text-stone-600 font-light text-sm">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#efdada] mt-2 flex-shrink-0" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
 
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-                {websiteAccessibility.focusAreas.map((item, i) => (
-                  <li key={i} className="flex gap-3 items-start bg-[#F9F8F6] p-4 rounded-sm text-sm text-stone-600">
-                    <span className="text-primary font-bold">✓</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="bg-[#F9F8F6] p-6 md:p-8 rounded-sm">
-                <p className="font-bold uppercase tracking-widest text-xs text-stone-900 mb-4">
-                  {websiteAccessibility.referencesTitle}
-                </p>
-                <div className="flex flex-wrap gap-4 mb-6">
-                  {websiteAccessibility.references.map((ref, i) => (
-                    <a 
-                      key={i} 
-                      href={ref.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs font-bold uppercase tracking-widest text-stone-500 border border-stone-200 px-4 py-2 hover:border-primary hover:text-primary transition-colors bg-white"
-                    >
-                      {ref.label}
-                    </a>
+              {/* Website Accessibility Section */}
+              <div className="mt-16 pt-16 border-t border-stone-100">
+                <h3 className="font-heading text-2xl text-stone-900 mb-6">
+                  {websiteAccessibility.title}
+                </h3>
+                
+                <div className="space-y-4 text-stone-600 font-light leading-relaxed text-sm md:text-base mb-8">
+                  {websiteAccessibility.paragraphs.map((p, i) => (
+                    <p key={i}>{p}</p>
                   ))}
                 </div>
-                <p className="text-stone-500 text-xs leading-relaxed italic">
-                  {websiteAccessibility.thirdParty}
-                </p>
-              </div>
-              
-              <div className="mt-8 text-stone-600 font-light text-sm leading-relaxed">
-                 <p>{websiteAccessibility.closing}</p>
+
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+                  {websiteAccessibility.focusAreas.map((item, i) => (
+                    <li key={i} className="flex gap-3 items-start bg-[#F9F8F6] p-4 rounded-sm text-sm text-stone-600">
+                      <span className="text-primary font-bold">✓</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="bg-[#F9F8F6] p-6 md:p-8 rounded-sm">
+                  <p className="font-bold uppercase tracking-widest text-xs text-stone-900 mb-4">
+                    {websiteAccessibility.referencesTitle}
+                  </p>
+                  <div className="flex flex-wrap gap-4 mb-6">
+                    {websiteAccessibility.references.map((ref, i) => (
+                      <a 
+                        key={i} 
+                        href={ref.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-bold uppercase tracking-widest text-stone-500 border border-stone-200 px-4 py-2 hover:border-primary hover:text-primary transition-colors bg-white"
+                      >
+                        {ref.label}
+                      </a>
+                    ))}
+                  </div>
+                  <p className="text-stone-500 text-xs leading-relaxed italic">
+                    {websiteAccessibility.thirdParty}
+                  </p>
+                </div>
+                
+                <div className="mt-8 text-stone-600 font-light text-sm leading-relaxed">
+                   <p>{websiteAccessibility.closing}</p>
+                </div>
+
               </div>
 
             </div>
-
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       <Footer />
     </main>

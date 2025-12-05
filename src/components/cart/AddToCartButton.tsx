@@ -59,14 +59,14 @@ export function AddToCartButton({ merchandiseId, available = true, className = '
              Quantity
            </label>
            <div className="relative">
-             <input
-               id={qtyInputId}
+        <input
+          id={qtyInputId}
                className="w-full bg-[#F9F8F6] border-b border-stone-300 py-4 text-center text-stone-900 font-medium focus:outline-none focus:border-stone-900 transition-colors"
-               type="number"
-               min={1}
-               value={qty}
-               onChange={(e) => setQty(Math.max(1, parseInt(e.target.value || '1', 10) || 1))}
-             />
+          type="number"
+          min={1}
+          value={qty}
+          onChange={(e) => setQty(Math.max(1, parseInt(e.target.value || '1', 10) || 1))}
+        />
            </div>
         </div>
 
