@@ -52,27 +52,39 @@ export function AddToCartButton({ merchandiseId, available = true, className = '
   const buttonLabel = !available ? 'Sold out' : submitting ? 'Adding...' : 'Add to cart'
 
   return (
-    <div className={['product-action', className].filter(Boolean).join(' ').trim()}>
-      <label className="product-qty" htmlFor={qtyInputId}>
-        <span className="product-qty-label">Quantity</span>
-        <input
-          id={qtyInputId}
-          className="product-qty-input"
-          type="number"
-          min={1}
-          value={qty}
-          onChange={(e) => setQty(Math.max(1, parseInt(e.target.value || '1', 10) || 1))}
-        />
-      </label>
-      <div className="product-add-wrap">
-        <button className="product-add" type="button" onClick={add} disabled={disabled}>
+    <div className={['flex flex-col gap-4', className].filter(Boolean).join(' ').trim()}>
+      <div className="flex items-end gap-4">
+        <div className="w-1/3">
+           <label htmlFor={qtyInputId} className="block text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400 mb-2">
+             Quantity
+           </label>
+           <div className="relative">
+             <input
+               id={qtyInputId}
+               className="w-full bg-[#F9F8F6] border-b border-stone-300 py-4 text-center text-stone-900 font-medium focus:outline-none focus:border-stone-900 transition-colors"
+               type="number"
+               min={1}
+               value={qty}
+               onChange={(e) => setQty(Math.max(1, parseInt(e.target.value || '1', 10) || 1))}
+             />
+           </div>
+        </div>
+
+        <button 
+          className="w-2/3 bg-stone-900 text-white text-xs font-bold uppercase tracking-[0.2em] py-5 hover:bg-stone-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed h-[54px]"
+          type="button" 
+          onClick={add} 
+          disabled={disabled}
+        >
           {buttonLabel}
         </button>
+      </div>
+      
+      <div className="min-h-[20px]">
         <span
-          className={[
-            'product-add-status',
-            feedback ? `product-add-status--${feedback.type}` : '',
-          ].join(' ')}
+          className={`block text-[10px] font-bold uppercase tracking-widest transition-colors duration-300 ${
+            feedback?.type === 'error' ? 'text-red-500' : 'text-stone-500'
+          }`}
           role="status"
           aria-live="polite"
         >

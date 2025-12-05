@@ -3,14 +3,24 @@
 import React from 'react'
 import Image from 'next/image'
 
-const socialSlides = [
-  { id: 'social-1', src: '/assets/social_pic1.png', alt: 'Lip tint with a satin finish' },
-  { id: 'social-2', src: '/assets/social_pic2.png', alt: 'Textured faux fur jacket selfie' },
-  { id: 'social-3', src: '/assets/social_pic3.png', alt: 'Glossy lips with product close up' },
-  { id: 'social-4', src: '/assets/social_pic1.png', alt: 'Lip tint swatch in hand' },
-  { id: 'social-5', src: '/assets/social_pic2.png', alt: 'Burgundy outfit mirror selfie' },
-  { id: 'social-6', src: '/assets/social_pic3.png', alt: 'Lip oil and phone detail' },
+// Fallback local slides in case remote fetch fails
+const FALLBACK_SLIDES = [
+  { id: 'social-1', src: '/assets/social_pic1.png', alt: 'Social highlight 1' },
+  { id: 'social-2', src: '/assets/social_pic2.png', alt: 'Social highlight 2' },
+  { id: 'social-3', src: '/assets/social_pic3.png', alt: 'Social highlight 3' },
 ]
+
+const SHEET_CSV =
+  'https://docs.google.com/spreadsheets/d/1_9w5PvPW67LbDN2rqu8wuGDgnIaoRW8Fos_zdgo2x7c/export?format=csv'
+
+const driveDirectUrl = (url: string) => {
+  // Accept full Drive links like https://drive.google.com/file/d/<id>/view?... or ...?id=<id>
+  const idMatch = url.match(/\/d\/([^/]+)/) || url.match(/[?&]id=([^&]+)/)
+  if (!idMatch) return url
+  return `https://drive.google.com/uc?id=${idMatch[1]}`
+}
+
+type Slide = { id: string; src: string; alt: string }
 const SOCIAL_TITLE_COPY = 'we love @tomijewelry on you'
 
 export function Social() {
@@ -18,6 +28,42 @@ export function Social() {
   const [typingIndex, setTypingIndex] = React.useState(0)
   const [isDeleting, setIsDeleting] = React.useState(false)
   const typedText = SOCIAL_TITLE_COPY.slice(0, typingIndex)
+  const [slides, setSlides] = React.useState<Slide[]>(FALLBACK_SLIDES)
+
+  // Fetch Google Sheet CSV and map drive links to direct image URLs
+  React.useEffect(() => {
+    const fetchSlides = async () => {
+      try {
+        const res = await fetch(SHEET_CSV)
+        if (!res.ok) throw new Error('Failed to fetch sheet')
+        const text = await res.text()
+        const rows = text.trim().split(/\r?\n/)
+        if (!rows.length) return
+        const headers = rows[0].split(',').map((h) => h.trim().toLowerCase())
+        const srcIdx = headers.findIndex((h) => h === 'src' || h === 'url' || h === 'image')
+        const altIdx = headers.findIndex((h) => h === 'alt' || h === 'caption' || h === 'description')
+        if (srcIdx === -1) return
+
+        const mapped: Slide[] = rows.slice(1).map((row, i) => {
+          const cols = row.split(',')
+          const rawSrc = cols[srcIdx]?.trim() || ''
+          const alt = altIdx !== -1 ? cols[altIdx]?.trim() || 'Social highlight' : 'Social highlight'
+          return {
+            id: `social-remote-${i + 1}`,
+            src: driveDirectUrl(rawSrc),
+            alt,
+          }
+        })
+
+        const valid = mapped.filter((s) => s.src)
+        if (valid.length) setSlides(valid)
+      } catch (err) {
+        console.error('Social slides fetch failed, using fallback', err)
+      }
+    }
+
+    fetchSlides()
+  }, [])
 
   React.useEffect(() => {
     const isComplete = typingIndex === SOCIAL_TITLE_COPY.length
@@ -71,9 +117,17 @@ export function Social() {
               </svg>
             </button>
             <div className="social-track" ref={trackRef}>
-              {socialSlides.map((slide) => (
+              {slides.map((slide, idx) => (
                 <div key={slide.id} className="social-slide" data-slide>
-                  <Image src={slide.src} alt={slide.alt} fill sizes="(min-width: 1024px) 220px, (min-width: 768px) 45vw, 72vw" className="social-slide-media" priority={slide.id === 'social-1'} />
+                  <Image
+                    src={slide.src}
+                    alt={slide.alt}
+                    fill
+                    sizes="(min-width: 1024px) 220px, (min-width: 768px) 45vw, 72vw"
+                    className="social-slide-media"
+                    priority={idx === 0}
+                    unoptimized
+                  />
                 </div>
               ))}
             </div>

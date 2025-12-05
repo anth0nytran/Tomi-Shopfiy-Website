@@ -6,7 +6,7 @@ export function Values() {
     <section id="values" className="py-20 md:py-32 bg-[#F9F8F6] w-full">
       <div className="container mx-auto px-6 md:px-12 mb-16 md:mb-24 text-center">
         <h3 className="font-heading text-4xl md:text-6xl text-stone-900 leading-[1.1] max-w-4xl mx-auto mb-6">
-          Accessible Luxury
+          Affordable Luxury
         </h3>
         <p className="text-stone-600 text-lg md:text-xl font-light max-w-2xl mx-auto leading-relaxed text-balance">
           Because you deserve solid gold without the high markup. Mindfully crafted for your everyday, designed to last a lifetime.

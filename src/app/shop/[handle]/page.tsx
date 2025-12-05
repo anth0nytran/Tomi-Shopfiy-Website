@@ -7,17 +7,21 @@ import Link from 'next/link'
 import { fetchProductByHandle } from '@/lib/shopify'
 import { AddToCartButton } from '@/components/cart/AddToCartButton'
 import { CATALOG_BY_SLUG } from '../catalog'
+import { ChevronLeft } from 'lucide-react'
 
 export default async function ProductPage({ params }: { params: { handle: string } }) {
   const product = await fetchProductByHandle(params.handle)
   if (!product) {
     return (
-      <main className="shop-main">
+      <main className="min-h-screen bg-[#F9F8F6] flex flex-col">
         <AnnouncementBar />
         <Header />
-        <section className="product-hero">
-          <div className="product-hero-inner">
-            <p>Product not found.</p>
+        <section className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-stone-500 mb-4">Product not found.</p>
+            <Link href="/shop" className="text-xs font-bold uppercase tracking-[0.2em] border-b border-stone-900 pb-1">
+              Back to Shop
+            </Link>
           </div>
         </section>
         <Footer />
@@ -34,83 +38,142 @@ export default async function ProductPage({ params }: { params: { handle: string
   const descriptionHtml = product.descriptionHtml || product.description || ''
   const priceLabel = price ? new Intl.NumberFormat(undefined, { style: 'currency', currency: price.currencyCode }).format(parseFloat(price.amount)) : null
   const stockLabel = firstVariant?.availableForSale ? 'In stock' : 'Out of stock'
+  
   const metaEntries = [
     product.productType ? { label: 'Category', value: product.productType } : null,
     collections.length ? { label: 'Collections', value: collections.map((collection: any) => collection.title).join(', ') } : null,
     product.vendor ? { label: 'Maker', value: product.vendor } : null,
     firstVariant?.sku ? { label: 'SKU', value: firstVariant.sku } : null,
-    product.tags?.length ? { label: 'Tags', value: product.tags.join(', ') } : null,
   ].filter(Boolean) as { label: string; value: string }[]
 
   return (
-    <main className="product-main" data-skip-header-offset="true">
+    <main className="min-h-screen bg-[#F9F8F6]">
       <AnnouncementBar />
       <Header />
-      <div className="product-topbar">
-        <Link className="back-link" href="/shop">Back to shop</Link>
-      </div>
-      <section className="product-layout" aria-label={`${product.title} details`}>
-        <div className="product-gallery">
-          <div className="product-gallery-main">
-            {primaryImage?.url ? (
-              <Image src={primaryImage.url} alt={primaryImage.altText || ''} className="product-gallery-img" width={1200} height={1200} />
-            ) : (
-              <div className="product-gallery-img" style={{ background: '#f3e9e9', height: 560 }} />
+
+      <div className="pt-44 pb-24 px-6 md:px-12 container mx-auto max-w-7xl">
+        <Link 
+          href="/shop" 
+          className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 hover:text-stone-900 transition-colors mb-12"
+        >
+          <ChevronLeft className="w-3 h-3" />
+          Back to shop
+        </Link>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+          
+          {/* Product Gallery - Large & Clean */}
+          <div className="lg:col-span-7 flex flex-col gap-4">
+            <div className="relative w-full aspect-square bg-stone-100 overflow-hidden">
+              {primaryImage?.url ? (
+                <Image 
+                  src={primaryImage.url} 
+                  alt={primaryImage.altText || product.title} 
+                  fill
+                  className="object-cover object-center hover:scale-105 transition-transform duration-700"
+                  priority
+                  quality={90}
+                  sizes="(max-width: 1024px) 100vw, 60vw"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-stone-300">No Image</div>
+              )}
+            </div>
+            
+            {/* Thumbnails if multiple images exist */}
+            {(product.images?.edges?.length || 0) > 1 && (
+              <div className="grid grid-cols-4 gap-4">
+                 {product.images?.edges?.slice(0, 4).map((e: any, i: number) => (
+                   <div key={i} className="relative aspect-square bg-stone-100 cursor-pointer hover:opacity-80 transition-opacity">
+                      <Image 
+                        src={e.node.url} 
+                        alt={e.node.altText || ''} 
+                        fill 
+                        className="object-cover"
+                        sizes="20vw"
+                      />
+                   </div>
+                 ))}
+              </div>
             )}
           </div>
-          <div className="product-thumbs">
-            {product.images?.edges?.slice(0, 3).map((e: any, i: number) => (
-              <Image key={i} src={e.node.url} alt={e.node.altText || ''} width={120} height={120} />
-            ))}
+
+          {/* Product Details - Sticky & Editorial */}
+          <div className="lg:col-span-5 lg:sticky lg:top-40">
+             
+             {/* Breadcrumbs */}
+             <nav className="flex items-center gap-2 text-[10px] uppercase tracking-[0.15em] text-stone-400 mb-6">
+               <Link href="/shop" className="hover:text-stone-600">Shop</Link>
+               <span>/</span>
+               {primaryCollection ? (
+                 <Link href={collectionEntry ? `/shop/category/${collectionEntry.slug}` : '/shop'} className="text-stone-900 hover:text-stone-600">
+                   {primaryCollection.title}
+                 </Link>
+               ) : (
+                 <span className="text-stone-900">Product</span>
+               )}
+             </nav>
+
+             <h1 className="font-heading text-4xl md:text-5xl text-stone-900 mb-8 leading-tight">
+               {product.title}
+             </h1>
+
+             {/* Purchase Card - Clean & Minimal */}
+             <div className="bg-white border border-stone-100 p-8 mb-10 shadow-sm">
+               <div className="flex justify-between items-start mb-8">
+                 <div>
+                   <span className="block text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400 mb-2">Price</span>
+                   <span className="text-3xl md:text-4xl text-stone-900 font-light">{priceLabel}</span>
+                 </div>
+                 
+                 <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${firstVariant?.availableForSale ? 'bg-[#efdada] text-stone-900' : 'bg-stone-200 text-stone-500'}`}>
+                   <span className={`w-1.5 h-1.5 rounded-full ${firstVariant?.availableForSale ? 'bg-stone-900' : 'bg-stone-400'}`} />
+                   {stockLabel}
+                 </div>
+               </div>
+
+               <AddToCartButton merchandiseId={firstVariant?.id || ''} available={!!firstVariant?.availableForSale} />
+             </div>
+
+             {/* Details Accordion / Sections */}
+             <div className="space-y-8">
+               
+               {/* Description */}
+               <div className="border-t border-stone-200 pt-6">
+                 <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-stone-900 mb-4">
+                   Details &amp; Specs
+                 </h3>
+                 <div 
+                   className="prose prose-stone prose-sm max-w-none text-stone-600 font-light leading-relaxed"
+                   dangerouslySetInnerHTML={{ __html: descriptionHtml }} 
+                 />
+               </div>
+
+               {/* Product Notes */}
+               <div className="border-t border-stone-200 pt-6">
+                 <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-stone-900 mb-4">
+                   Product Notes
+                 </h3>
+                 {metaEntries.length > 0 ? (
+                   <dl className="grid grid-cols-1 gap-4">
+                     {metaEntries.map((entry) => (
+                       <div key={entry.label} className="flex justify-between items-baseline border-b border-stone-100 pb-2 last:border-0">
+                         <dt className="text-xs font-bold uppercase tracking-widest text-stone-500">{entry.label}</dt>
+                         <dd className="text-sm text-stone-900 text-right font-medium">{entry.value}</dd>
+                       </div>
+                     ))}
+                   </dl>
+                 ) : (
+                   <p className="text-sm text-stone-500 italic">No additional notes available.</p>
+                 )}
+               </div>
+
+             </div>
+
           </div>
         </div>
-        <div className="product-panel">
-          <nav className="product-breadcrumbs" aria-label="breadcrumbs">
-            <Link href="/shop">Shop</Link>
-            {primaryCollection ? (
-              <>
-                <span>/</span>
-                <Link href={collectionEntry ? `/shop/category/${collectionEntry.slug}` : '/shop'}>{primaryCollection.title}</Link>
-              </>
-            ) : null}
-          </nav>
-          <h1 className="product-title-lg">{product.title}</h1>
-          <div className="product-summary">
-            <div className="product-summary-top">
-              <div>
-                <p className="product-price-label">Price</p>
-                <p className="product-price-lg">{priceLabel}</p>
-              </div>
-              <div className={`product-stock ${firstVariant?.availableForSale ? 'product-stock--in' : 'product-stock--out'}`}>
-                <span className="dot" />
-                {stockLabel}
-              </div>
-            </div>
-            <AddToCartButton merchandiseId={firstVariant?.id || ''} available={!!firstVariant?.availableForSale} />
-          </div>
-          <div className="product-info-grid">
-            <section className="product-info-card product-info-card--details">
-              <h2 className="product-info-title">Details &amp; Specs</h2>
-              <div className="product-spec-richtext" dangerouslySetInnerHTML={{ __html: descriptionHtml }} />
-            </section>
-            <section className="product-info-card product-info-card--notes" aria-label="Product metadata">
-              <h2 className="product-info-title">Product Notes</h2>
-              {metaEntries.length ? (
-                <dl className="product-meta-grid">
-                  {metaEntries.map((entry) => (
-                    <div className="product-meta-item" key={entry.label}>
-                      <dt>{entry.label}</dt>
-                      <dd>{entry.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              ) : (
-                <p className="product-meta-empty">More details coming soon.</p>
-              )}
-            </section>
-          </div>
-        </div>
-      </section>
+      </div>
+      
       <Footer />
     </main>
   )

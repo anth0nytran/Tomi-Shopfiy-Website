@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
@@ -33,188 +34,244 @@ const jadeProcessSteps = [
 
 export default function JadeBarPage() {
   return (
-    <main className="jade-main">
+    <main className="min-h-screen bg-[#F9F8F6]">
       <AnnouncementBar />
       <Header />
 
-      <section className="jade-hero" aria-labelledby="jade-heading">
-        <div className="jade-hero-inner">
-          <div className="jade-hero-head">
-            <p className="jade-overline">Houston&#39;s first ever customizable</p>
-            <h1 id="jade-heading" className="jade-title">Jade Bar</h1>
-            <p className="jade-subtitle">why we wear jade</p>
-          </div>
+      {/* Hero Section */}
+      <section className="relative w-full h-[85vh] min-h-[600px] flex items-end pb-20 md:pb-32 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <Image 
+            src="/assets/jade%20bar%20hero.png" 
+            alt="Tomi Jade Bar" 
+            fill 
+            className="object-cover"
+            priority
+            quality={95}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         </div>
-        <div className="jade-hero-banner" aria-hidden>
-          <Image src="/assets/jade%20bar%20hero.png" alt="Jade Bar" fill priority sizes="100vw" className="jade-hero-banner-img" />
-        </div>
-        <div className="jade-hero-strip" aria-label="why we wear jade">
-          <div className="jade-strip">
-            <div className="jade-strip-item">
-              <span className="jade-strip-icon" aria-hidden>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4z" stroke="currentColor" strokeWidth="1.6"/></svg>
-              </span>
-              <div className="jade-strip-text">
-                <span className="jade-strip-title">for protection</span>
-                <span className="jade-strip-desc">ward off negativity</span>
-              </div>
-            </div>
-            <div className="jade-strip-item">
-              <span className="jade-strip-icon" aria-hidden>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21c4-3 7-6 7-10a7 7 0 10-14 0c0 4 3 7 7 10z" stroke="currentColor" strokeWidth="1.6"/></svg>
-              </span>
-              <div className="jade-strip-text">
-                <span className="jade-strip-title">for health</span>
-                <span className="jade-strip-desc">balance & vitality</span>
-              </div>
-            </div>
-            <div className="jade-strip-item">
-              <span className="jade-strip-icon" aria-hidden>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 17l-5 3 2-5-4-3 5-1 2-5 2 5 5 1-4 3 2 5-5-3z" stroke="currentColor" strokeWidth="1.6"/></svg>
-              </span>
-              <div className="jade-strip-text">
-                <span className="jade-strip-title">for good luck</span>
-                <span className="jade-strip-desc">invite prosperity</span>
-              </div>
-            </div>
+        
+        <div className="relative z-10 px-6 md:px-12 container mx-auto w-full">
+          <div className="max-w-3xl">
+            <span className="block text-xs font-bold tracking-[0.2em] uppercase mb-4 text-white/90">
+              Houston's First Customizable
+            </span>
+            <h1 className="font-heading text-7xl md:text-9xl text-white mb-6 leading-none">
+              Jade Bar
+            </h1>
+            <div className="h-px w-24 bg-white/50 mb-8" />
+            <p className="text-xl md:text-2xl font-light text-white/90 tracking-wide max-w-lg leading-relaxed">
+              Curate your own heirloom. Choose your stone, your chain, and your story.
+            </p>
           </div>
         </div>
       </section>
-      <section className="jade-process" aria-labelledby="process-heading">
-        <div className="jade-process-inner">
-          <p className="process-eyebrow">Jade to be yours.</p>
-          <h2 id="process-heading" className="process-title">The process</h2>
-          <p className="process-subtitle">A four-step journey to your custom jade.</p>
 
-          <div className="jade-process-steps">
-            {jadeProcessSteps.map((step, index) => {
-              const mediaLeft = index % 2 === 0
-              const mediaAnim = mediaLeft ? 'slide-right' : 'slide-left'
-              const copyAnim = mediaLeft ? 'slide-left' : 'slide-right'
+      {/* Why We Wear Jade - Editorial Grid */}
+      <section className="py-24 bg-white border-b border-stone-100">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="text-center mb-16">
+             <span className="text-xs font-bold tracking-[0.2em] uppercase text-stone-400">
+               Significance
+             </span>
+             <h2 className="font-heading text-3xl md:text-4xl text-stone-900 mt-3">
+               Why we wear jade
+             </h2>
+          </div>
 
-              return (
-                <article
-                  className={`jade-process-item ${mediaLeft ? 'is-media-left' : 'is-media-right'}`}
-                  style={{ '--step-index': index } as React.CSSProperties}
-                  key={step.title}
-                >
-                  <div className="jade-process-cell jade-process-cell--media">
-                    <div className="jade-process-media">
-                      <Image
-                        src={step.imageSrc}
-                        alt={step.imageAlt}
-                        width={520}
-                        height={360}
-                        sizes="(max-width: 900px) 100vw, 460px"
-                        className="jade-process-img"
-                      />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-0 relative">
+            
+            {/* Item 1 */}
+            <div className="flex flex-col items-center text-center md:px-12 group">
+              <div className="w-16 h-16 rounded-full bg-[#efdada]/20 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-500">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4z" /></svg>
+              </div>
+              <h3 className="font-heading text-2xl text-stone-900 mb-2">For Protection</h3>
+              <p className="text-sm text-stone-500 font-light leading-relaxed">
+                A talisman to ward off negativity and keep your spirit grounded.
+              </p>
+            </div>
+
+            {/* Vertical Divider 1 */}
+            <div className="hidden md:block absolute top-4 bottom-4 left-1/3 w-px bg-stone-100" />
+
+            {/* Item 2 */}
+            <div className="flex flex-col items-center text-center md:px-12 group">
+              <div className="w-16 h-16 rounded-full bg-[#efdada]/20 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-500">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 21c4-3 7-6 7-10a7 7 0 10-14 0c0 4 3 7 7 10z" /></svg>
+              </div>
+              <h3 className="font-heading text-2xl text-stone-900 mb-2">For Health</h3>
+              <p className="text-sm text-stone-500 font-light leading-relaxed">
+                Promoting balance, vitality, and emotional well-being.
+              </p>
+            </div>
+
+            {/* Vertical Divider 2 */}
+            <div className="hidden md:block absolute top-4 bottom-4 right-1/3 w-px bg-stone-100" />
+
+            {/* Item 3 */}
+            <div className="flex flex-col items-center text-center md:px-12 group">
+              <div className="w-16 h-16 rounded-full bg-[#efdada]/20 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-500">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 17l-5 3 2-5-4-3 5-1 2-5 2 5 5 1-4 3 2 5-5-3z" /></svg>
+              </div>
+              <h3 className="font-heading text-2xl text-stone-900 mb-2">For Good Luck</h3>
+              <p className="text-sm text-stone-500 font-light leading-relaxed">
+                To invite prosperity and open doors to new opportunities.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* The Process - Timeline */}
+      <section className="py-24 md:py-32 bg-[#F9F8F6] overflow-hidden">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="text-center mb-20">
+            <span className="text-xs font-bold tracking-[0.2em] uppercase text-stone-400 block mb-4">
+              How it works
+            </span>
+            <h2 className="font-heading text-4xl md:text-5xl text-stone-900">
+              The Jade Bar Experience
+            </h2>
+          </div>
+
+          <div className="relative">
+            {/* Central Line (Hidden on Mobile) */}
+            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-stone-300 -translate-x-1/2 hidden md:block" />
+
+            <div className="space-y-20 md:space-y-32">
+              {jadeProcessSteps.map((step, index) => {
+                const isEven = index % 2 === 0
+                return (
+                  <div key={index} className={`relative flex flex-col md:flex-row items-center ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                    
+                    {/* Timeline Dot (Center) */}
+                    <div className="absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-primary rounded-full z-10 hidden md:block shadow-[0_0_0_8px_#F9F8F6]" />
+
+                    {/* Image Side */}
+                    <div className="w-full md:w-1/2 px-6 md:px-12 mb-8 md:mb-0">
+                      <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-stone-200 shadow-md group">
+                        <Image
+                          src={step.imageSrc}
+                          alt={step.imageAlt}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="jade-process-cell jade-process-cell--copy">
-                    <p className="jade-process-step-index">Step {String(index + 1).padStart(2, '0')}</p>
-                    <h3 className="jade-process-step-title">{step.title}</h3>
-                    <p className="jade-process-step-desc">{step.description}</p>
-                  </div>
+                    {/* Text Side */}
+                    <div className="w-full md:w-1/2 px-6 md:px-12 text-center md:text-left">
+                      <div className={`flex flex-col ${isEven ? 'md:items-start' : 'md:items-end md:text-right'}`}>
+                        <span className="text-6xl font-heading text-[#efdada] opacity-50 mb-2 leading-none">
+                          0{index + 1}
+                        </span>
+                        <h3 className="text-2xl md:text-3xl font-heading text-stone-900 mb-4">
+                          {step.title}
+                        </h3>
+                        <p className="text-lg text-stone-600 font-light leading-relaxed max-w-md">
+                          {step.description}
+                        </p>
+                      </div>
+                    </div>
 
-                  <span className="jade-process-pin" aria-hidden />
-                </article>
-              )
-            })}
+                  </div>
+                )
+              })}
+            </div>
           </div>
+
         </div>
       </section>
 
-      {/* <section className="jade-how" aria-labelledby="how-heading">
-        <div className="jade-how-inner">
-          <h2 id="how-heading" className="jade-section-title">How it works</h2>
-          <ol className="jade-steps">
-            <li className="jade-step">
-              <div className="jade-step-num">1</div>
-              <div className="jade-step-figure" aria-hidden></div>
-              <h3 className="jade-step-title">Make an appointment</h3>
-              <p className="jade-step-desc">Visit our Jade Bar and create your own piece.</p>
-            </li>
-            <li className="jade-step">
-              <div className="jade-step-num">2</div>
-              <div className="jade-step-figure" aria-hidden></div>
-              <h3 className="jade-step-title">Show up</h3>
-              <p className="jade-step-desc">On-time and ready to customize with our team.</p>
-            </li>
-            <li className="jade-step">
-              <div className="jade-step-num">3</div>
-              <div className="jade-step-figure" aria-hidden></div>
-              <h3 className="jade-step-title">Customize</h3>
-              <p className="jade-step-desc">Choose your grade‑A jade, donut, chain or satin cord.</p>
-            </li>
-            <li className="jade-step">
-              <div className="jade-step-num">4</div>
-              <div className="jade-step-figure" aria-hidden></div>
-              <h3 className="jade-step-title">Show off</h3>
-              <p className="jade-step-desc">Wear your new custom jade piece the same day.</p>
-            </li>
-          </ol>
-        </div>
-      </section> */}
-
-      
-
-      <section className="jade-source" aria-labelledby="source-heading">
-        <div className="jade-source-inner">
-          <div className="jade-source-grid">
-            <div className="jade-source-copy">
-              <h2 id="source-heading" className="jade-section-title">Where we source our jade</h2>
-              <p className="jade-source-lede">At tomi, we believe jade should be celebrated in its purest and most authentic form. That’s why we carefully source our jade directly from trusted suppliers in Myanmar (Burma) and select regions in Asia renowned for producing the world’s finest jadeite. Every piece is hand‑selected for its natural beauty, durability, and cultural significance.</p>
-              <div className="jade-source-chips" aria-label="regions">
-                <span className="jade-chip">Myanmar (Burma)</span>
-                <span className="jade-chip">Select regions in Asia</span>
-                <span className="jade-chip">Trusted suppliers</span>
+      {/* Sourcing & Grades */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-6 max-w-7xl">
+          
+          {/* Sourcing Intro */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-24">
+            <div>
+              <span className="text-xs font-bold tracking-[0.2em] uppercase text-stone-400 block mb-4">
+                Our Sourcing
+              </span>
+              <h2 className="font-heading text-4xl md:text-5xl text-stone-900 mb-8">
+                Authentic. Ethical. <br /><span className="italic text-stone-500">Untreated.</span>
+              </h2>
+              <p className="text-lg text-stone-600 font-light leading-relaxed mb-8 text-balance">
+                At tomi, we believe jade should be celebrated in its purest form. We source directly from trusted suppliers in Myanmar (Burma) and select Asian regions. Every piece is hand-selected for natural beauty and durability.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <span className="px-4 py-2 bg-[#F9F8F6] text-stone-600 text-xs font-bold uppercase tracking-wider rounded-full">Myanmar (Burma)</span>
+                <span className="px-4 py-2 bg-[#F9F8F6] text-stone-600 text-xs font-bold uppercase tracking-wider rounded-full">Trusted Suppliers</span>
               </div>
             </div>
-            <div className="jade-source-visual" aria-hidden>
-              <div className="jade-source-map">
-                <Image
+            <div className="relative aspect-[4/3] bg-stone-100 overflow-hidden rounded-lg">
+               <Image
                   src="/assets/source_jade.png"
-                  alt="Supplemental imagery of jade sourced for tomi"
+                  alt="Jade sourcing map"
                   fill
-                  sizes="(max-width: 860px) 100vw, 480px"
-                  className="jade-source-img"
-                />
-              </div>
+                  className="object-cover"
+               />
             </div>
           </div>
 
-          <div className="jade-grades" aria-label="jade grades">
-            <div className="jade-grade jade-grade--a">
-              <div className="jade-grade-head">
-                <span className="jade-grade-badge">Grade A</span>
-                <span className="jade-grade-only">we only sell this</span>
+          {/* Grading Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            {/* Grade A */}
+            <div className="bg-[#F9F8F6] p-8 border border-[#efdada] relative overflow-hidden group hover:shadow-md transition-shadow">
+              <div className="absolute top-0 right-0 bg-[#efdada] text-primary text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-bl-lg">
+                We Only Sell This
               </div>
-              <p className="jade-grade-desc">100% natural jadeite, untreated and free from chemical enhancements. May be wax‑polished for shine but has no dyes or resin coatings. This is the highest standard of jade available.</p>
+              <h3 className="font-heading text-2xl text-stone-900 mb-4">Grade A</h3>
+              <p className="text-stone-600 font-light leading-relaxed text-sm">
+                100% natural jadeite, untreated and free from dyes or resin. Just pure, authentic stone that lasts generations.
+              </p>
             </div>
-            <div className="jade-grade jade-grade--b">
-              <div className="jade-grade-head">
-                <span className="jade-grade-badge">Grade B</span>
-              </div>
-              <p className="jade-grade-desc">Chemically bleached and polymer‑filled to improve color and translucency. Less durable and considered lower quality.</p>
+
+            {/* Grade B */}
+            <div className="bg-white border border-stone-100 p-8 opacity-60 hover:opacity-100 transition-opacity">
+              <h3 className="font-heading text-2xl text-stone-400 mb-4">Grade B</h3>
+              <p className="text-stone-500 font-light leading-relaxed text-sm">
+                Chemically bleached and polymer-filled to improve color. Less durable and lower quality than natural jade.
+              </p>
             </div>
-            <div className="jade-grade jade-grade--c">
-              <div className="jade-grade-head">
-                <span className="jade-grade-badge">Grade C</span>
-              </div>
-              <p className="jade-grade-desc">Dyed to enhance color. Over time, color can fade and the stone can lose integrity.</p>
+
+            {/* Grade C */}
+            <div className="bg-white border border-stone-100 p-8 opacity-60 hover:opacity-100 transition-opacity">
+              <h3 className="font-heading text-2xl text-stone-400 mb-4">Grade C</h3>
+              <p className="text-stone-500 font-light leading-relaxed text-sm">
+                Dyed to enhance color artificially. Over time, the color can fade and the stone loses its integrity.
+              </p>
             </div>
+
           </div>
 
-          <p className="jade-promise">Our commitment is simple: we only offer <strong>Grade A Jade</strong>, ensuring each piece you purchase is natural, untreated, and crafted to last for generations.</p>
         </div>
       </section>
 
-      
+      {/* CTA */}
+      <section className="py-24 bg-[#efdada] text-center px-6">
+        <div className="max-w-2xl mx-auto">
+          <h2 className="font-heading text-4xl md:text-5xl text-stone-900 mb-8">
+            Ready to create your piece?
+          </h2>
+          <p className="text-lg text-stone-700 font-light mb-10">
+            Visit us at our Houston studio to experience the Jade Bar in person.
+          </p>
+          <Link 
+            href="/visit" 
+            className="inline-flex items-center justify-center px-10 py-4 bg-stone-900 text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-stone-700 transition-colors"
+          >
+            Plan Your Visit
+          </Link>
+        </div>
+      </section>
 
       <Footer />
     </main>
   )
 }
-
-

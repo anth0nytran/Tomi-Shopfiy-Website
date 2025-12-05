@@ -9,6 +9,7 @@ import {
   CatalogSlug,
   ShopifyListProduct,
 } from './catalog'
+import { ChevronDown } from 'lucide-react'
 
 const TAB_ENTRIES = CATALOG_ENTRIES.filter((entry) => entry.tab)
 
@@ -33,16 +34,19 @@ export function ShopHero({ entry }: { entry: CatalogEntry }) {
   const heroImage = SHOP_HEADING_IMAGES[entry.slug] ?? DEFAULT_HERO_IMAGE
 
   return (
-    <section className={`shop-hero ${entry.heroClass}`} aria-label={`${entry.title} hero`}>
-      <div className="shop-hero-media">
+    <section className="relative w-full h-[40vh] md:h-[50vh] min-h-[300px] bg-[#F9F8F6] overflow-hidden">
+      <div className="absolute inset-0">
         <Image
           src={heroImage}
           alt={`${entry.title} hero`}
           fill
+          className="object-cover object-center"
           sizes="100vw"
-          className="shop-hero-img"
           priority
+          quality={90}
         />
+        {/* Subtle overlay to ensure text contrast if we ever add text over it, keeping it light for now */}
+        <div className="absolute inset-0 bg-black/10" />
       </div>
     </section>
   )
@@ -50,57 +54,54 @@ export function ShopHero({ entry }: { entry: CatalogEntry }) {
 
 export function ShopTabs({ active, onTabSelect }: { active: CatalogSlug; onTabSelect?: (slug: CatalogSlug, href: string) => void }) {
   const trackRef = useRef<HTMLDivElement>(null)
-  const indicatorRef = useRef<HTMLSpanElement>(null)
 
-  const updateIndicator = useCallback(() => {
-    const track = trackRef.current
-    const indicator = indicatorRef.current
-    if (!track || !indicator) return
-    const activeEl = track.querySelector<HTMLElement>('[data-active="true"]')
-    if (!activeEl) return
-    const { offsetLeft, offsetWidth } = activeEl
-    indicator.style.width = `${offsetWidth}px`
-    indicator.style.transform = `translate3d(${offsetLeft}px, -50%, 0)`
-    indicator.classList.add('is-visible')
-  }, [])
-
+  // Scroll active tab into view on mount/change
   useEffect(() => {
-    updateIndicator()
-    const handleResize = () => updateIndicator()
-    if (typeof window !== 'undefined') {
-      window.addEventListener('resize', handleResize)
-      return () => window.removeEventListener('resize', handleResize)
+    if (trackRef.current) {
+      const activeEl = trackRef.current.querySelector<HTMLElement>('[data-active="true"]')
+      if (activeEl) {
+        activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+      }
     }
-    return undefined
-  }, [active, updateIndicator])
+  }, [active])
 
   return (
-    <nav className="shop-nav" aria-label="Shop categories">
-      <div className="shop-nav-track" ref={trackRef}>
-        {TAB_ENTRIES.map((entry) => {
-          const isAll = entry.slug === 'all'
-          const href = isAll ? '/shop' : `/shop/category/${entry.slug}`
-          const isActive = active === entry.slug
-          const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-            if (onTabSelect) {
-              event.preventDefault()
-              onTabSelect(entry.slug, href)
+    <nav className="sticky top-[var(--header-height,60px)] z-30 bg-white border-b border-stone-100 w-full">
+      <div className="container mx-auto px-6">
+        <div 
+          className="flex overflow-x-auto scrollbar-hide gap-8 md:gap-12 py-4 md:py-5 items-center justify-start md:justify-center"
+          ref={trackRef}
+        >
+          {TAB_ENTRIES.map((entry) => {
+            const isAll = entry.slug === 'all'
+            const href = isAll ? '/shop' : `/shop/category/${entry.slug}`
+            const isActive = active === entry.slug
+            const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+              if (onTabSelect) {
+                event.preventDefault()
+                onTabSelect(entry.slug, href)
+              }
             }
-          }
-          return (
-            <Link
-              key={entry.slug}
-              className={`shop-nav-pill${isActive ? ' is-active' : ''}`}
-              href={href}
-              scroll={false}
-              onClick={handleClick}
-              data-active={isActive ? 'true' : 'false'}
-            >
-              <span>{entry.navLabel || entry.title}</span>
-            </Link>
-          )
-        })}
-        <span ref={indicatorRef} className="shop-nav-indicator" aria-hidden="true" />
+            return (
+              <Link
+                key={entry.slug}
+                href={href}
+                onClick={handleClick}
+                data-active={isActive ? 'true' : 'false'}
+                className={`whitespace-nowrap text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 relative pb-1 ${
+                  isActive ? 'text-stone-900' : 'text-stone-400 hover:text-stone-600'
+                }`}
+              >
+                {entry.navLabel || entry.title}
+                <span 
+                  className={`absolute bottom-0 left-0 w-full h-[1px] bg-stone-900 transform transition-transform duration-300 ${
+                    isActive ? 'scale-x-100' : 'scale-x-0'
+                  }`} 
+                />
+              </Link>
+            )
+          })}
+        </div>
       </div>
     </nav>
   )
@@ -127,27 +128,46 @@ export function ShopToolbar({
   onSortChange?: (value: string) => void
 }) {
   const formattedCount = new Intl.NumberFormat().format(count)
-  const label = `Total ${count === 1 ? 'item' : 'items'}: ${formattedCount}`
+  const label = `${formattedCount} ${count === 1 ? 'Item' : 'Items'}`
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     onSortChange?.(event.target.value)
   }
+
   return (
-    <section className="shop-toolbar" aria-label="Shop toolbar">
-      <div className="toolbar-head">
-        <h1 className="shop-title">{entry.title}</h1>
-        {entry.subtitle ? <p className="shop-sub">{entry.subtitle}</p> : null}
-      </div>
-      <div className="toolbar-actions">
-        <div className={`inventory-count${isUpdating ? ' inventory-count--updating' : ''}`} aria-live="polite">
-          {isUpdating ? 'Updating…' : label}
+    <section className="py-12 md:py-16 bg-[#F9F8F6]">
+      <div className="container mx-auto px-6 md:px-12">
+        <div className="flex flex-col items-center text-center mb-10">
+          <h1 className="font-heading text-4xl md:text-6xl text-stone-900 mb-4 leading-tight capitalize">
+            {entry.title}
+          </h1>
+          {entry.subtitle && (
+            <p className="text-stone-600 text-lg font-light max-w-2xl mx-auto leading-relaxed">
+              {entry.subtitle}
+            </p>
+          )}
         </div>
-        <div className="sort" role="group" aria-label="Sort products">
-          <span className="sort-label">Sort</span>
-          <select id="shop-sort" className="sort-select" value={sort} onChange={handleSortChange}>
-            {SORT_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </select>
+
+        <div className="flex flex-col md:flex-row justify-between items-center border-t border-stone-200 pt-6 gap-4">
+          <div className={`text-xs font-bold uppercase tracking-widest text-stone-500 transition-opacity duration-300 ${isUpdating ? 'opacity-50' : 'opacity-100'}`}>
+            {isUpdating ? 'Updating...' : label}
+          </div>
+          
+          <div className="relative group flex items-center gap-3">
+             <span className="text-xs font-bold uppercase tracking-widest text-stone-500">Sort By</span>
+             <div className="relative">
+               <select 
+                 id="shop-sort" 
+                 className="appearance-none bg-transparent border-b border-stone-300 pr-8 pl-2 py-1 text-sm font-medium text-stone-900 focus:outline-none focus:border-stone-900 cursor-pointer"
+                 value={sort} 
+                 onChange={handleSortChange}
+               >
+                 {SORT_OPTIONS.map((option) => (
+                   <option key={option.value} value={option.value}>{option.label}</option>
+                 ))}
+               </select>
+               <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 pointer-events-none" />
+             </div>
+          </div>
         </div>
       </div>
     </section>
@@ -162,24 +182,43 @@ export function ProductCard({ product, index }: { product: ShopifyListProduct; i
   const formattedPrice = priceAmount
     ? new Intl.NumberFormat(undefined, { style: 'currency', currency: priceCurrency }).format(parseFloat(priceAmount))
     : null
-  const delayIndex = index % 12
+  
+  // Stagger animation delay
+  const delay = (index % 12) * 50
 
   return (
     <Link
       href={`/shop/${product.handle}`}
-      className="product-card product-card--animated"
-      style={{ animationDelay: `${delayIndex * 45}ms` }}
+      className="group block animate-fade-in-up fill-mode-both"
+      style={{ animationDelay: `${delay}ms` }}
     >
-      <div className="product-media">
+      <div className="relative aspect-square overflow-hidden bg-stone-100 mb-3">
         {primaryImage?.url ? (
-          <Image src={primaryImage.url} alt={primaryImage.altText || ''} className="product-img" width={800} height={800} />
+          <Image  
+            src={primaryImage.url} 
+            alt={primaryImage.altText || product.title} 
+            className="object-cover object-center w-full h-full transition-transform duration-700 group-hover:scale-105"
+            width={800} 
+            height={800}
+            sizes="(max-width: 768px) 50vw, 25vw"
+          />
         ) : (
-          <div className="product-img" style={{ background: '#f3e9e9', height: 300 }} />
+          <div className="w-full h-full flex items-center justify-center text-stone-300">
+            <span className="text-xs uppercase tracking-widest">No Image</span>
+          </div>
         )}
+        
+        {/* Quick Add / Hover Action could go here */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
       </div>
-      <div className="product-info">
-        <div className="product-title">{product.title}</div>
-        <div className="product-price">{formattedPrice}</div>
+      
+      <div className="text-center space-y-1">
+        <h3 className="text-sm text-stone-900 font-medium group-hover:text-stone-600 transition-colors">
+          {product.title}
+        </h3>
+        <p className="text-xs text-stone-500 tracking-wide">
+          {formattedPrice}
+        </p>
       </div>
     </Link>
   )
@@ -187,8 +226,15 @@ export function ProductCard({ product, index }: { product: ShopifyListProduct; i
 
 export function LoadMoreButton({ onClick, disabled }: { onClick: () => void; disabled?: boolean }) {
   return (
-    <button type="button" className="load-more" onClick={onClick} disabled={disabled}>
-      Show more
-    </button>
+    <div className="flex justify-center pt-12 pb-20">
+      <button 
+        type="button" 
+        onClick={onClick} 
+        disabled={disabled}
+        className="inline-flex items-center justify-center px-10 py-4 border border-stone-900 text-stone-900 text-xs font-bold uppercase tracking-[0.2em] hover:bg-stone-900 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {disabled ? 'Loading...' : 'Load More'}
+      </button>
+    </div>
   )
 }

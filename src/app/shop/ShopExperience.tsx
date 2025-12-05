@@ -10,6 +10,7 @@ import {
   filterProductsByCatalogEntry,
 } from './catalog'
 import { ShopHero, ShopTabs, ShopToolbar, ProductCard, LoadMoreButton } from './components'
+import { JadeBuilder } from './JadeBuilder'
 
 const INITIAL_VISIBLE = 12
 
@@ -131,19 +132,41 @@ export function ShopExperience({ initialSlug, products }: ShopExperienceProps) {
   const inventoryCount = filteredProducts.length
 
   if (entry.instoreOnly) {
+    if (entry.slug === 'jade-jewelry') {
+      return (
+        <div className="min-h-screen bg-[#F9F8F6] flex flex-col">
+          <ShopHero entry={entry} />
+          <ShopTabs active={entry.slug} onTabSelect={handleTabSelect} />
+          <section className="flex-1 py-12 px-4 md:px-8">
+            <JadeBuilder />
+          </section>
+        </div>
+      )
+    }
+
     return (
-      <div className="shop-experience">
+      <div className="min-h-screen bg-[#F9F8F6] flex flex-col">
         <ShopHero entry={entry} />
         <ShopTabs active={entry.slug} onTabSelect={handleTabSelect} />
-        <section className="jade-instore" aria-label="Jade Jewelry notice">
-          <div className="jade-instore-inner">
-            <div className="jade-instore-card">
-              <h3 className="jade-instore-title">This is currently an in-store experience only.</h3>
-              <p className="jade-instore-copy">
-                Visit our store <a href="/visit">here</a> and learn more about the process before you go.
-              </p>
-              <a href="/jade-bar" className="jade-instore-btn">Learn the Jade Bar process</a>
-            </div>
+        <section className="flex-1 flex items-center justify-center py-20 px-6" aria-label="Jade Jewelry notice">
+          <div className="max-w-2xl w-full bg-white p-12 border border-stone-100 shadow-sm text-center">
+             <div className="flex justify-center mb-8">
+                <span className="inline-block px-4 py-1.5 bg-[#efdada] text-stone-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full">
+                  In-Store Only
+                </span>
+             </div>
+            <h3 className="font-heading text-3xl md:text-4xl text-stone-900 mb-6">
+              This is currently an in-store experience only.
+            </h3>
+            <p className="text-stone-600 text-lg font-light mb-10 leading-relaxed">
+              Visit our store <Link href="/visit" className="underline hover:text-stone-900">here</Link> and learn more about the process before you go.
+            </p>
+            <Link 
+              href="/jade-bar" 
+              className="inline-flex items-center justify-center px-8 py-4 bg-stone-900 text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-stone-700 transition-colors"
+            >
+              Learn the Jade Bar process
+            </Link>
           </div>
         </section>
       </div>
@@ -151,7 +174,7 @@ export function ShopExperience({ initialSlug, products }: ShopExperienceProps) {
   }
 
   return (
-    <div className={`shop-experience${isAnimating || isPending ? ' is-transitioning' : ''}`}>
+    <div className={`min-h-screen bg-[#F9F8F6] flex flex-col transition-opacity duration-300 ${isAnimating || isPending ? 'opacity-70 pointer-events-none' : 'opacity-100'}`}>
       <ShopHero entry={entry} />
       <ShopTabs active={entry.slug} onTabSelect={handleTabSelect} />
       <ShopToolbar
@@ -161,35 +184,34 @@ export function ShopExperience({ initialSlug, products }: ShopExperienceProps) {
         sort={sort}
         onSortChange={handleSortChange}
       />
+      
       {inventoryCount === 0 ? (
-        <section className="shop-empty" aria-label="No products">
-          <div className="shop-empty-inner">
-            <h2>No products available yet</h2>
-            <p>
+        <section className="flex-1 flex items-center justify-center py-32 px-6" aria-label="No products">
+          <div className="text-center max-w-md">
+            <h2 className="font-heading text-2xl text-stone-900 mb-4">No products available yet</h2>
+            <p className="text-stone-600 font-light mb-8">
               We don’t have any {entry.navLabel?.toLowerCase() || entry.title.toLowerCase()} listed right now. Check back soon or explore other
               collections.
             </p>
-            <Link className="btn btn--primary" href="/shop">
+            <Link href="/shop" className="inline-block border-b border-stone-900 pb-1 text-xs font-bold uppercase tracking-[0.2em] text-stone-900 hover:opacity-70 transition-opacity">
               Shop all pieces
             </Link>
           </div>
         </section>
       ) : (
         <>
-          <section className="shop-grid" aria-label="Product grid">
-            {visibleProducts.map((product, index) => (
-              <ProductCard key={product.id ?? `${product.handle}-${index}`} product={product} index={index} />
-            ))}
+          <section className="container mx-auto px-4 md:px-8 pb-20" aria-label="Product grid">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-3 gap-y-10 md:gap-x-5 md:gap-y-14">
+              {visibleProducts.map((product, index) => (
+                <ProductCard key={product.id ?? `${product.handle}-${index}`} product={product} index={index} />
+              ))}
+            </div>
           </section>
           {hasMore ? (
-            <div className="shop-load-more">
-              <LoadMoreButton onClick={handleLoadMore} disabled={isAnimating || isPending} />
-            </div>
+            <LoadMoreButton onClick={handleLoadMore} disabled={isAnimating || isPending} />
           ) : null}
         </>
       )}
     </div>
   )
 }
-
-
