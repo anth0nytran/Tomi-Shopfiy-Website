@@ -143,7 +143,7 @@ export function JadeBuilder() {
                   </div>
                   
                   <p className="text-stone-500 font-light leading-relaxed mb-6">
-                     Work one-on-one with our team. Sourcing specific stones, custom carvings, or unique settings? Let's discuss your vision directly.
+                    Work one-on-one with our team. Sourcing specific stones, custom carvings, or unique settings? Let&apos;s discuss your vision directly.
                   </p>
 
                   <div className="mt-auto flex items-center text-primary text-xs font-bold uppercase tracking-[0.2em] group-hover:translate-x-2 transition-transform">
@@ -177,7 +177,7 @@ export function JadeBuilder() {
             <div className="bg-white p-8 md:p-12 border border-stone-100 shadow-sm">
               <div className="mb-10 text-center">
                 <h2 className="font-heading text-3xl md:text-4xl text-primary mb-3">Online Order</h2>
-                <p className="text-stone-500 font-light">Tell us what you love, and we'll find the perfect match.</p>
+                <p className="text-stone-500 font-light">Tell us what you love, and we&apos;ll find the perfect match.</p>
               </div>
 
               {/* Type Tabs */}
