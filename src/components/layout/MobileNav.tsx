@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useId, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 type MobileNavSubLink = {
   href: string
@@ -47,6 +48,11 @@ export function MobileNav({ links }: MobileNavProps) {
   const scrollPositionRef = useRef(0)
   const panelId = useId()
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     setIsOpen(false)
@@ -81,6 +87,10 @@ export function MobileNav({ links }: MobileNavProps) {
         touchAction: body.style.touchAction || '',
       }
       scrollPositionRef.current = window.scrollY
+      
+      // Add marker class to prevent other scroll handlers from reacting
+      body.classList.add('mobile-nav-open')
+      
       body.style.overflow = 'hidden'
       body.style.position = 'fixed'
       body.style.top = `-${scrollPositionRef.current}px`
@@ -94,6 +104,7 @@ export function MobileNav({ links }: MobileNavProps) {
         body.style.top = top
         body.style.width = width
         body.style.touchAction = touchAction
+        body.classList.remove('mobile-nav-open')
         window.scrollTo(0, scrollPositionRef.current)
       }
     }
@@ -104,6 +115,8 @@ export function MobileNav({ links }: MobileNavProps) {
     body.style.top = top
     body.style.width = width
     body.style.touchAction = touchAction
+    // Ensure class is removed if closed differently
+    body.classList.remove('mobile-nav-open') 
     window.scrollTo(0, scrollPositionRef.current)
   }, [isOpen])
 
@@ -115,12 +128,102 @@ export function MobileNav({ links }: MobileNavProps) {
   const openMenu = () => {
     setIsOpen(true)
     setExpandedSection(null)
+    // Force a sync of header variables in case they are stale
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 10)
   }
 
   const closeMenu = () => {
     setIsOpen(false)
     setExpandedSection(null)
   }
+
+  const menuContent = (
+    <div className="mobile-nav-layer" onClick={closeMenu}>
+      <div id={panelId} className="mobile-nav-panel" role="menu" onClick={(e) => e.stopPropagation()}>
+        <div className="mobile-nav-panel-inner">
+          {links.map((link) => {
+            const hasSubLinks = link.subLinks && link.subLinks.length > 0
+            const hasSections = link.sections && link.sections.length > 0
+            const isExpanded = expandedSection === link.label
+
+            if (hasSections || hasSubLinks) {
+              return (
+                <div key={link.href} className="mobile-nav-section">
+                  <button
+                    type="button"
+                    className="mobile-nav-link mobile-nav-link--expandable"
+                    aria-expanded={isExpanded}
+                    onClick={() => toggleSection(link.label)}
+                  >
+                    {link.label}
+                    <span className={`mobile-nav-chevron ${isExpanded ? 'mobile-nav-chevron--open' : ''}`}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                        <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </span>
+                  </button>
+                  {isExpanded && (
+                    <div className="mobile-nav-mega">
+                      {hasSections ? (
+                        chunkSections(link.sections!).map((columnSections, columnIndex) => (
+                          <div key={`column-${columnIndex}`} className="mobile-nav-column">
+                            {columnSections.map((section) => (
+                              <div key={section.title || 'default'} className="mobile-nav-subsection">
+                                {section.title ? <p className="mobile-nav-section-title">{section.title}</p> : null}
+                                <div className="mobile-nav-sublinks">
+                                  {section.links.map((subLink) => (
+                                    <Link
+                                      key={subLink.href}
+                                      href={subLink.href}
+                                      className="mobile-nav-sublink"
+                                      role="menuitem"
+                                      onClick={() => setIsOpen(false)}
+                                    >
+                                      {subLink.label}
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ))
+                      ) : (
+                          <div className="mobile-nav-sublinks">
+                            {link.subLinks!.map((subLink) => (
+                              <Link
+                                key={subLink.href}
+                                href={subLink.href}
+                                className="mobile-nav-sublink"
+                                role="menuitem"
+                                onClick={() => setIsOpen(false)}
+                              >
+                                {subLink.label}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                    </div>
+                  )}
+                </div>
+              )
+            }
+
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="mobile-nav-link"
+                role="menuitem"
+                onClick={() => setIsOpen(false)}
+              >
+                {link.label}
+              </Link>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
 
   return (
     <div className="mobile-nav" data-open={isOpen ? 'true' : 'false'}>
@@ -146,94 +249,7 @@ export function MobileNav({ links }: MobileNavProps) {
         <span className="mobile-nav-label">Menu</span>
       </button>
 
-      {isOpen ? (
-        <div className="mobile-nav-layer" onClick={closeMenu}>
-          <div id={panelId} className="mobile-nav-panel" role="menu" onClick={(e) => e.stopPropagation()}>
-            <div className="mobile-nav-panel-inner">
-              {links.map((link) => {
-                const hasSubLinks = link.subLinks && link.subLinks.length > 0
-                const hasSections = link.sections && link.sections.length > 0
-                const isExpanded = expandedSection === link.label
-
-                if (hasSections || hasSubLinks) {
-                  return (
-                    <div key={link.href} className="mobile-nav-section">
-                      <button
-                        type="button"
-                        className="mobile-nav-link mobile-nav-link--expandable"
-                        aria-expanded={isExpanded}
-                        onClick={() => toggleSection(link.label)}
-                      >
-                        {link.label}
-                        <span className={`mobile-nav-chevron ${isExpanded ? 'mobile-nav-chevron--open' : ''}`}>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                            <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </span>
-                      </button>
-                      {isExpanded && (
-                        <div className="mobile-nav-mega">
-                          {hasSections ? (
-                            chunkSections(link.sections!).map((columnSections, columnIndex) => (
-                              <div key={`column-${columnIndex}`} className="mobile-nav-column">
-                                {columnSections.map((section) => (
-                                  <div key={section.title || 'default'} className="mobile-nav-subsection">
-                                    {section.title ? <p className="mobile-nav-section-title">{section.title}</p> : null}
-                                    <div className="mobile-nav-sublinks">
-                                      {section.links.map((subLink) => (
-                                        <Link
-                                          key={subLink.href}
-                                          href={subLink.href}
-                                          className="mobile-nav-sublink"
-                                          role="menuitem"
-                                          onClick={() => setIsOpen(false)}
-                                        >
-                                          {subLink.label}
-                                        </Link>
-                                      ))}
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            ))
-                          ) : (
-                              <div className="mobile-nav-sublinks">
-                                {link.subLinks!.map((subLink) => (
-                                  <Link
-                                    key={subLink.href}
-                                    href={subLink.href}
-                                    className="mobile-nav-sublink"
-                                    role="menuitem"
-                                    onClick={() => setIsOpen(false)}
-                                  >
-                                    {subLink.label}
-                                  </Link>
-                                ))}
-                              </div>
-                            )}
-                        </div>
-                      )}
-                    </div>
-                  )
-                }
-
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="mobile-nav-link"
-                    role="menuitem"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-      ) : null}
+      {isOpen && mounted ? createPortal(menuContent, document.body) : null}
     </div>
   )
 }
-

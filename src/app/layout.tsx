@@ -30,8 +30,8 @@ export const metadata: Metadata = {
   title: 'Tomi - Solid Gold Jewelry in Houston',
   description: 'Solid gold jewelry that shines best on you. Timeless designs, not microtrends.',
   icons: {
-    icon: '/assets/tomi_stacked logo.svg',
-    shortcut: '/assets/tomi_stacked logo.svg',
+    icon: '/assets/pink_tomi_logo.png',
+    shortcut: '/assets/pink_tomi_logo.png',
   },
 }
 

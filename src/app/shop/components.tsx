@@ -67,7 +67,7 @@ export function ShopTabs({ active, onTabSelect }: { active: CatalogSlug; onTabSe
   }, [active])
 
   return (
-    <nav className="sticky top-[var(--header-height,60px)] z-30 bg-white border-b border-stone-100 w-full">
+    <nav className="sticky top-[var(--header-offset,60px)] z-30 bg-white border-b border-stone-100 w-full">
       <div className="container mx-auto px-6">
         <div 
           className="flex overflow-x-auto scrollbar-hide gap-8 md:gap-12 py-4 md:py-5 items-center justify-start md:justify-center"

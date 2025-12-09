@@ -32,6 +32,9 @@ let isHidden = false
 let lastY = 0
 let ticking = false
 
+// Transition tracking
+let headerTransitionRaf: number | null = null
+
 function ensureVarStyleEl(): HTMLStyleElement {
   let el = document.getElementById('tomi-root-vars') as HTMLStyleElement | null
   if (!el) {
@@ -52,14 +55,50 @@ function setRootVar(name: string, value: string) {
   el.textContent = `:root { ${body} }`
 }
 
+function stopHeaderTransitionLoop() {
+  if (headerTransitionRaf) {
+    cancelAnimationFrame(headerTransitionRaf)
+    headerTransitionRaf = null
+  }
+}
+
+function startHeaderTransitionLoop() {
+  stopHeaderTransitionLoop()
+  const loop = () => {
+    syncHeaderVars()
+    headerTransitionRaf = requestAnimationFrame(loop)
+  }
+  loop()
+}
+
+const onHeaderTransitionStart = () => startHeaderTransitionLoop()
+const onHeaderTransitionEnd = () => stopHeaderTransitionLoop()
+
 function refreshDomRefs() {
-  headerEl = document.querySelector('.header') as HTMLElement | null
+  const newHeader = document.querySelector('.header') as HTMLElement | null
+  
+  // Re-attach listeners if header element changed
+  if (headerEl && headerEl !== newHeader) {
+     headerEl.removeEventListener('transitionstart', onHeaderTransitionStart)
+     headerEl.removeEventListener('transitionrun', onHeaderTransitionStart)
+     headerEl.removeEventListener('transitionend', onHeaderTransitionEnd)
+     headerEl.removeEventListener('transitioncancel', onHeaderTransitionEnd)
+  }
+  
+  headerEl = newHeader
   announcementEl = document.querySelector('.announcement-bar') as HTMLElement | null
   mainEl = document.querySelector('main') as HTMLElement | null
   cartDrawerEl = document.querySelector('.cart-drawer') as HTMLElement | null
   cartPanelEl = document.querySelector('[data-cart-panel]') as HTMLElement | null
   cartBodyEl = document.getElementById('cart-body') as HTMLElement | null
   cartFooterEl = document.getElementById('cart-footer') as HTMLElement | null
+
+  if (headerEl) {
+     headerEl.addEventListener('transitionstart', onHeaderTransitionStart)
+     headerEl.addEventListener('transitionrun', onHeaderTransitionStart)
+     headerEl.addEventListener('transitionend', onHeaderTransitionEnd)
+     headerEl.addEventListener('transitioncancel', onHeaderTransitionEnd)
+  }
 
   if (typeof ResizeObserver === 'undefined') return
 
@@ -185,6 +224,9 @@ function applyHeaderModeByPage() {
 }
 
 function applyNoScrollState() {
+  // If the mobile menu is open, we shouldn't attempt to show the announcement bar or change header state
+  if (document.body.classList.contains('mobile-nav-open')) return
+
   const doc = document.documentElement
   const scrollable = doc.scrollHeight > (window.innerHeight + 4)
 
@@ -218,6 +260,7 @@ function updateCachedHeights(force = false) {
 
 function handleScroll() {
   if (ticking) return
+  if (document.body.classList.contains('mobile-nav-open')) return
   ticking = true
   window.requestAnimationFrame(() => {
     const y = Math.max(0, window.scrollY)
@@ -262,7 +305,15 @@ function syncHeaderVars() {
   const hidden = document.body.classList.contains('announcement-hidden') || announcementEl?.classList.contains('hidden')
   const headerTop = hidden ? 0 : lastAnnouncementHeight
   setRootVar('--header-top', `${headerTop}px`)
-  setRootVar('--header-offset', `${lastAnnouncementHeight + lastHeaderHeight}px`)
+  
+  if (headerEl) {
+    const rect = headerEl.getBoundingClientRect()
+    // Use actual bottom position for perfect alignment, ensuring no gaps
+    setRootVar('--header-offset', `${Math.round(rect.bottom)}px`)
+  } else {
+    setRootVar('--header-offset', `${headerTop + lastHeaderHeight}px`)
+  }
+
   if (document.body.classList.contains('cart-open')) {
     setRootVar('--cart-panel-top', `${computeHeaderBottom()}px`)
   }

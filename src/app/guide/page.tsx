@@ -19,13 +19,13 @@ export default function GuidePage() {
               <div className="w-full md:w-1/3 flex justify-center md:justify-end md:sticky md:top-40">
                 <div className="relative w-48 h-64 md:w-64 md:h-80 opacity-20">
                   <Image 
-                    src="/assets/tomi_stacked logo.svg"
+                    src="/assets/pink_tomi_logo.png"
                     alt="Tomi Jewelry"
                     fill
                     className="object-contain"
                   />
                 </div>
-              </div>
+          </div>
 
               {/* Right Side: Care Guide Content */}
               <div className="w-full md:w-2/3 max-w-2xl">

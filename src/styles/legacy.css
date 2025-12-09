@@ -280,7 +280,7 @@
   position: fixed;
   top: var(--header-top, 0);
   left: 0; right: 0;
-  z-index: 1000;
+  z-index: 1810;
   background: rgba(48, 66, 56, 0.32);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
