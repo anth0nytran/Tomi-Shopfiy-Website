@@ -88,10 +88,10 @@ export const TomiReveal: React.FC<TomiRevealProps> = ({ height, variant }) => {
     <>
       <div className="absolute inset-0 flex flex-col p-6 md:p-12">
         {/* Border Container */}
-        <div className="w-full h-full border border-tomi-text/10 relative flex flex-col rounded-r-full overflow-hidden">
+        <div className="w-full h-full border border-tomi-text/60 relative flex flex-col rounded-r-full overflow-hidden">
             
             {/* Header Line & Badge */}
-            <div className="w-full h-px bg-tomi-text/20 mt-24 relative">
+            <div className="w-full h-px bg-tomi-text/40 mt-24 relative">
                 <div className="absolute -top-3 left-0 md:left-12 bg-[#EEDCDC] pr-4 font-body text-[10px] md:text-xs font-bold tracking-[0.2em] text-tomi-text uppercase flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-tomi-text"></span>
                     EST. 2023 / HOUSTON, TX
@@ -101,7 +101,7 @@ export const TomiReveal: React.FC<TomiRevealProps> = ({ height, variant }) => {
             {/* Split Screen Content */}
             <div className="flex-1 w-full flex relative overflow-hidden">
                 {/* Center Vertical Divider */}
-                <div className="absolute left-1/2 top-0 bottom-0 w-px bg-tomi-text/20" />
+                <div className="absolute left-1/2 top-0 bottom-0 w-px bg-tomi-text/40" />
 
                 {/* Left Side "to" */}
                 <div className="flex-1 flex items-center justify-end pr-2 md:pr-8 overflow-hidden">
@@ -119,7 +119,7 @@ export const TomiReveal: React.FC<TomiRevealProps> = ({ height, variant }) => {
                 {/* Right Side "mi" */}
                 <div className="flex-1 flex items-center justify-start pl-2 md:pl-8 overflow-hidden">
                     <span 
-                        className="font-heading text-[35vw] md:text-[30vw] leading-none text-tomi-text relative -left-[2vw] italic"
+                        className="font-heading text-[35vw] md:text-[30vw] leading-none text-tomi-text relative -left-[2vw]"
                         style={{ 
                           transform: `translateY(${getParallaxY(0.15)}px)`, // Different speed for depth
                         }}
@@ -130,20 +130,20 @@ export const TomiReveal: React.FC<TomiRevealProps> = ({ height, variant }) => {
             </div>
 
             {/* Footer Grid Info */}
-            <div className="h-auto md:h-32 border-t border-tomi-text/20 flex flex-col md:flex-row">
-                <div className="flex-1 p-6 md:border-r border-tomi-text/20 flex items-center">
-                    <p className="font-heading italic text-tomi-text text-lg md:text-2xl leading-tight max-w-sm">
+            <div className="h-auto md:h-32 border-t border-tomi-text/40 flex flex-col md:flex-row">
+                <div className="flex-1 p-6 md:border-r border-tomi-text/40 flex items-center">
+                    <p className="font-heading text-tomi-text text-lg md:text-2xl leading-tight max-w-sm">
                         &ldquo;Today&apos;s gem, tomorrow&apos;s gift.&rdquo;
                     </p>
                 </div>
                 <div className="flex-1 p-6 flex justify-between items-end">
                     <div className="flex flex-col gap-1">
                         <span className="font-body text-[10px] uppercase tracking-widest text-tomi-text/50">Collection</span>
-                        <span className="font-heading text-tomi-text">Solid Gold / Timeless</span>
+                        <span className="font-body text-tomi-text">Solid Gold / Timeless</span>
                     </div>
                     <div className="text-right flex flex-col gap-1">
                          <span className="font-body text-[10px] uppercase tracking-widest text-tomi-text/50">Origin</span>
-                         <span className="font-heading text-tomi-text">Houston, TX</span>
+                         <span className="font-body text-tomi-text">Houston, TX</span>
                     </div>
                 </div>
             </div>
