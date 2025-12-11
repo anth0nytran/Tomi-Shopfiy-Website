@@ -8,28 +8,27 @@ import { motion, AnimatePresence } from 'framer-motion'
 // --- Data Constants ---
 
 const JADE_COLORS = [
-  { label: 'Green', value: 'green', color: '#15803d' }, // Deeper green
-  { label: 'Purple', value: 'purple', color: '#a855f7' }, // Brighter purple
-  { label: 'Black', value: 'black', color: '#1c1917' },
-  { label: 'Blue', value: 'blue', color: '#0ea5e9' }, // Cyan/Blue
-  { label: 'Yellow', value: 'yellow', color: '#facc15' }, // Bright yellow
-  { label: 'Pink', value: 'pink', color: '#f472b6' }, // Rose pink
+  { label: 'Green', value: 'green', color: '#879d91' },
+  { label: 'Lavender', value: 'lavender', color: '#cec9d1' },
+  { label: 'White', value: 'white', color: '#ffffff' },
+  { label: 'Pink', value: 'pink', color: '#e6e3e4' },
+  { label: 'Yellow', value: 'yellow', color: '#e1e0c8' },
+  { label: 'Blue', value: 'blue', color: '#b0bbc4' },
+  { label: 'Black', value: 'black', color: '#000000' },
 ]
 
-const CHAIN_OPTIONS = [
-  'Adjustable Box',
-  'Satin Cord',
-  'Adjustable Cable',
+const CHAIN_STYLES = [
+  '14k Wheat',
+  '14k Box',
+  '14k Sparkle',
+  '14k Dainty Cable',
+  '9k Sparkle',
 ]
 
-const BRACELET_OPTIONS = [
-  'Adjustable Wheat',
-  'Adjustable Dainty Cable',
-  'Adjustable Sparkle',
-]
+const CHAIN_METALS = ['Yellow Gold', 'White Gold']
 
-const BAIL_SHAPES = ['Round', 'Oval']
-const BAIL_METALS = ['White Gold', 'Yellow Gold']
+const BAIL_SHAPES = ['Round', 'Oval', 'Mini Oval']
+const BAIL_METALS = ['Yellow Gold', 'White Gold']
 
 // --- Components ---
 
@@ -42,7 +41,8 @@ export function JadeBuilder() {
   const [jewelryType, setJewelryType] = useState<'necklace' | 'bracelet'>('necklace')
   
   // Option 1 State
-  const [chain, setChain] = useState<string>('Adjustable Box')
+  const [chain, setChain] = useState<string>('14k Wheat')
+  const [chainMetal, setChainMetal] = useState<string>('Yellow Gold')
   const [bailShape, setBailShape] = useState<string>('Round')
   const [bailMetal, setBailMetal] = useState<string>('Yellow Gold') 
   const [jadeColor, setJadeColor] = useState<string>('green')
@@ -207,10 +207,10 @@ export function JadeBuilder() {
                 {/* 1. Chain Style */}
                 <div className="space-y-4">
                   <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary text-center">
-                    1. Choose {jewelryType === 'necklace' ? 'Chain' : 'Bracelet'} Style
+                    1. Choose Chain Style
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {(jewelryType === 'necklace' ? CHAIN_OPTIONS : BRACELET_OPTIONS).map((opt) => (
+                    {CHAIN_STYLES.map((opt) => (
                       <button
                         key={opt}
                         onClick={() => setChain(opt)}
@@ -226,11 +226,33 @@ export function JadeBuilder() {
                   </div>
                 </div>
 
-                {/* 2. Bail Selection (Only for Necklace) */}
+                {/* 2. Chain Metal */}
+                <div className="space-y-4">
+                  <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary text-center">
+                    2. Chain Metal
+                  </h3>
+                  <div className="flex gap-3 max-w-md mx-auto w-full">
+                    {CHAIN_METALS.map((metal) => (
+                      <button
+                        key={metal}
+                        onClick={() => setChainMetal(metal)}
+                        className={`flex-1 py-3 text-sm border transition-all ${
+                          chainMetal === metal 
+                            ? 'border-[#efdada] bg-[#efdada] text-primary' 
+                            : 'border-stone-100 text-stone-500 hover:border-primary/30'
+                        }`}
+                      >
+                        {metal}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. Bail Selection (Only for Necklace) */}
                 {jewelryType === 'necklace' && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-4">
-                      <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary text-center">2. Bail Shape</h3>
+                      <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary text-center">3. Bail Shape</h3>
                       <div className="flex gap-3">
                         {BAIL_SHAPES.map(shape => (
                           <button
@@ -249,7 +271,7 @@ export function JadeBuilder() {
                     </div>
                     
                     <div className="space-y-4">
-                      <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary text-center">3. Bail Metal</h3>
+                      <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary text-center">4. Bail Metal</h3>
                       <div className="flex gap-3">
                         {BAIL_METALS.map(metal => (
                           <button
@@ -269,10 +291,10 @@ export function JadeBuilder() {
                   </div>
                 )}
 
-                {/* 3. Jade Color Preference */}
+                {/* 4. Jade Color Preference */}
                 <div className="space-y-4 text-center">
                   <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
-                     {jewelryType === 'necklace' ? '4.' : '2.'} Jade Color Preference
+                     {jewelryType === 'necklace' ? '5.' : '3.'} Jade Color Preference
                   </h3>
                   <div className="flex flex-wrap gap-4 justify-center">
                     {JADE_COLORS.map(color => (
@@ -374,12 +396,40 @@ export function JadeBuilder() {
                   </div>
                 </div>
 
+                {/* Preference: Necklace or Bracelet */}
+                <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Are you interested in a custom jade:</label>
+                    <div className="flex gap-4 pt-2">
+                        {['Necklace', 'Bracelet'].map(option => (
+                            <label key={option} className="flex items-center gap-2 cursor-pointer group">
+                                <input type="radio" name="jewelry_interest" className="w-4 h-4 text-primary focus:ring-primary border-stone-300" />
+                                <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">{option}</span>
+                            </label>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Chain Sourcing */}
+                <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Chain Preference:</label>
+                    <div className="flex flex-col gap-2 pt-1">
+                        <label className="flex items-center gap-2 cursor-pointer group">
+                            <input type="radio" name="chain_sourcing" className="w-4 h-4 text-primary focus:ring-primary border-stone-300" />
+                            <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">Purchase one of our chains</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer group">
+                            <input type="radio" name="chain_sourcing" className="w-4 h-4 text-primary focus:ring-primary border-stone-300" />
+                            <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">Send/Bring your own to our storefront</span>
+                        </label>
+                    </div>
+                </div>
+
                 {/* Text Area */}
                 <div className="space-y-2">
-                   <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">What are you looking for?</label>
+                   <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Notes or Specifications</label>
                    <textarea 
                      className="w-full min-h-[150px] bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors resize-none placeholder:text-stone-300 leading-relaxed"
-                     placeholder="Tell us about your dream jade piece..."
+                     placeholder="Jade color preference, bail addition, type of chain, preference for yellow vs white gold, etc."
                    />
                 </div>
 
