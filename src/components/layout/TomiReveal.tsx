@@ -133,7 +133,7 @@ export const TomiReveal: React.FC<TomiRevealProps> = ({ height, variant }) => {
             <div className="h-auto md:h-32 border-t border-tomi-text/20 flex flex-col md:flex-row">
                 <div className="flex-1 p-6 md:border-r border-tomi-text/20 flex items-center">
                     <p className="font-heading italic text-tomi-text text-lg md:text-2xl leading-tight max-w-sm">
-                        "Today's gem, tomorrow's gift."
+                        &ldquo;Today&apos;s gem, tomorrow&apos;s gift.&rdquo;
                     </p>
                 </div>
                 <div className="flex-1 p-6 flex justify-between items-end">
