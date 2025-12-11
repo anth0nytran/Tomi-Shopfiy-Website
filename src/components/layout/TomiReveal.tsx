@@ -100,15 +100,12 @@ export const TomiReveal: React.FC<TomiRevealProps> = ({ height, variant }) => {
 
             {/* Split Screen Content */}
             <div className="flex-1 w-full flex relative overflow-hidden">
-                {/* Center Vertical Divider */}
-                <div className="absolute left-1/2 top-0 bottom-0 w-px bg-tomi-text/40" />
-
                 {/* Left Side "to" */}
-                <div className="flex-1 flex items-center justify-end pr-2 md:pr-8 overflow-hidden">
+                <div className="flex-1 flex items-center justify-end pr-2 md:pr-8 overflow-hidden border-r border-tomi-text/40">
                     <span 
                         className="font-heading text-[35vw] md:text-[30vw] leading-none text-tomi-text relative -right-[2vw]"
                         style={{ 
-                          transform: `translateY(${getParallaxY(0.25)}px)`,
+                          transform: `translateY(${getParallaxY(0.15)}px)`,
                           opacity: isVisible ? 1 : 0.8 
                         }}
                     >
@@ -130,7 +127,7 @@ export const TomiReveal: React.FC<TomiRevealProps> = ({ height, variant }) => {
             </div>
 
             {/* Footer Grid Info */}
-            <div className="h-auto md:h-32 border-t border-tomi-text/40 flex flex-col md:flex-row">
+            <div className="h-auto md:h-32 border-t border-tomi-text/40 flex flex-col md:flex-row pb-12 md:pb-0">
                 <div className="flex-1 p-6 md:border-r border-tomi-text/40 flex items-center">
                     <p className="font-heading text-tomi-text text-lg md:text-2xl leading-tight max-w-sm">
                         &ldquo;Today&apos;s gem, tomorrow&apos;s gift.&rdquo;
