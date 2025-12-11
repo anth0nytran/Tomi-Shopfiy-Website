@@ -134,7 +134,7 @@ export function ShopExperience({ initialSlug, products }: ShopExperienceProps) {
   if (entry.instoreOnly) {
     if (entry.slug === 'jade-jewelry') {
       return (
-        <div className="min-h-screen bg-[#F9F8F6] flex flex-col">
+        <div className="min-h-screen bg-white flex flex-col">
           <ShopHero entry={entry} />
           <ShopTabs active={entry.slug} onTabSelect={handleTabSelect} />
           <section className="flex-1 py-12 px-4 md:px-8">
@@ -145,7 +145,7 @@ export function ShopExperience({ initialSlug, products }: ShopExperienceProps) {
     }
 
     return (
-      <div className="min-h-screen bg-[#F9F8F6] flex flex-col">
+      <div className="min-h-screen bg-white flex flex-col">
         <ShopHero entry={entry} />
         <ShopTabs active={entry.slug} onTabSelect={handleTabSelect} />
         <section className="flex-1 flex items-center justify-center py-20 px-6" aria-label="Jade Jewelry notice">
@@ -174,7 +174,7 @@ export function ShopExperience({ initialSlug, products }: ShopExperienceProps) {
   }
 
   return (
-    <div className={`min-h-screen bg-[#F9F8F6] flex flex-col transition-opacity duration-300 ${isAnimating || isPending ? 'opacity-70 pointer-events-none' : 'opacity-100'}`}>
+    <div className={`min-h-screen bg-white flex flex-col transition-opacity duration-300 ${isAnimating || isPending ? 'opacity-70 pointer-events-none' : 'opacity-100'}`}>
       <ShopHero entry={entry} />
       <ShopTabs active={entry.slug} onTabSelect={handleTabSelect} />
       <ShopToolbar

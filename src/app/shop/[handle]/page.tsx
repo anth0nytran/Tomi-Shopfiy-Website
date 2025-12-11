@@ -13,7 +13,7 @@ export default async function ProductPage({ params }: { params: { handle: string
   const product = await fetchProductByHandle(params.handle)
   if (!product) {
     return (
-      <main className="bg-[#F9F8F6] flex flex-col">
+      <main className="bg-white flex flex-col">
         <AnnouncementBar />
         <Header />
         <section className="flex-1 flex items-center justify-center">
@@ -47,7 +47,7 @@ export default async function ProductPage({ params }: { params: { handle: string
   ].filter(Boolean) as { label: string; value: string }[]
 
   return (
-    <main className="bg-[#F9F8F6] flex flex-col">
+    <main className="bg-white flex flex-col">
       <AnnouncementBar />
       <Header />
 

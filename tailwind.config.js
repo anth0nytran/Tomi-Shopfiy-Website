@@ -14,6 +14,7 @@ module.exports = {
         'accent-pink': '#E8BFC6',
         white: '#ffffff',
         black: '#000000',
+        'tomi-text': '#38473b',
       },
       fontFamily: {
         body: ['Neue Haas Grotesk Display', 'sans-serif'],

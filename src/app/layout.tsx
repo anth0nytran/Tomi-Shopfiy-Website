@@ -35,6 +35,8 @@ export const metadata: Metadata = {
   },
 }
 
+import { TomiReveal } from '@/components/layout/TomiReveal'
+
 export default function RootLayout({
   children,
 }: {
@@ -48,19 +50,18 @@ export default function RootLayout({
         <style dangerouslySetInnerHTML={{ __html: `
           html { height: 100%; }
           body { min-height: 100%; min-height: 100dvh; margin: 0; display: flex; flex-direction: column; }
-          body > div:first-child { display: flex !important; flex-direction: column !important; flex: 1 0 auto !important; }
-          main { display: flex !important; flex-direction: column !important; flex: 1 0 auto !important; }
-          main > .flex-1 { flex: 1 0 auto !important; }
-          .footer, footer { flex-shrink: 0 !important; margin-top: auto !important; }
         ` }} />
         <Script id="set-header-vars" strategy="beforeInteractive">
           {`(function(){function setVars(){try{var s=document.getElementById('tomi-root-vars');if(!s){s=document.createElement('style');s.id='tomi-root-vars';document.head.appendChild(s);}var b=document.querySelector('.announcement-bar');var h=document.querySelector('.header');var bh=b?Math.round(b.getBoundingClientRect().height)||0:0;var hh=h?Math.round(h.getBoundingClientRect().height)||72:72;s.textContent=':root{--header-top:'+bh+'px;--header-offset:'+(bh+hh+2)+'px;}';}catch(e){}} if(document.readyState!=='loading'){setVars();}else{document.addEventListener('DOMContentLoaded', setVars);} })();`}
         </Script>
       </head>
-      <body className={`${neueHaasGrotesk.variable} ${recklessNeue.variable} font-body text-ink bg-white antialiased`}>
+      <body className={`${neueHaasGrotesk.variable} ${recklessNeue.variable} font-body text-ink antialiased`}>
         <Providers>
           <ClientInit />
-          {children}
+          <div className="relative z-20 bg-white mb-[100vh] rounded-b-[3rem] md:rounded-b-[5rem] shadow-2xl flex flex-col min-h-screen">
+            {children}
+          </div>
+          <TomiReveal height="100vh" variant="editorial" />
         </Providers>
       </body>
     </html>

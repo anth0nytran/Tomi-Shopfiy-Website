@@ -23,7 +23,7 @@ export function ProductGallery({ images, title }: Props) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="relative w-full aspect-square bg-stone-100 overflow-hidden">
+      <div className="relative w-full aspect-square bg-white overflow-hidden">
         {current?.url ? (
           <Image
             src={current.url}
@@ -48,7 +48,7 @@ export function ProductGallery({ images, title }: Props) {
                 key={`${img.url}-${idx}`}
                 type="button"
                 onClick={() => setSelected(idx)}
-                className={`relative aspect-square bg-stone-100 overflow-hidden border ${
+                className={`relative aspect-square bg-white overflow-hidden border ${
                   isActive ? 'border-stone-900' : 'border-transparent hover:border-stone-300'
                 } transition-colors`}
                 aria-label={`View image ${idx + 1}`}

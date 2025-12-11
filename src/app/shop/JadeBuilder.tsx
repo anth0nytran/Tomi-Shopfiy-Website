@@ -90,7 +90,7 @@ export function JadeBuilder() {
                 
                 <div className="relative h-64 w-full overflow-hidden bg-stone-50">
                    {/* Placeholder for visual - using simple color block or abstract pattern if no specific image fits perfectly yet */}
-                   <div className="absolute inset-0 bg-[#F9F8F6] flex items-center justify-center group-hover:scale-105 transition-transform duration-700">
+                   <div className="absolute inset-0 bg-white flex items-center justify-center group-hover:scale-105 transition-transform duration-700">
                       <Sparkles className="w-16 h-16 text-stone-200 group-hover:text-primary/20 transition-colors" />
                    </div>
                    <Image 
@@ -125,7 +125,7 @@ export function JadeBuilder() {
                 <div className="absolute top-0 left-0 w-full h-2 bg-stone-100 group-hover:bg-primary transition-colors duration-500" />
                 
                 <div className="relative h-64 w-full overflow-hidden bg-stone-50">
-                    <div className="absolute inset-0 bg-[#F9F8F6] flex items-center justify-center group-hover:scale-105 transition-transform duration-700">
+                    <div className="absolute inset-0 bg-white flex items-center justify-center group-hover:scale-105 transition-transform duration-700">
                       <MessageSquare className="w-16 h-16 text-stone-200 group-hover:text-primary/20 transition-colors" />
                    </div>
                    <Image 

@@ -35,7 +35,7 @@ export function ShopHero({ entry }: { entry: CatalogEntry }) {
   const heroImage = SHOP_HEADING_IMAGES[entry.slug] ?? DEFAULT_HERO_IMAGE
 
   return (
-    <section className="relative w-full h-[40vh] md:h-[50vh] min-h-[300px] bg-[#F9F8F6] overflow-hidden">
+    <section className="relative w-full h-[40vh] md:h-[50vh] min-h-[300px] bg-white overflow-hidden">
       <div className="absolute inset-0">
         <Image
           src={heroImage}
@@ -135,7 +135,7 @@ export function ShopToolbar({
   }
 
   return (
-    <section className="py-12 md:py-16 bg-[#F9F8F6]">
+    <section className="py-12 md:py-16 bg-white">
       <div className="container mx-auto px-6 md:px-12">
         <div className="flex flex-col items-center text-center mb-10">
           <h1 className="font-heading text-4xl md:text-6xl text-stone-900 mb-4 leading-tight capitalize">
@@ -199,9 +199,9 @@ export function ProductCard({ product, index }: { product: ShopifyListProduct; i
       className="group block animate-fade-in-up fill-mode-both"
       style={{ animationDelay: `${delay}ms` }}
     >
-      <div className="relative aspect-square overflow-hidden bg-stone-100 mb-3">
+      <div className="relative aspect-square overflow-hidden bg-white mb-3">
         {primaryImage?.url ? (
-          <Image  
+          <Image   
             src={primaryImage.url} 
             alt={primaryImage.altText || product.title} 
             className="object-cover object-center w-full h-full transition-transform duration-700 group-hover:scale-105"
