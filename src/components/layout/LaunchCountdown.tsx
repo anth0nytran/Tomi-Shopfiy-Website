@@ -228,7 +228,7 @@ export function LaunchCountdown() {
                     transition={{ delay: 0.5, duration: 0.8 }}
                     className="font-heading text-4xl md:text-6xl text-rose mb-4"
                   >
-                    welcome to tomi jewelry's website
+                    welcome to tomi jewelry&apos;s website
                   </motion.h2>
                   <motion.p 
                     initial={{ y: 20, opacity: 0 }}
