@@ -86,13 +86,45 @@ export const TomiReveal: React.FC<TomiRevealProps> = ({ height, variant }) => {
   // --- Variant 2: Editorial (The Layout - Enhanced) ---
   const RenderEditorial = () => (
     <>
-      <div className="absolute inset-0 flex flex-col p-6 pl-0 md:p-12 md:pl-0">
+      {/* Mobile: Simplified Parallax */}
+      <div className="absolute inset-0 md:hidden flex items-center justify-center bg-[#EEDCDC] overflow-hidden">
+          <div className="relative w-full h-full flex flex-col items-center justify-center">
+              <span 
+                className="font-heading text-[35vw] text-tomi-text leading-none select-none"
+                style={{ 
+                    transform: `translateY(${getParallaxY(0.12)}px)` 
+                }}
+              >
+                tomi
+              </span>
+
+              {/* Footer Info Overlay */}
+              <div className="absolute bottom-12 w-full px-8 text-center">
+                   <p className="font-heading text-tomi-text text-xl mb-6">
+                        &ldquo;Today&apos;s gem, tomorrow&apos;s gift.&rdquo;
+                    </p>
+                   <div className="flex justify-between items-end text-tomi-text">
+                        <div className="text-left flex flex-col gap-1">
+                             <span className="font-body text-[10px] uppercase tracking-widest opacity-50">Collection</span>
+                             <span className="font-body text-sm">Solid Gold</span>
+                        </div>
+                         <div className="text-right flex flex-col gap-1">
+                             <span className="font-body text-[10px] uppercase tracking-widest opacity-50">Origin</span>
+                             <span className="font-body text-sm">Houston, TX</span>
+                        </div>
+                   </div>
+              </div>
+          </div>
+      </div>
+
+      {/* Desktop: Original Complex Layout */}
+      <div className="hidden md:flex absolute inset-0 flex-col p-12 pl-0">
         {/* Border Container */}
-        <div className="w-full h-full border border-tomi-text/60 border-l-0 relative flex flex-col rounded-[2rem] rounded-l-none md:rounded-r-full overflow-hidden bg-[#EEDCDC]">
+        <div className="w-full h-full border border-tomi-text/60 border-l-0 relative flex flex-col rounded-r-full overflow-hidden bg-[#EEDCDC]">
             
             {/* Header Line & Badge */}
             <div className="w-full h-px bg-tomi-text/40 mt-24 relative">
-                <div className="absolute -top-3 left-6 md:left-24 bg-[#EEDCDC] pr-4 font-body text-[10px] md:text-xs font-bold tracking-[0.2em] text-tomi-text uppercase flex items-center gap-2">
+                <div className="absolute -top-3 left-24 bg-[#EEDCDC] pr-4 font-body text-xs font-bold tracking-[0.2em] text-tomi-text uppercase flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-tomi-text"></span>
                     EST. 2023 / HOUSTON, TX
                 </div>
@@ -101,9 +133,9 @@ export const TomiReveal: React.FC<TomiRevealProps> = ({ height, variant }) => {
             {/* Split Screen Content */}
             <div className="flex-1 w-full flex relative overflow-hidden">
                 {/* Left Side "to" */}
-                <div className="w-[50vw] flex-none flex items-center justify-end pr-2 md:pr-8 overflow-hidden border-r border-tomi-text/40">
+                <div className="w-[50vw] flex-none flex items-center justify-end pr-8 overflow-hidden border-r border-tomi-text/40">
                     <span 
-                        className="font-heading font-medium text-[35vw] md:text-[30vw] leading-none text-tomi-text relative -right-[2vw]"
+                        className="font-heading font-medium text-[30vw] leading-none text-tomi-text relative -right-[2vw]"
                         style={{ 
                           transform: `translateY(${getParallaxY(0.15)}px)`,
                           opacity: isVisible ? 1 : 0.8 
@@ -114,11 +146,11 @@ export const TomiReveal: React.FC<TomiRevealProps> = ({ height, variant }) => {
                 </div>
 
                 {/* Right Side "mi" */}
-                <div className="flex-1 flex items-center justify-start pl-2 md:pl-8 overflow-hidden">
+                <div className="flex-1 flex items-center justify-start pl-8 overflow-hidden">
                     <span 
-                        className="font-heading font-medium text-[35vw] md:text-[30vw] leading-none text-tomi-text relative -left-[2vw]"
+                        className="font-heading font-medium text-[30vw] leading-none text-tomi-text relative -left-[2vw]"
                         style={{ 
-                          transform: `translateY(${getParallaxY(0.15)}px)`, // Different speed for depth
+                          transform: `translateY(${getParallaxY(0.15)}px)`, 
                         }}
                     >
                         mi
@@ -127,9 +159,9 @@ export const TomiReveal: React.FC<TomiRevealProps> = ({ height, variant }) => {
             </div>
 
             {/* Footer Grid Info */}
-            <div className="h-auto md:h-32 border-t border-tomi-text/40 flex flex-col md:flex-row pb-12 md:pb-0">
-                <div className="w-[50vw] flex-none p-6 pl-12 md:pl-[4.5rem] md:border-r border-tomi-text/40 flex items-center">
-                    <p className="font-heading text-tomi-text text-lg md:text-2xl leading-tight max-w-sm">
+            <div className="h-32 border-t border-tomi-text/40 flex flex-row">
+                <div className="w-[50vw] flex-none p-6 pl-[4.5rem] border-r border-tomi-text/40 flex items-center">
+                    <p className="font-heading text-tomi-text text-2xl leading-tight max-w-sm">
                         &ldquo;Today&apos;s gem, tomorrow&apos;s gift.&rdquo;
                     </p>
                 </div>

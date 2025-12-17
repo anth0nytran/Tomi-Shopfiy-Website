@@ -12,12 +12,18 @@ const policySections = [
     ],
   },
   {
-    title: 'Communication',
+    title: 'Communications',
     paragraphs: [
-      'We communicate with people with disabilities in ways that take into account their disabilities.',
-      'We train all employees who communicate with customers on how to interact and communicate with people with various types of disabilities.',
-      'This includes training on how to communicate with customers over the telephone using clear and plain language and adjusting pace of speech, as needed.',
-      'We offer to communicate with customers by email, through our website and other methods if telephone communication is not suitable to their needs.',
+      'We are committed to providing accessible communication for individuals with disabilities. While formal accessibility training is not yet fully implemented, we are working toward developing training and internal practices that support inclusive and effective communication.',
+    ],
+    listTitle: 'This includes:',
+    listItems: [
+      'Training employees who interact with customers on communicating respectfully and effectively with people with disabilities',
+      'Promoting clear and plain-language communication, including appropriate pacing during telephone conversations',
+      'Offering alternative communication methods, such as email or website-based communication, when telephone communication is not suitable',
+    ],
+    closingParagraphs: [
+      'Accessibility is an ongoing effort, and we are committed to continual improvement as we develop and formalize our training program.',
     ],
   },
   {
@@ -51,8 +57,8 @@ const policySections = [
   {
     title: 'Training of Employees',
     paragraphs: [
-      'Tomi Jewelry will provide training to all Associates who work with the public and all parties who are involved in the development and approvals of customer service policies, practices and procedures. Individuals in the following positions, but not limited to are trained:',
-      'Office Associates; Service Centre Office Associates; District Sales Managers; Store Salaried Associates; Store Hourly Associates.',
+      'Tomi Jewelry is developing a training program for all Associates who work with the public and parties involved in customer service policy development. This program is coming soon as we formalize our accessibility practices. Individuals in the following positions will be trained:',
+      'Tomi Leadership, In-Store Management & Sales Associate Staff.',
     ],
     listTitle: 'Training will include the following:',
     listItems: [
@@ -182,8 +188,16 @@ export default function AccessibilityPage() {
                   </ul>
                       </div>
                     )}
+
+                    {section.closingParagraphs && (
+                      <div className="mt-6 space-y-4 text-stone-600 font-light leading-relaxed text-sm md:text-base">
+                        {section.closingParagraphs.map((p: string, i: number) => (
+                          <p key={i}>{p}</p>
+                        ))}
+                      </div>
+                    )}
                   </div>
-            ))}
+                ))}
               </div>
 
               {/* Website Accessibility Section */}

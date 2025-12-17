@@ -27,7 +27,7 @@ const footerColumns: FooterColumn[] = [
     links: [
       { label: 'Contact', href: '/contact' },
       { label: 'FAQ', href: '/contact#faq' },
-      { label: 'Shipping', href: '#' },
+      { label: 'Shipping', href: '/shipping' },
       { label: 'Accessibility', href: '/accessibility' },
     ],
   },

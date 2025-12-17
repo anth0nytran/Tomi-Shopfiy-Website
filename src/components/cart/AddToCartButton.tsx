@@ -5,13 +5,23 @@ type Props = {
   merchandiseId: string
   available?: boolean
   className?: string
+  attributes?: Array<{ key: string; value: string }>
+  canSubmit?: boolean
+  cannotSubmitMessage?: string
 }
 
 type FeedbackState = { type: 'success' | 'error'; message: string } | null
 
 const FEEDBACK_RESET_MS = 4000
 
-export function AddToCartButton({ merchandiseId, available = true, className = '' }: Props) {
+export function AddToCartButton({
+  merchandiseId,
+  available = true,
+  className = '',
+  attributes,
+  canSubmit: canSubmitProp,
+  cannotSubmitMessage,
+}: Props) {
   const [qty, setQty] = useState<number>(1)
   const [submitting, setSubmitting] = useState(false)
   const [feedback, setFeedback] = useState<FeedbackState>(null)
@@ -32,7 +42,15 @@ export function AddToCartButton({ merchandiseId, available = true, className = '
       const res = await fetch('/api/cart/lines', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lines: [{ merchandiseId, quantity: Math.max(1, qty) }] }),
+        body: JSON.stringify({
+          lines: [
+            {
+              merchandiseId,
+              quantity: Math.max(1, qty),
+              attributes: Array.isArray(attributes) && attributes.length ? attributes : undefined,
+            },
+          ],
+        }),
         cache: 'no-store',
       })
       if (!res.ok) {
@@ -49,6 +67,8 @@ export function AddToCartButton({ merchandiseId, available = true, className = '
     }
   }
 
+  const canSubmit = typeof canSubmitProp === 'boolean' ? canSubmitProp : true
+  const disabledFinal = disabled || !canSubmit
   const buttonLabel = !available ? 'Sold out' : submitting ? 'Adding...' : 'Add to cart'
 
   return (
@@ -74,7 +94,7 @@ export function AddToCartButton({ merchandiseId, available = true, className = '
           className="w-2/3 bg-stone-900 text-white text-xs font-bold uppercase tracking-[0.2em] py-5 hover:bg-stone-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed h-[54px]"
           type="button" 
           onClick={add} 
-          disabled={disabled}
+          disabled={disabledFinal}
         >
           {buttonLabel}
         </button>
@@ -88,7 +108,8 @@ export function AddToCartButton({ merchandiseId, available = true, className = '
           role="status"
           aria-live="polite"
         >
-          {feedback?.message || (!available ? 'Temporarily unavailable.' : '')}
+          {feedback?.message ||
+            (!available ? 'Temporarily unavailable.' : !canSubmit ? cannotSubmitMessage || '' : '')}
         </span>
       </div>
     </div>

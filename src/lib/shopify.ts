@@ -108,7 +108,7 @@ export const GET_PRODUCTS = `
               }
             }
           }
-          images(first: 1) {
+          images(first: 2) {
             edges {
               node {
                 url
@@ -162,6 +162,10 @@ export const GET_PRODUCT_BY_HANDLE = gql`
       descriptionHtml
       handle
       productType
+      availableRingSizes: metafield(namespace: "custom", key: "available_ring_sizes") {
+        type
+        value
+      }
       images(first: 6) {
         edges { node { url altText } }
       }
@@ -305,6 +309,10 @@ export const CART_FRAGMENT = gql`
         node {
           id
           quantity
+          attributes {
+            key
+            value
+          }
           cost { subtotalAmount { amount currencyCode } }
           merchandise {
             __typename
@@ -383,7 +391,16 @@ export async function getCart(cartId: string): Promise<ShopifyCart | null> {
   return (res?.cart ?? null) as ShopifyCart | null
 }
 
-export async function addLinesToCart(cartId: string, lines: Array<{ merchandiseId: string; quantity: number }>): Promise<ShopifyCart> {
+export type ShopifyCartLineAttribute = { key: string; value: string }
+
+export async function addLinesToCart(
+  cartId: string,
+  lines: Array<{
+    merchandiseId: string
+    quantity: number
+    attributes?: ShopifyCartLineAttribute[]
+  }>,
+): Promise<ShopifyCart> {
   const client = getStorefrontClient()
   const res = await client.request(CART_LINES_ADD, { cartId, lines }) as any
   const cart = res?.cartLinesAdd?.cart

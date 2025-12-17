@@ -22,10 +22,13 @@ const SHOP_HEADING_IMAGES: Partial<Record<CatalogSlug, string>> = {
   rings: '/assets/shop headings/rings.png',
   necklaces: '/assets/shop headings/necklaces.png',
   bracelets: '/assets/shop headings/bracelets.png',
+  anklets: '/assets/headers/ANKLETS.jpg',
   earrings: '/assets/shop headings/earrings.png',
   flutter: '/assets/shop headings/flutter.png',
   refined: '/assets/shop headings/refined.png',
   embellish: '/assets/shop headings/embellish.png',
+  moonlight: '/assets/headers/MOONLIGHT.jpg',
+  'jade-jewelry': '/assets/headers/JADE%20JEWELRY.jpg',
   'one-of-a-kind-vintage': '/assets/shop headings/one of a kind.png',
 }
 
@@ -66,6 +69,38 @@ export function ShopTabs({ active, onTabSelect }: { active: CatalogSlug; onTabSe
     }
   }, [active])
 
+  // Guard: during fast navigation, the fixed header (z-index: 1810) can briefly overlap the tabs,
+  // causing clicks to land on the logo (home). Capture clicks and resolve the tab under the pointer.
+  useEffect(() => {
+    if (!onTabSelect) return
+    if (typeof document === 'undefined') return
+
+    const handler = (event: MouseEvent) => {
+      if (event.defaultPrevented) return
+      if (event.button !== 0) return
+
+      const elements = document.elementsFromPoint(event.clientX, event.clientY)
+      const tabAnchor = elements
+        .map((el) => (el as HTMLElement | null)?.closest?.('a[data-shop-tab="true"]') as HTMLAnchorElement | null)
+        .find(Boolean)
+
+      if (!tabAnchor) return
+
+      // Always force the tab click behavior (and prevent underlying elements like the logo from receiving it).
+      event.preventDefault()
+      event.stopPropagation()
+
+      const slug = tabAnchor.dataset.shopTabSlug as CatalogSlug | undefined
+      const href = tabAnchor.getAttribute('href') ?? tabAnchor.dataset.shopTabHref
+      if (!slug || !href) return
+
+      onTabSelect(slug, href)
+    }
+
+    document.addEventListener('click', handler, true)
+    return () => document.removeEventListener('click', handler, true)
+  }, [onTabSelect])
+
   return (
     <nav className="sticky top-[var(--header-offset,60px)] z-30 bg-white border-b border-stone-100 w-full">
       <div className="container mx-auto px-6">
@@ -80,6 +115,7 @@ export function ShopTabs({ active, onTabSelect }: { active: CatalogSlug; onTabSe
           const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
             if (onTabSelect) {
               event.preventDefault()
+              event.stopPropagation()
               onTabSelect(entry.slug, href)
             }
           }
@@ -88,6 +124,9 @@ export function ShopTabs({ active, onTabSelect }: { active: CatalogSlug; onTabSe
               key={entry.slug}
               href={href}
               onClick={handleClick}
+              data-shop-tab="true"
+              data-shop-tab-slug={entry.slug}
+              data-shop-tab-href={href}
               data-active={isActive ? 'true' : 'false'}
                 className={`whitespace-nowrap text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 relative pb-1 ${
                   isActive ? 'text-stone-900' : 'text-stone-400 hover:text-stone-600'
@@ -183,6 +222,7 @@ export function ShopToolbar({
 
 export function ProductCard({ product, index }: { product: ShopifyListProduct; index: number }) {
   const primaryImage = product.images?.edges?.[0]?.node
+  const secondaryImage = product.images?.edges?.[1]?.node
   const primaryVariant = product.variants?.edges?.[0]?.node
   const priceAmount = primaryVariant?.price?.amount
   const priceCurrency = primaryVariant?.price?.currencyCode
@@ -201,14 +241,28 @@ export function ProductCard({ product, index }: { product: ShopifyListProduct; i
     >
       <div className="relative aspect-square overflow-hidden bg-white mb-3">
         {primaryImage?.url ? (
-          <Image   
-            src={primaryImage.url} 
-            alt={primaryImage.altText || product.title} 
-            className="object-cover object-center w-full h-full transition-transform duration-700 group-hover:scale-105"
-            width={800} 
-            height={800}
-            sizes="(max-width: 768px) 50vw, 25vw"
-          />
+          <>
+            <Image
+              src={primaryImage.url}
+              alt={primaryImage.altText || product.title}
+              fill
+              className={`object-cover object-center transition-all duration-700 ease-out ${
+                secondaryImage?.url ? 'opacity-100 group-hover:opacity-0' : 'opacity-100'
+              } group-hover:scale-105`}
+              sizes="(max-width: 768px) 50vw, 25vw"
+              quality={90}
+            />
+            {secondaryImage?.url ? (
+              <Image
+                src={secondaryImage.url}
+                alt={secondaryImage.altText || product.title}
+                fill
+                className="object-cover object-center transition-all duration-700 ease-out opacity-0 group-hover:opacity-100 group-hover:scale-105"
+                sizes="(max-width: 768px) 50vw, 25vw"
+                quality={90}
+              />
+            ) : null}
+          </>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-stone-300">
             <span className="text-xs uppercase tracking-widest">No Image</span>

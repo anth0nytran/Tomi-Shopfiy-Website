@@ -559,6 +559,18 @@ async function renderCart(options?: RenderCartOptions) {
     const p = n.merchandise?.product
     const img = p?.images?.edges?.[0]?.node
     const price = n.cost?.subtotalAmount
+    const attrs = Array.isArray(n.attributes) ? n.attributes : []
+    const attrsHtml = attrs.length
+      ? `<div class="cart-item-sub">${attrs
+          .map((a: any) => {
+            const k = typeof a?.key === 'string' ? a.key : ''
+            const v = typeof a?.value === 'string' ? a.value : ''
+            if (!k || !v) return ''
+            return `${k}: ${v}`
+          })
+          .filter(Boolean)
+          .join(' • ')}</div>`
+      : ''
     return `
       <div class="cart-item" data-line-id="${n.id}">
         <a class="cart-item-link" href="/shop/${p?.handle || ''}" aria-label="View ${p?.title || 'product'}">
@@ -566,6 +578,7 @@ async function renderCart(options?: RenderCartOptions) {
           <div class="cart-item-info">
             <div class="cart-item-title">${p?.title || ''}</div>
             <div class="cart-item-sub">Qty ${n.quantity}</div>
+            ${attrsHtml}
           </div>
         </a>
         <div class="cart-item-price">${price ? formatMoney(parseFloat(price.amount), price.currencyCode) : ''}</div>

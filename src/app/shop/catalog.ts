@@ -10,6 +10,7 @@ export type CatalogSlug =
   | 'rings'
   | 'necklaces'
   | 'bracelets'
+  | 'anklets'
   | 'earrings'
   | 'studs'
   | 'hoops'
@@ -113,6 +114,16 @@ export const CATALOG_ENTRIES: CatalogEntry[] = [
     navLabel: 'Bracelets',
     navGroup: 'categories',
     filter: productType('Bracelet'),
+    tab: true,
+  },
+  {
+    slug: 'anklets',
+    title: 'ANKLETS',
+    subtitle: 'Effortless gold accents for every step',
+    heroClass: 'shop-hero--all',
+    navLabel: 'Anklets',
+    navGroup: 'categories',
+    filter: productType('Anklet'),
     tab: true,
   },
   {

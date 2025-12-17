@@ -364,27 +364,27 @@ export function JadeBuilder() {
 
               <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
                 
-                {/* Name Field */}
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Name</label>
-                  <input 
-                    type="text" 
-                    className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
-                    placeholder="Your Name"
-                  />
+                {/* Name Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">First Name</label>
+                    <input 
+                      type="text" 
+                      className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
+                      placeholder="First Name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Last Name</label>
+                    <input 
+                      type="text" 
+                      className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
+                      placeholder="Last Name"
+                    />
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {/* Email Field */}
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Email</label>
-                    <input 
-                      type="email" 
-                      className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
-                      placeholder="email@example.com"
-                    />
-                  </div>
-
                   {/* Phone Field */}
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Phone</label>
@@ -394,42 +394,100 @@ export function JadeBuilder() {
                       placeholder="(555) 000-0000"
                     />
                   </div>
+
+                  {/* Date Field */}
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Date</label>
+                    <input 
+                      type="date" 
+                      className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300 text-stone-600"
+                    />
+                  </div>
                 </div>
 
-                {/* Preference: Necklace or Bracelet */}
-                <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Are you interested in a custom jade:</label>
-                    <div className="flex gap-4 pt-2">
-                        {['Necklace', 'Bracelet'].map(option => (
-                            <label key={option} className="flex items-center gap-2 cursor-pointer group">
-                                <input type="radio" name="jewelry_interest" className="w-4 h-4 text-primary focus:ring-primary border-stone-300" />
-                                <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">{option}</span>
-                            </label>
-                        ))}
+                {/* Chain Preference */}
+                <div className="space-y-6 pt-4 border-t border-stone-100">
+                    <div>
+                        <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Chain Selection</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Chain Style */}
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Style</label>
+                                <select className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors cursor-pointer appearance-none rounded-none">
+                                    <option value="">Select Chain Style</option>
+                                    <option value="14k Wheat">14k Wheat</option>
+                                    <option value="14k Box">14k Box</option>
+                                    <option value="14k Cable">14k Cable</option>
+                                    <option value="14k Sparkle">14k Sparkle</option>
+                                    <option value="14k Dainty Cable">14k Dainty Cable</option>
+                                    <option value="9k Sparkle">9k Sparkle</option>
+                                </select>
+                            </div>
+                            
+                            {/* Chain Color */}
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Color</label>
+                                <div className="flex gap-4 pt-3">
+                                    {['Yellow Gold', 'White Gold'].map(option => (
+                                        <label key={option} className="flex items-center gap-2 cursor-pointer group">
+                                            <input type="radio" name="chain_color" className="w-4 h-4 text-primary focus:ring-primary border-stone-300 accent-primary" />
+                                            <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">{option}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Bail Preference */}
+                    <div>
+                        <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Bail Selection</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Bail Shape */}
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Shape</label>
+                                <div className="flex flex-wrap gap-4 pt-3">
+                                    {['Round', 'Oval', 'Mini Oval'].map(option => (
+                                        <label key={option} className="flex items-center gap-2 cursor-pointer group">
+                                            <input type="radio" name="bail_shape" className="w-4 h-4 text-primary focus:ring-primary border-stone-300 accent-primary" />
+                                            <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">{option}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Bail Color */}
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Color</label>
+                                <div className="flex gap-4 pt-3">
+                                    {['Yellow Gold', 'White Gold'].map(option => (
+                                        <label key={option} className="flex items-center gap-2 cursor-pointer group">
+                                            <input type="radio" name="bail_color" className="w-4 h-4 text-primary focus:ring-primary border-stone-300 accent-primary" />
+                                            <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">{option}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                {/* Chain Sourcing */}
-                <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Chain Preference:</label>
-                    <div className="flex flex-col gap-2 pt-1">
-                        <label className="flex items-center gap-2 cursor-pointer group">
-                            <input type="radio" name="chain_sourcing" className="w-4 h-4 text-primary focus:ring-primary border-stone-300" />
-                            <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">Purchase one of our chains</span>
-                        </label>
-                        <label className="flex items-center gap-2 cursor-pointer group">
-                            <input type="radio" name="chain_sourcing" className="w-4 h-4 text-primary focus:ring-primary border-stone-300" />
-                            <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">Send/Bring your own to our storefront</span>
-                        </label>
-                    </div>
+                {/* BYO Chain */}
+                <div className="space-y-2 pt-4 border-t border-stone-100">
+                   <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">BYO Chain</label>
+                   <input 
+                     type="text" 
+                     className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
+                     placeholder="Type of chain & color"
+                   />
                 </div>
 
-                {/* Text Area */}
+                {/* Notes */}
                 <div className="space-y-2">
-                   <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Notes or Specifications</label>
+                   <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Notes</label>
                    <textarea 
                      className="w-full min-h-[150px] bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors resize-none placeholder:text-stone-300 leading-relaxed"
-                     placeholder="Jade color preference, bail addition, type of chain, preference for yellow vs white gold, etc."
+                     placeholder="Be as specific as possible..."
                    />
                 </div>
 

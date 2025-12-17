@@ -8,6 +8,26 @@ import { AddToCartButton } from '@/components/cart/AddToCartButton'
 import { CATALOG_BY_SLUG } from '../catalog'
 import { ChevronLeft } from 'lucide-react'
 import { ProductGallery } from '../ProductGallery'
+import { RingPurchaseCard } from './RingPurchaseCard'
+
+function parseRingSizesFromMetafield(value: unknown): string[] {
+  if (typeof value !== 'string') return []
+  const trimmed = value.trim()
+  if (!trimmed) return []
+  // Shopify list metafields come back as JSON in a string, but we also accept comma-separated strings.
+  if (trimmed.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(trimmed)
+      if (Array.isArray(parsed)) return parsed.map((v) => `${v}`.trim()).filter(Boolean)
+    } catch {
+      // fall through
+    }
+  }
+  return trimmed
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+}
 
 export default async function ProductPage({ params }: { params: { handle: string } }) {
   const product = await fetchProductByHandle(params.handle)
@@ -38,6 +58,11 @@ export default async function ProductPage({ params }: { params: { handle: string
   const descriptionHtml = product.descriptionHtml || product.description || ''
   const priceLabel = price ? new Intl.NumberFormat(undefined, { style: 'currency', currency: price.currencyCode }).format(parseFloat(price.amount)) : null
   const stockLabel = firstVariant?.availableForSale ? 'In stock' : 'Out of stock'
+  const isRing =
+    `${product.productType || ''}`.toLowerCase().includes('ring') ||
+    collections.some((c: any) => `${c?.handle || ''}`.toLowerCase() === 'rings' || `${c?.title || ''}`.toLowerCase().includes('ring'))
+
+  const ringSizes = parseRingSizesFromMetafield(product?.availableRingSizes?.value)
   
   const metaEntries = [
     product.productType ? { label: 'Category', value: product.productType } : null,
@@ -101,7 +126,15 @@ export default async function ProductPage({ params }: { params: { handle: string
               </div>
             </div>
 
-            <AddToCartButton merchandiseId={firstVariant?.id || ''} available={!!firstVariant?.availableForSale} />
+            {isRing ? (
+              <RingPurchaseCard
+                merchandiseId={firstVariant?.id || ''}
+                available={!!firstVariant?.availableForSale}
+                ringSizes={ringSizes}
+              />
+            ) : (
+              <AddToCartButton merchandiseId={firstVariant?.id || ''} available={!!firstVariant?.availableForSale} />
+            )}
           </div>
 
              {/* Details Accordion / Sections */}

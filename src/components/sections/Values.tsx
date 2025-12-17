@@ -23,7 +23,7 @@ export function Values() {
             <div className="mb-8 relative w-14 h-14 flex items-center justify-center opacity-90 transition-transform duration-500 group-hover:scale-110">
               <Image src="/assets/gem icon background removed.png" alt="Gem icon" width={56} height={56} className="object-contain" />
             </div>
-            <h4 className="text-xs font-bold uppercase tracking-[0.2em] mb-3 text-stone-900">14k Solid Gold</h4>
+            <h4 className="text-xs font-bold uppercase tracking-[0.2em] mb-3 text-stone-900">Solid Gold</h4>
             <p className="text-stone-500 leading-relaxed font-light text-sm md:text-base max-w-[260px]">
               Real gold that never oxidizes or discolors. Wear it in the shower, sleep in it, live in it.
             </p>

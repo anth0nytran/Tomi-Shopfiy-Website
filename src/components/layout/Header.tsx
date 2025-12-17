@@ -112,7 +112,7 @@ export async function Header() {
                 alt="Tomi logo"
                 width={200}
                 height={250}
-                sizes="(max-width: 768px) 120px, 180px"
+                sizes="(max-width: 1280px) 120px, 180px"
                 className="logo-text logo-text--dark"
                 priority
               />
@@ -122,7 +122,7 @@ export async function Header() {
                 aria-hidden="true"
                 width={200}
                 height={250}
-                sizes="(max-width: 768px) 120px, 180px"
+                sizes="(max-width: 1280px) 120px, 180px"
                 className="logo-text logo-text--light"
                 priority
               />

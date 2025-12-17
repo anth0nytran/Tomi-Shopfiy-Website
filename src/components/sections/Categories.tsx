@@ -12,7 +12,7 @@ const CATEGORY_LINKS = [
 export function Categories() {
   return (
     <section id="categories" className="w-full bg-primary">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full border-t border-white">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 w-full border-t border-white">
           {CATEGORY_LINKS.map((category, index) => (
             <Link
               key={category.label}
@@ -23,13 +23,13 @@ export function Categories() {
           >
             {/* Image Area - Dark Green Background */}
             <div className="flex-1 relative bg-primary w-full overflow-hidden flex items-center justify-center">
-              <div className={`relative w-full h-full transition-transform duration-700 ease-out group-hover:scale-105 ${category.label === 'NECKLACES' ? '-mt-12 scale-110' : 'p-12'}`}>
+              <div className={`relative w-full h-full transition-transform duration-700 ease-out group-hover:scale-105 ${category.label === 'NECKLACES' ? '-mt-12 scale-110' : 'p-6 xl:p-12'}`}>
                 <Image 
                   src={category.image} 
                   alt={category.alt} 
                   fill
                   className={`object-contain ${category.label === 'NECKLACES' ? 'object-top' : 'object-center'}`}
-                  sizes="(max-width: 768px) 100vw, 25vw"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
                 />
               </div>
             </div>

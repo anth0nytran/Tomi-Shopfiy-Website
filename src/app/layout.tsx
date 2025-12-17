@@ -36,6 +36,7 @@ export const metadata: Metadata = {
 }
 
 import { TomiReveal } from '@/components/layout/TomiReveal'
+import { LaunchCountdown } from '@/components/layout/LaunchCountdown'
 
 export default function RootLayout({
   children,
@@ -57,6 +58,7 @@ export default function RootLayout({
       </head>
       <body className={`${neueHaasGrotesk.variable} ${recklessNeue.variable} font-body text-ink antialiased`}>
         <Providers>
+          <LaunchCountdown />
           <ClientInit />
           <div className="relative z-20 bg-white mb-[100vh] rounded-b-[3rem] md:rounded-b-[5rem] shadow-2xl flex flex-col min-h-screen">
             {children}
