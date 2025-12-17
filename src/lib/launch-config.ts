@@ -8,7 +8,7 @@ export const launchConfig = {
   // Test mode configuration for development
   testMode: {
     enabled: true, // Set to true to test the unlocking behavior
-    durationInSeconds: 60, // How long the countdown lasts in test mode
+    durationInSeconds: 10, // How long the countdown lasts in test mode
   }
 }
 

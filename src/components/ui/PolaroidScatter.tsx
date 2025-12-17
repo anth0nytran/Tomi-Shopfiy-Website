@@ -35,7 +35,7 @@ const Polaroid: React.FC<PolaroidProps> = ({ src, caption, angle = 0, x = 0, y =
         stiffness: 100, 
         delay: delay 
       }}
-      className="absolute flex flex-col items-center bg-white p-3 pb-8 shadow-xl transform-gpu cursor-grab active:cursor-grabbing w-[180px] md:w-[220px]"
+      className="absolute flex flex-col items-center bg-white p-2 pb-6 md:p-3 md:pb-8 shadow-xl transform-gpu cursor-grab active:cursor-grabbing w-[120px] md:w-[220px]"
       style={{
         boxShadow: "0 10px 30px -5px rgba(0,0,0,0.3)"
       }}
@@ -71,21 +71,37 @@ export const PolaroidScatter = () => {
     { src: "/assets/social_pic2.png", caption: "golden hour", angle: 3, x: 350, y: -180 },
     { src: "/assets/social_pic3.png", caption: "details", angle: -6, x: -380, y: 150 },
     { src: "/assets/product_ph1.png", caption: "new collection", angle: 5, x: 380, y: 150 },
-    { src: "/assets/1kind.jpg", caption: "one of a kind", angle: -2, x: 0, y: 280 }, // Bottom center
   ]
 
+  // Use a different ref for mobile to allow overflow
+  // or simply conditionally pass ref.
+  // For simplicity, we'll pass the ref but change the container style.
+  
   return (
-    <div ref={containerRef} className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none overflow-hidden">
+    <div ref={containerRef} className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none md:overflow-hidden">
        {/* Container specifically for interactive elements that re-enables pointer events */}
        <div className="relative w-full h-full max-w-6xl mx-auto">
           {images.map((img, i) => (
             <div key={i} className="absolute inset-0 flex items-center justify-center pointer-events-none">
                <div className="pointer-events-auto">
-                 <Polaroid 
-                   {...img} 
-                   containerRef={containerRef}
-                   delay={1.5 + (i * 0.2)} // Stagger in after initial load
-                 />
+                 {/* Mobile: Reduce scatter distance */}
+                 <div className="md:hidden">
+                    <Polaroid 
+                      {...img}
+                      x={img.x * 0.4} // Scale down position for mobile
+                      y={img.y * 0.5}
+                      containerRef={containerRef}
+                      delay={1.5 + (i * 0.2)}
+                    />
+                 </div>
+                 {/* Desktop: Full size */}
+                 <div className="hidden md:block">
+                    <Polaroid 
+                      {...img} 
+                      containerRef={containerRef}
+                      delay={1.5 + (i * 0.2)} 
+                    />
+                 </div>
                </div>
             </div>
           ))}

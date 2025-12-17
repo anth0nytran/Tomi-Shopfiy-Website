@@ -18,7 +18,7 @@ export function LaunchCountdown() {
   })
   const [isLocked, setIsLocked] = useState(launchConfig.isEnabled)
   const [mounted, setMounted] = useState(false)
-  const [viewState, setViewState] = useState<'countdown' | 'final' | 'present' | 'unlocked'>('countdown')
+  const [viewState, setViewState] = useState<'countdown' | 'final' | 'present' | 'revealing' | 'unlocked'>('countdown')
 
   // Mouse tracking for spotlight
   const mouseX = useMotionValue(0)
@@ -30,6 +30,21 @@ export function LaunchCountdown() {
     mouseX.set(clientX - left)
     mouseY.set(clientY - top)
   }
+
+  // Effect to lock body scroll when locked
+  useEffect(() => {
+    if (isLocked) {
+      document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+      document.documentElement.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+      document.documentElement.style.overflow = ''
+    }
+  }, [isLocked])
 
   useEffect(() => {
     setMounted(true)
@@ -68,13 +83,16 @@ export function LaunchCountdown() {
 
       if (distance < 0) {
         clearInterval(interval)
-        if (viewState !== 'present' && viewState !== 'unlocked') {
+        if (viewState !== 'present' && viewState !== 'revealing' && viewState !== 'unlocked') {
            setViewState('present')
         }
       } else {
-        // State transitions
+        // State transitions - Use exact 5 to avoid jumping
         if (totalSeconds <= 5 && totalSeconds > 0 && viewState !== 'final') {
-          setViewState('final')
+           // Only transition if we are coming from 'countdown'
+           if (viewState === 'countdown') {
+              setViewState('final')
+           }
         }
 
         setTimeLeft({
@@ -94,17 +112,30 @@ export function LaunchCountdown() {
   useEffect(() => {
     if (viewState === 'present') {
       const timer = setTimeout(() => {
-        setIsLocked(false) // Trigger exit animation
-        // We do NOT set 'unlocked' here to allow animation to play
+        setViewState('revealing') // Transition to 'revealing' to hide text
       }, 5000) 
       return () => clearTimeout(timer)
     }
+
+    if (viewState === 'revealing') {
+       // Wait for text to fade out (e.g. 1s) then unlock to trigger curtains
+       const timer = setTimeout(() => {
+          setIsLocked(false)
+       }, 1000)
+       return () => clearTimeout(timer)
+    }
   }, [viewState])
 
-  if (!mounted) return null
-  // If we are unlocked and isLocked is false (meaning exit complete), we can return null to unmount fully
-  // But AnimatePresence handles the unmounting of children.
-  // We just need to make sure we don't render the overlay if we are fully unlocked and done.
+  // Don't render until mounted to match server HTML as best as possible, 
+  // but to prevent flash, layout should handle initial state or we return a simple block.
+  // We'll return a basic block if not mounted but enabledConfig is true
+  if (!mounted) {
+    // Return a simple blocking div to prevent content flash during hydration
+    return (
+       <div className="fixed inset-0 z-[9999] bg-[#1a231b]" />
+    )
+  }
+  
   if (viewState === 'unlocked') return null
 
   const textReveal = {
@@ -118,26 +149,27 @@ export function LaunchCountdown() {
         duration: 1.2,
         ease: [0.215, 0.61, 0.355, 1] 
       }
-    })
+    }),
+    exit: { opacity: 0, scale: 0.95, transition: { duration: 0.8, ease: "easeInOut" } }
   }
 
   return (
     <AnimatePresence onExitComplete={() => setViewState('unlocked')}>
       {isLocked && (
         <motion.div 
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden"
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden bg-transparent" // Transparent bg to allow see-through
           onMouseMove={handleMouseMove}
         >
           {/* --- CURTAINS (The Reveal) --- */}
           {/* Top Curtain */}
           <motion.div 
-            className="absolute top-0 left-0 w-full h-1/2 bg-[#1a231b] z-0"
+            className="absolute top-0 left-0 w-full h-1/2 bg-[#1a231b]/80 backdrop-blur-md z-0 border-b border-white/10"
             initial={{ y: 0 }}
             exit={{ y: "-100%", transition: { duration: 1.5, ease: [0.77, 0, 0.175, 1], delay: 0.2 } }}
           />
           {/* Bottom Curtain */}
           <motion.div 
-            className="absolute bottom-0 left-0 w-full h-1/2 bg-[#1a231b] z-0"
+            className="absolute bottom-0 left-0 w-full h-1/2 bg-[#1a231b]/80 backdrop-blur-md z-0 border-t border-white/10"
             initial={{ y: 0 }}
             exit={{ y: "100%", transition: { duration: 1.5, ease: [0.77, 0, 0.175, 1], delay: 0.2 } }}
           />
@@ -147,8 +179,8 @@ export function LaunchCountdown() {
              className="absolute inset-0 z-1 pointer-events-none"
              exit={{ opacity: 0, transition: { duration: 0.5 } }}
           >
-             {/* Base Gradient */}
-             <div className="absolute inset-0 bg-gradient-to-b from-[#38473b] via-[#2a352c] to-[#1a231b] opacity-90" />
+             {/* Base Gradient - Significantly reduced opacity to show site behind */}
+             <div className="absolute inset-0 bg-gradient-to-b from-[#38473b]/80 via-[#2a352c]/80 to-[#1a231b]/80 backdrop-blur-sm" />
              
              {/* Noise Texture */}
              <div className="absolute inset-0 opacity-[0.07] mix-blend-overlay" 
@@ -166,10 +198,10 @@ export function LaunchCountdown() {
              {/* Starfield */}
              <Starfield count={200} speed={0.03} starColor="#ead6d6" />
 
-             {/* Liquid Glass */}
+             {/* Liquid Glass - Enhanced for tease effect */}
              <GlassFilter />
              <div 
-               className="absolute inset-0 opacity-30 mix-blend-soft-light"
+               className="absolute inset-0 opacity-40 mix-blend-soft-light backdrop-blur-[2px]"
                style={{ filter: "url(#glass-distortion)" }}
              />
 
@@ -240,12 +272,12 @@ export function LaunchCountdown() {
                      />
                   </motion.div>
 
-                  <h1 className="font-heading text-lg md:text-xl tracking-[0.3em] mb-12 text-rose/90 uppercase text-center font-light">
+                  <h1 className="font-heading text-base md:text-xl tracking-[0.2em] md:tracking-[0.3em] mb-8 md:mb-12 text-rose/90 uppercase text-center font-light px-4">
                     Website Access Opening In
                   </h1>
 
                   {/* Minimalist Timer */}
-                  <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 font-body">
+                  <div className="flex flex-wrap justify-center items-center gap-4 md:gap-16 font-body w-full max-w-[90vw]">
                     <TimeUnit value={timeLeft.days} label="Days" />
                     <div className="hidden md:block w-px h-12 bg-white/20" />
                     <TimeUnit value={timeLeft.hours} label="Hours" />
@@ -285,12 +317,14 @@ export function LaunchCountdown() {
               )}
 
               {/* PHASE 3: PRESENTATION - "GRAND REVEAL" */}
+              {/* Only show text if NOT revealing or unlocked. 
+                  When we go to 'revealing', this block will exit due to AnimatePresence. */}
               {viewState === 'present' && (
                 <motion.div 
                   key="present"
                   initial="hidden"
                   animate="visible"
-                  exit={{ opacity: 0, scale: 1.05, transition: { duration: 1 } }}
+                  exit="exit"
                   className="flex flex-col items-center justify-center text-center w-full"
                 >
                   <div className="overflow-hidden p-2">
@@ -337,12 +371,12 @@ function TimeUnit({ value, label }: { value: number; label: string }) {
     <motion.div 
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="flex flex-col items-center min-w-[80px] md:min-w-[100px]"
+      className="flex flex-col items-center min-w-[60px] md:min-w-[100px]"
     >
-      <span className="text-5xl md:text-7xl font-light tabular-nums leading-none text-white drop-shadow-lg font-heading">
+      <span className="text-4xl md:text-7xl font-light tabular-nums leading-none text-white drop-shadow-lg font-heading">
         {value.toString().padStart(2, '0')}
       </span>
-      <span className="text-[10px] md:text-xs uppercase tracking-[0.2em] mt-4 text-rose/70 font-medium">
+      <span className="text-[8px] md:text-xs uppercase tracking-[0.2em] mt-2 md:mt-4 text-rose/70 font-medium">
         {label}
       </span>
     </motion.div>
