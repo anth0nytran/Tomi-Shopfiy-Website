@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { launchConfig } from '@/lib/launch-config'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GlassFilter } from '../ui/liquid-glass'
+import { Starfield } from '../ui/Starfield'
 
 export function LaunchCountdown() {
   const [timeLeft, setTimeLeft] = useState({
@@ -36,16 +37,6 @@ export function LaunchCountdown() {
     // Set target date once
     const getTargetDate = () => {
        if (launchConfig.testMode.enabled) {
-          // If we already have a stored target in session storage, use it to prevent reset on refresh (optional, but good for testing flow)
-          // For now, to fix the specific issue of "resetting", we need to ensure the hook logic is sound.
-          // The issue is likely that when viewState changes, the effect re-runs, and because of how we calculated targetDate inside the effect without a ref,
-          // it might be re-evaluating 'now + 10s'.
-          
-          // Actually, let's just make sure we don't reset the target date on re-renders of this effect.
-          // We can use a ref or just rely on the fact that we need a stable target.
-          
-          // FIX: For the user's specific bug "starts over 10 9 8...", it implies the effect is re-running and creating a NEW target date.
-          // We need to persist the target date across re-renders of the component.
           const stored = sessionStorage.getItem('tomi_launch_target')
           if (stored && Number(stored) > new Date().getTime()) {
              return Number(stored)
@@ -85,7 +76,7 @@ export function LaunchCountdown() {
     }, 100)
 
     return () => clearInterval(interval)
-  }, [viewState]) // Added viewState dependency to ensure we don't miss transitions
+  }, [viewState])
 
   // Handle the presentation sequence
   useEffect(() => {
@@ -93,98 +84,109 @@ export function LaunchCountdown() {
       const timer = setTimeout(() => {
         setIsLocked(false)
         setViewState('unlocked')
-      }, 4000) // Show "Tomi Presents" for 4 seconds
+      }, 5000) // Extended for reading time
       return () => clearTimeout(timer)
     }
   }, [viewState])
 
   if (!mounted || viewState === 'unlocked') return null
 
+  // Animation Variants
+  const containerExit = {
+    opacity: 0,
+    y: "-100%", // Move up instead of clip-path for a smoother curtain effect
+    transition: { 
+      duration: 1.5, 
+      ease: [0.77, 0, 0.175, 1], // Quart easing
+      delay: 0.5 
+    }
+  }
+
+  const textReveal = {
+    hidden: { y: 100, opacity: 0, scale: 0.9 },
+    visible: (i: number) => ({
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      transition: {
+        delay: i * 0.3, // Slower stagger
+        duration: 1.2,
+        ease: [0.215, 0.61, 0.355, 1] // Cubic bezier
+      }
+    })
+  }
+
   return (
     <AnimatePresence>
       {isLocked && (
         <motion.div 
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden bg-primary"
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden bg-[#1a231b]"
           initial={{ opacity: 1 }}
-          exit={{ 
-            opacity: 0, 
-            transition: { duration: 1.5, ease: "easeInOut" },
-            // Optional: Add a scale out or curtain effect here
-            // clipPath: "circle(0% at 50% 50%)" 
-          }}
+          exit={containerExit}
         >
-          {/* Liquid Glass Background */}
-          <GlassFilter />
-          <div className="absolute inset-0 z-0">
-             {/* Base Gradient */}
-             <div className="absolute inset-0 bg-gradient-to-br from-primary via-[#2a352c] to-black opacity-80" />
-             
-             {/* Animated Liquid Layer */}
-             <div 
-               className="absolute inset-0 opacity-40"
-               style={{
-                 filter: "url(#glass-distortion)",
-                 background: "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1), transparent 70%)",
-                 transform: "scale(1.2)"
-               }}
-             />
-             
-             {/* Moving Orbs for Distortion Interaction */}
-             <motion.div 
-               animate={{ 
-                 x: [0, 100, -100, 0], 
-                 y: [0, -100, 100, 0],
-                 scale: [1, 1.2, 0.8, 1]
-               }}
-               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-               className="absolute top-1/4 left-1/4 w-96 h-96 bg-rose/10 rounded-full blur-[100px]"
-             />
-             <motion.div 
-               animate={{ 
-                 x: [0, -150, 150, 0], 
-                 y: [0, 150, -150, 0],
-                 scale: [1, 1.5, 0.9, 1]
-               }}
-               transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-               className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[#4a5e4d]/30 rounded-full blur-[120px]"
-             />
-          </div>
+          {/* --- BACKGROUND LAYERS --- */}
+          
+          {/* 1. Deep Base Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#1a231b] via-[#0f1410] to-black" />
+          
+          {/* 2. Starfield Animation */}
+          <Starfield count={1500} speed={0.2} starColor="#e8bfc6" />
 
-          {/* Content Container */}
-          <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
+          {/* 3. Liquid Glass Distortion Layer */}
+          <GlassFilter />
+          <div 
+            className="absolute inset-0 opacity-30 mix-blend-overlay pointer-events-none"
+            style={{ filter: "url(#glass-distortion)" }}
+          />
+
+          {/* 4. Ambient Glows */}
+          <motion.div 
+             animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.2, 1] }}
+             transition={{ duration: 8, repeat: Infinity }}
+             className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-rose/10 rounded-full blur-[120px]"
+          />
+          <motion.div 
+             animate={{ opacity: [0.2, 0.5, 0.2], scale: [1.2, 1, 1.2] }}
+             transition={{ duration: 10, repeat: Infinity, delay: 1 }}
+             className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[150px]"
+          />
+
+
+          {/* --- CONTENT LAYERS --- */}
+          <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4 perspective-[1000px]">
             
             <AnimatePresence mode="wait">
               {/* PHASE 1: STANDARD COUNTDOWN */}
               {viewState === 'countdown' && (
                 <motion.div 
                   key="countdown"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
-                  transition={{ duration: 0.8 }}
-                  className="flex flex-col items-center space-y-12 p-8 text-center"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, z: -500, scale: 2, filter: "blur(10px)" }} // "Warp speed" exit
+                  transition={{ duration: 1.5, ease: "easeInOut" }}
+                  className="flex flex-col items-center w-full max-w-4xl"
                 >
-                  {/* Logo */}
+                  {/* Floating Logo */}
                   <motion.div 
-                    className="relative w-48 h-20 mb-8"
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    className="relative w-32 h-32 md:w-40 md:h-40 mb-12"
+                    animate={{ y: [0, -15, 0] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                   >
                      <Image 
                        src="/assets/white_tomi_logo.png" 
                        alt="Tomi Jewelry" 
                        fill
-                       className="object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+                       className="object-contain drop-shadow-[0_0_25px_rgba(232,191,198,0.4)]"
                        priority
                      />
                   </motion.div>
 
-                  <h1 className="font-heading text-3xl md:text-5xl tracking-wide mb-4 text-rose drop-shadow-lg">
+                  <h1 className="font-heading text-2xl md:text-3xl tracking-[0.2em] mb-12 text-rose/80 uppercase text-center">
                     website access granted in..
                   </h1>
 
-                  {/* Timer */}
-                  <div className="flex items-start justify-center gap-4 md:gap-12 font-body">
+                  {/* Glass Timer Cards */}
+                  <div className="flex flex-wrap justify-center gap-4 md:gap-8 font-body">
                     <TimeUnit value={timeLeft.days} label="Days" />
                     <TimeUnit value={timeLeft.hours} label="Hours" />
                     <TimeUnit value={timeLeft.minutes} label="Minutes" />
@@ -197,55 +199,69 @@ export function LaunchCountdown() {
               {viewState === 'final' && (
                 <motion.div 
                   key="final"
-                  className="flex flex-col items-center justify-center"
+                  className="absolute inset-0 flex items-center justify-center"
                 >
                    <motion.div
-                     key={timeLeft.totalSeconds} // Re-animate on every second change
-                     initial={{ scale: 0.5, opacity: 0 }}
-                     animate={{ scale: 1, opacity: 1 }}
-                     exit={{ scale: 1.5, opacity: 0 }}
-                     transition={{ duration: 0.5 }}
-                     className="font-heading text-[15rem] md:text-[25rem] leading-none text-rose drop-shadow-[0_0_30px_rgba(234,214,214,0.5)]"
+                     key={timeLeft.totalSeconds}
+                     initial={{ scale: 0.2, opacity: 0, filter: "blur(20px)" }}
+                     animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+                     exit={{ scale: 2, opacity: 0, filter: "blur(10px)" }}
+                     transition={{ duration: 0.4, type: "spring", bounce: 0.5 }}
+                     className="relative font-heading text-[25vw] leading-none text-rose z-20"
+                     style={{ textShadow: "0 0 100px rgba(232,191,198,0.5)" }}
                    >
                      {timeLeft.totalSeconds}
                    </motion.div>
+                   
+                   {/* Shockwave effect */}
+                   <motion.div
+                      key={`ring-${timeLeft.totalSeconds}`}
+                      initial={{ scale: 0.5, opacity: 0.5, border: "2px solid rgba(232,191,198,0.5)" }}
+                      animate={{ scale: 2, opacity: 0, border: "0px solid rgba(232,191,198,0)" }}
+                      transition={{ duration: 0.8 }}
+                      className="absolute w-[30vw] h-[30vw] rounded-full"
+                   />
                 </motion.div>
               )}
 
-              {/* PHASE 3: PRESENTATION */}
+              {/* PHASE 3: PRESENTATION - "GRAND REVEAL" */}
               {viewState === 'present' && (
                 <motion.div 
                   key="present"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1 }}
-                  className="flex flex-col items-center justify-center text-center px-4"
+                  initial="hidden"
+                  animate="visible"
+                  exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)", transition: { duration: 1 } }}
+                  className="flex flex-col items-center justify-center text-center w-full"
                 >
-                  <motion.h2 
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.5, duration: 0.8 }}
-                    className="font-heading text-4xl md:text-6xl text-rose mb-4"
-                  >
-                    welcome to tomi jewelry&apos;s website
-                  </motion.h2>
-                  <motion.p 
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 1.2, duration: 0.8 }}
-                    className="font-body text-xl md:text-2xl text-white/80 tracking-[0.2em] uppercase"
-                  >
-                    happy shopping!
-                  </motion.p>
+                  <div className="overflow-hidden p-2">
+                    <motion.h2 
+                        custom={0}
+                        variants={textReveal}
+                        className="font-heading text-6xl md:text-[8vw] leading-[1.1] text-rose mb-2 md:mb-6 text-balance max-w-5xl drop-shadow-2xl"
+                    >
+                        welcome to
+                    </motion.h2>
+                  </div>
                   
-                  {/* Decorative Line */}
-                  <motion.div 
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ delay: 1.8, duration: 1 }}
-                    className="w-32 h-px bg-rose/50 mt-8"
-                  />
+                  <div className="overflow-hidden p-4">
+                    <motion.h2 
+                        custom={1}
+                        variants={textReveal}
+                        className="font-heading text-7xl md:text-[10vw] leading-[0.9] text-white mb-8 md:mb-12 drop-shadow-[0_0_30px_rgba(255,255,255,0.4)]"
+                    >
+                        tomi jewelry&apos;s website
+                    </motion.h2>
+                  </div>
+
+                  <div className="overflow-hidden p-2">
+                     <motion.p 
+                        custom={2}
+                        variants={textReveal}
+                        className="font-body text-sm md:text-xl text-rose/70 tracking-[0.5em] uppercase border-t border-rose/30 pt-8 mt-4"
+                     >
+                        happy shopping!
+                     </motion.p>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -258,13 +274,17 @@ export function LaunchCountdown() {
 
 function TimeUnit({ value, label }: { value: number; label: string }) {
   return (
-    <div className="flex flex-col items-center bg-white/5 backdrop-blur-sm rounded-lg p-4 min-w-[80px] md:min-w-[120px] border border-white/10 shadow-xl">
-      <span className="text-4xl md:text-6xl font-light tabular-nums leading-none text-white drop-shadow-md">
+    <motion.div 
+      initial={{ y: 20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      className="flex flex-col items-center bg-white/5 backdrop-blur-md rounded-2xl p-6 min-w-[100px] md:min-w-[140px] border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+    >
+      <span className="text-5xl md:text-7xl font-light tabular-nums leading-none text-white drop-shadow-md font-heading">
         {value.toString().padStart(2, '0')}
       </span>
-      <span className="text-[10px] md:text-xs uppercase tracking-widest mt-2 text-rose/80 font-medium">
+      <span className="text-[10px] md:text-xs uppercase tracking-[0.2em] mt-4 text-rose/60 font-medium">
         {label}
       </span>
-    </div>
+    </motion.div>
   )
 }
