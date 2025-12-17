@@ -10,10 +10,10 @@ interface StarfieldProps {
 }
 
 export const Starfield: React.FC<StarfieldProps> = ({
-  speed = 0.05,
+  speed = 0.02, // Slower, more elegant movement
   backgroundColor = 'transparent',
-  starColor = '#ffffff',
-  count = 800,
+  starColor = '#ead6d6', // Rose gold default
+  count = 400, // Fewer particles for a cleaner look
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -25,7 +25,7 @@ export const Starfield: React.FC<StarfieldProps> = ({
     if (!ctx) return
 
     let animationFrameId: number
-    let stars: Array<{ x: number; y: number; z: number; o: number }> = []
+    let stars: Array<{ x: number; y: number; z: number; o: number; size: number }> = []
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth
@@ -39,6 +39,7 @@ export const Starfield: React.FC<StarfieldProps> = ({
         y: Math.random() * canvas.height - canvas.height / 2,
         z: Math.random() * 2000,
         o: Math.random(),
+        size: Math.random() * 2 + 0.5, // Varying sizes for "glitter" effect
       }))
     }
 
@@ -57,7 +58,7 @@ export const Starfield: React.FC<StarfieldProps> = ({
       const cy = canvas.height / 2
 
       stars.forEach((star) => {
-        star.z -= speed * 20 // Move towards screen
+        star.z -= speed * 10 // Slower movement
 
         // Reset if passed screen
         if (star.z <= 0) {
@@ -68,15 +69,24 @@ export const Starfield: React.FC<StarfieldProps> = ({
 
         const x = cx + (star.x / star.z) * canvas.width
         const y = cy + (star.y / star.z) * canvas.height
-        const size = (1 - star.z / 2000) * 3 // Size based on depth
+        const scale = (1 - star.z / 2000)
+        const size = star.size * scale * 2 // Larger "bokeh" feel
 
         if (x >= 0 && x < canvas.width && y >= 0 && y < canvas.height) {
-          const alpha = (1 - star.z / 2000) * star.o
+          const alpha = scale * star.o * 0.8
           ctx.fillStyle = starColor
           ctx.globalAlpha = alpha
           ctx.beginPath()
           ctx.arc(x, y, size, 0, 2 * Math.PI)
           ctx.fill()
+          
+          // Add a subtle "shine" to some particles
+          if (star.o > 0.8) {
+             ctx.globalAlpha = alpha * 0.5
+             ctx.beginPath()
+             ctx.arc(x, y, size * 2, 0, 2 * Math.PI)
+             ctx.fill()
+          }
         }
       })
 

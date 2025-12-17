@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { launchConfig } from '@/lib/launch-config'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValue, useMotionTemplate } from 'framer-motion'
 import { GlassFilter } from '../ui/liquid-glass'
 import { Starfield } from '../ui/Starfield'
+import { PolaroidScatter } from '../ui/PolaroidScatter'
 
 export function LaunchCountdown() {
   const [timeLeft, setTimeLeft] = useState({
@@ -18,6 +19,17 @@ export function LaunchCountdown() {
   const [isLocked, setIsLocked] = useState(launchConfig.isEnabled)
   const [mounted, setMounted] = useState(false)
   const [viewState, setViewState] = useState<'countdown' | 'final' | 'present' | 'unlocked'>('countdown')
+
+  // Mouse tracking for spotlight
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+  const spotlightBackground = useMotionTemplate`radial-gradient(800px circle at ${mouseX}px ${mouseY}px, rgba(255,255,255,0.15), transparent 80%)`
+
+  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect()
+    mouseX.set(clientX - left)
+    mouseY.set(clientY - top)
+  }
 
   useEffect(() => {
     setMounted(true)
@@ -82,25 +94,18 @@ export function LaunchCountdown() {
   useEffect(() => {
     if (viewState === 'present') {
       const timer = setTimeout(() => {
-        setIsLocked(false)
-        setViewState('unlocked')
-      }, 5000) // Extended for reading time
+        setIsLocked(false) // Trigger exit animation
+        // We do NOT set 'unlocked' here to allow animation to play
+      }, 5000) 
       return () => clearTimeout(timer)
     }
   }, [viewState])
 
-  if (!mounted || viewState === 'unlocked') return null
-
-  // Animation Variants
-  const containerExit = {
-    opacity: 0,
-    y: "-100%", // Move up instead of clip-path for a smoother curtain effect
-    transition: { 
-      duration: 1.5, 
-      ease: [0.77, 0, 0.175, 1], // Quart easing
-      delay: 0.5 
-    }
-  }
+  if (!mounted) return null
+  // If we are unlocked and isLocked is false (meaning exit complete), we can return null to unmount fully
+  // But AnimatePresence handles the unmounting of children.
+  // We just need to make sure we don't render the overlay if we are fully unlocked and done.
+  if (viewState === 'unlocked') return null
 
   const textReveal = {
     hidden: { y: 100, opacity: 0, scale: 0.9 },
@@ -109,51 +114,106 @@ export function LaunchCountdown() {
       opacity: 1,
       scale: 1,
       transition: {
-        delay: i * 0.3, // Slower stagger
+        delay: i * 0.3, 
         duration: 1.2,
-        ease: [0.215, 0.61, 0.355, 1] // Cubic bezier
+        ease: [0.215, 0.61, 0.355, 1] 
       }
     })
   }
 
   return (
-    <AnimatePresence>
+    <AnimatePresence onExitComplete={() => setViewState('unlocked')}>
       {isLocked && (
         <motion.div 
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden bg-[#1a231b]"
-          initial={{ opacity: 1 }}
-          exit={containerExit}
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden"
+          onMouseMove={handleMouseMove}
         >
-          {/* --- BACKGROUND LAYERS --- */}
-          
-          {/* 1. Deep Base Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#1a231b] via-[#0f1410] to-black" />
-          
-          {/* 2. Starfield Animation */}
-          <Starfield count={1500} speed={0.2} starColor="#e8bfc6" />
-
-          {/* 3. Liquid Glass Distortion Layer */}
-          <GlassFilter />
-          <div 
-            className="absolute inset-0 opacity-30 mix-blend-overlay pointer-events-none"
-            style={{ filter: "url(#glass-distortion)" }}
-          />
-
-          {/* 4. Ambient Glows */}
+          {/* --- CURTAINS (The Reveal) --- */}
+          {/* Top Curtain */}
           <motion.div 
-             animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.2, 1] }}
-             transition={{ duration: 8, repeat: Infinity }}
-             className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-rose/10 rounded-full blur-[120px]"
+            className="absolute top-0 left-0 w-full h-1/2 bg-[#1a231b] z-0"
+            initial={{ y: 0 }}
+            exit={{ y: "-100%", transition: { duration: 1.5, ease: [0.77, 0, 0.175, 1], delay: 0.2 } }}
           />
+          {/* Bottom Curtain */}
           <motion.div 
-             animate={{ opacity: [0.2, 0.5, 0.2], scale: [1.2, 1, 1.2] }}
-             transition={{ duration: 10, repeat: Infinity, delay: 1 }}
-             className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[150px]"
+            className="absolute bottom-0 left-0 w-full h-1/2 bg-[#1a231b] z-0"
+            initial={{ y: 0 }}
+            exit={{ y: "100%", transition: { duration: 1.5, ease: [0.77, 0, 0.175, 1], delay: 0.2 } }}
           />
 
+          {/* --- ATMOSPHERE CONTAINER (Fades out before curtains split) --- */}
+          <motion.div 
+             className="absolute inset-0 z-1 pointer-events-none"
+             exit={{ opacity: 0, transition: { duration: 0.5 } }}
+          >
+             {/* Base Gradient */}
+             <div className="absolute inset-0 bg-gradient-to-b from-[#38473b] via-[#2a352c] to-[#1a231b] opacity-90" />
+             
+             {/* Noise Texture */}
+             <div className="absolute inset-0 opacity-[0.07] mix-blend-overlay" 
+                  style={{ 
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` 
+                  }} 
+             />
 
-          {/* --- CONTENT LAYERS --- */}
-          <div className="relative z-10 w-full h-full flex flex-col items-center justify-center px-4 perspective-[1000px]">
+             {/* Spotlight */}
+             <motion.div
+               className="absolute inset-0 mix-blend-soft-light"
+               style={{ background: spotlightBackground }}
+             />
+
+             {/* Starfield */}
+             <Starfield count={200} speed={0.03} starColor="#ead6d6" />
+
+             {/* Liquid Glass */}
+             <GlassFilter />
+             <div 
+               className="absolute inset-0 opacity-30 mix-blend-soft-light"
+               style={{ filter: "url(#glass-distortion)" }}
+             />
+
+             {/* Ambient Glows */}
+             <motion.div 
+                animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.1, 1] }}
+                transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-[-10%] left-[-10%] w-[70vw] h-[70vw] bg-[#E8BFC6]/20 rounded-full blur-[150px]"
+             />
+             <motion.div 
+                animate={{ opacity: [0.3, 0.6, 0.3], scale: [1.1, 1, 1.1] }}
+                transition={{ duration: 12, repeat: Infinity, delay: 2, ease: "easeInOut" }}
+                className="absolute bottom-[-10%] right-[-10%] w-[80vw] h-[80vw] bg-[#ead6d6]/15 rounded-full blur-[180px]"
+             />
+          </motion.div>
+
+          {/* --- INTERACTIVE ELEMENTS --- */}
+          <AnimatePresence>
+            {viewState === 'countdown' && (
+              <motion.div
+                className="absolute inset-0 z-[20] pointer-events-none"
+                key="polaroids"
+                exit={{ opacity: 0, scale: 1.5, filter: "blur(20px)", transition: { duration: 0.8 } }}
+              >
+                <PolaroidScatter />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* --- FLASH EFFECT (Transition to Present) --- */}
+          <AnimatePresence>
+            {viewState === 'present' && (
+              <motion.div
+                key="flash"
+                className="absolute inset-0 z-[50] bg-white pointer-events-none"
+                initial={{ opacity: 1 }}
+                animate={{ opacity: 0 }}
+                transition={{ duration: 1.5, ease: "easeOut" }}
+              />
+            )}
+          </AnimatePresence>
+
+          {/* --- MAIN CONTENT --- */}
+          <div className="relative z-[30] w-full h-full flex flex-col items-center justify-center px-4 perspective-[1000px] pointer-events-none">
             
             <AnimatePresence mode="wait">
               {/* PHASE 1: STANDARD COUNTDOWN */}
@@ -162,34 +222,36 @@ export function LaunchCountdown() {
                   key="countdown"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, z: -500, scale: 2, filter: "blur(10px)" }} // "Warp speed" exit
-                  transition={{ duration: 1.5, ease: "easeInOut" }}
+                  exit={{ opacity: 0, scale: 0.8, filter: "blur(10px)", transition: { duration: 0.5 } }}
                   className="flex flex-col items-center w-full max-w-4xl"
                 >
                   {/* Floating Logo */}
                   <motion.div 
-                    className="relative w-32 h-32 md:w-40 md:h-40 mb-12"
-                    animate={{ y: [0, -15, 0] }}
+                    className="relative w-32 h-32 md:w-40 md:h-40 mb-8"
+                    animate={{ y: [0, -10, 0] }}
                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                   >
                      <Image 
                        src="/assets/white_tomi_logo.png" 
                        alt="Tomi Jewelry" 
                        fill
-                       className="object-contain drop-shadow-[0_0_25px_rgba(232,191,198,0.4)]"
+                       className="object-contain drop-shadow-2xl"
                        priority
                      />
                   </motion.div>
 
-                  <h1 className="font-heading text-2xl md:text-3xl tracking-[0.2em] mb-12 text-rose/80 uppercase text-center">
-                    website access granted in..
+                  <h1 className="font-heading text-lg md:text-xl tracking-[0.3em] mb-12 text-rose/90 uppercase text-center font-light">
+                    Website Access Opening In
                   </h1>
 
-                  {/* Glass Timer Cards */}
-                  <div className="flex flex-wrap justify-center gap-4 md:gap-8 font-body">
+                  {/* Minimalist Timer */}
+                  <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 font-body">
                     <TimeUnit value={timeLeft.days} label="Days" />
+                    <div className="hidden md:block w-px h-12 bg-white/20" />
                     <TimeUnit value={timeLeft.hours} label="Hours" />
+                    <div className="hidden md:block w-px h-12 bg-white/20" />
                     <TimeUnit value={timeLeft.minutes} label="Minutes" />
+                    <div className="hidden md:block w-px h-12 bg-white/20" />
                     <TimeUnit value={timeLeft.seconds} label="Seconds" />
                   </div>
                 </motion.div>
@@ -201,26 +263,24 @@ export function LaunchCountdown() {
                   key="final"
                   className="absolute inset-0 flex items-center justify-center"
                 >
+                   {/* Intense Background Pulse */}
+                   <motion.div 
+                      className="absolute inset-0 bg-rose/10 mix-blend-overlay z-0"
+                      animate={{ opacity: [0, 0.5, 0] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                   />
+                   
                    <motion.div
                      key={timeLeft.totalSeconds}
-                     initial={{ scale: 0.2, opacity: 0, filter: "blur(20px)" }}
+                     initial={{ scale: 0.5, opacity: 0, filter: "blur(10px)" }}
                      animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
-                     exit={{ scale: 2, opacity: 0, filter: "blur(10px)" }}
-                     transition={{ duration: 0.4, type: "spring", bounce: 0.5 }}
+                     exit={{ scale: 1.5, opacity: 0 }}
+                     transition={{ duration: 0.4 }}
                      className="relative font-heading text-[25vw] leading-none text-rose z-20"
-                     style={{ textShadow: "0 0 100px rgba(232,191,198,0.5)" }}
+                     style={{ textShadow: "0 0 100px rgba(232,191,198,0.8)" }}
                    >
                      {timeLeft.totalSeconds}
                    </motion.div>
-                   
-                   {/* Shockwave effect */}
-                   <motion.div
-                      key={`ring-${timeLeft.totalSeconds}`}
-                      initial={{ scale: 0.5, opacity: 0.5, border: "2px solid rgba(232,191,198,0.5)" }}
-                      animate={{ scale: 2, opacity: 0, border: "0px solid rgba(232,191,198,0)" }}
-                      transition={{ duration: 0.8 }}
-                      className="absolute w-[30vw] h-[30vw] rounded-full"
-                   />
                 </motion.div>
               )}
 
@@ -230,7 +290,7 @@ export function LaunchCountdown() {
                   key="present"
                   initial="hidden"
                   animate="visible"
-                  exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)", transition: { duration: 1 } }}
+                  exit={{ opacity: 0, scale: 1.05, transition: { duration: 1 } }}
                   className="flex flex-col items-center justify-center text-center w-full"
                 >
                   <div className="overflow-hidden p-2">
@@ -239,7 +299,7 @@ export function LaunchCountdown() {
                         variants={textReveal}
                         className="font-heading text-6xl md:text-[8vw] leading-[1.1] text-rose mb-2 md:mb-6 text-balance max-w-5xl drop-shadow-2xl"
                     >
-                        welcome to
+                        Welcome to
                     </motion.h2>
                   </div>
                   
@@ -247,9 +307,9 @@ export function LaunchCountdown() {
                     <motion.h2 
                         custom={1}
                         variants={textReveal}
-                        className="font-heading text-7xl md:text-[10vw] leading-[0.9] text-white mb-8 md:mb-12 drop-shadow-[0_0_30px_rgba(255,255,255,0.4)]"
+                        className="font-heading text-7xl md:text-[10vw] leading-[0.9] text-white mb-8 md:mb-12 drop-shadow-[0_0_50px_rgba(255,255,255,0.3)]"
                     >
-                        tomi jewelry&apos;s website
+                        Tomi Jewelry
                     </motion.h2>
                   </div>
 
@@ -259,7 +319,7 @@ export function LaunchCountdown() {
                         variants={textReveal}
                         className="font-body text-sm md:text-xl text-rose/70 tracking-[0.5em] uppercase border-t border-rose/30 pt-8 mt-4"
                      >
-                        happy shopping!
+                        Happy Shopping
                      </motion.p>
                   </div>
                 </motion.div>
@@ -277,12 +337,12 @@ function TimeUnit({ value, label }: { value: number; label: string }) {
     <motion.div 
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="flex flex-col items-center bg-white/5 backdrop-blur-md rounded-2xl p-6 min-w-[100px] md:min-w-[140px] border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+      className="flex flex-col items-center min-w-[80px] md:min-w-[100px]"
     >
-      <span className="text-5xl md:text-7xl font-light tabular-nums leading-none text-white drop-shadow-md font-heading">
+      <span className="text-5xl md:text-7xl font-light tabular-nums leading-none text-white drop-shadow-lg font-heading">
         {value.toString().padStart(2, '0')}
       </span>
-      <span className="text-[10px] md:text-xs uppercase tracking-[0.2em] mt-4 text-rose/60 font-medium">
+      <span className="text-[10px] md:text-xs uppercase tracking-[0.2em] mt-4 text-rose/70 font-medium">
         {label}
       </span>
     </motion.div>
