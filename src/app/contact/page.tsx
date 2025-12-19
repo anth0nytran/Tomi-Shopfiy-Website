@@ -3,8 +3,24 @@ import { AnnouncementBar } from '@/components/layout/AnnouncementBar'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import FAQ from '@/components/sections/FAQ'
+import { ContactForm } from './ContactForm'
 
-export default function ContactPage() {
+export default function ContactPage({
+  searchParams,
+}: {
+  searchParams?: Record<string, string | string[] | undefined>
+}) {
+  const intent = typeof searchParams?.intent === 'string' ? searchParams.intent : undefined
+  const source = typeof searchParams?.source === 'string' ? searchParams.source : undefined
+
+  const utm = {
+    utmSource: typeof searchParams?.utm_source === 'string' ? searchParams.utm_source : '',
+    utmMedium: typeof searchParams?.utm_medium === 'string' ? searchParams.utm_medium : '',
+    utmCampaign: typeof searchParams?.utm_campaign === 'string' ? searchParams.utm_campaign : '',
+    utmTerm: typeof searchParams?.utm_term === 'string' ? searchParams.utm_term : '',
+    utmContent: typeof searchParams?.utm_content === 'string' ? searchParams.utm_content : '',
+  }
+
   return (
     <main className="bg-[#F9F8F6] flex flex-col">
       <AnnouncementBar />
@@ -41,55 +57,11 @@ export default function ContactPage() {
 
               {/* Right Side: Form */}
               <div className="bg-white border border-stone-100 p-8 md:p-12 rounded-sm shadow-sm">
-                <form className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label htmlFor="name" className="text-xs font-bold uppercase tracking-[0.1em] text-stone-500">Name</label>
-                      <input 
-                        id="name"
-                        type="text" 
-                        className="w-full bg-white border border-stone-200 p-4 text-stone-900 focus:outline-none focus:border-stone-400 transition-colors text-sm"
-                        placeholder="Your name"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label htmlFor="email" className="text-xs font-bold uppercase tracking-[0.1em] text-stone-500">Email</label>
-                      <input 
-                        id="email"
-                        type="email" 
-                        className="w-full bg-white border border-stone-200 p-4 text-stone-900 focus:outline-none focus:border-stone-400 transition-colors text-sm"
-                        placeholder="Your email"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <label htmlFor="phone" className="text-xs font-bold uppercase tracking-[0.1em] text-stone-500">Phone (Optional)</label>
-                    <input 
-                      id="phone"
-                      type="tel" 
-                      className="w-full bg-white border border-stone-200 p-4 text-stone-900 focus:outline-none focus:border-stone-400 transition-colors text-sm"
-                      placeholder="Your phone number"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label htmlFor="message" className="text-xs font-bold uppercase tracking-[0.1em] text-stone-500">Message</label>
-                    <textarea 
-                      id="message"
-                      rows={5}
-                      className="w-full bg-[#F9F8F6] border border-transparent p-4 text-stone-900 focus:outline-none focus:bg-white focus:border-stone-300 transition-all text-sm resize-none"
-                      placeholder="How can we help?"
-                    />
-            </div>
-
-                  <button 
-                    type="submit" 
-                    className="w-full bg-stone-900 text-white text-xs font-bold uppercase tracking-[0.2em] py-5 hover:bg-stone-700 transition-colors"
-                  >
-                    Send Message
-                  </button>
-          </form>
+                <ContactForm
+                  initialIntent={intent as any}
+                  source={source}
+                  utm={utm}
+                />
               </div>
 
             </div>

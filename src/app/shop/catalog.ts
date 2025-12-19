@@ -57,6 +57,39 @@ const productType = (value: string): CatalogFilter => ({ kind: 'productType', pr
 const productTypes = (values: string[]): CatalogFilter => ({ kind: 'productType', productTypes: values })
 const collection = (handle: string): CatalogFilter => ({ kind: 'collection', handles: [handle] })
 
+function canonicalizeTypeToken(token: string) {
+  const t = token.toLowerCase().trim()
+  if (!t) return ''
+
+  // Simple singularization for common plural forms used in productType values:
+  // anklets -> anklet, hoops -> hoop, studs -> stud, etc.
+  // Avoid breaking words like "glass" by skipping "ss".
+  if (t.length > 3 && t.endsWith('s') && !t.endsWith('ss')) return t.slice(0, -1)
+  return t
+}
+
+function tokenizeProductType(value: string | null | undefined) {
+  const raw = (value ?? '').trim()
+  if (!raw) return []
+  return raw
+    .toLowerCase()
+    // Treat any separators/punctuation as breaks so values like:
+    // "Anklets / Chains", "Anklets&Chains", "Flat-Back", "Studs, Hoops"
+    // tokenize predictably.
+    .replace(/[^a-z0-9]+/g, ' ')
+    .split(/\s+/g)
+    .map(canonicalizeTypeToken)
+    .filter(Boolean)
+}
+
+function matchesProductType(filterType: string, actualType: string | null | undefined) {
+  const expectedTokens = tokenizeProductType(filterType)
+  if (!expectedTokens.length) return true
+  const actualTokens = new Set(tokenizeProductType(actualType))
+  // Require token inclusion (prevents false positives like ring matching earring).
+  return expectedTokens.every((t) => actualTokens.has(t))
+}
+
 export const CATALOG_ENTRIES: CatalogEntry[] = [
   {
     slug: 'new-arrivals',
@@ -232,8 +265,7 @@ export function filterProductsByCatalogEntry(products: ShopifyListProduct[], ent
       return products
     case 'productType':
       return products.filter((product) => {
-        const type = product.productType?.trim() || ''
-        return filter.productTypes.some((pt) => pt.toLowerCase() === type.toLowerCase())
+        return filter.productTypes.some((pt) => matchesProductType(pt, product.productType))
       })
     case 'collection':
       return products.filter((product) => {

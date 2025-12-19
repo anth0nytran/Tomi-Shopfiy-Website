@@ -51,9 +51,69 @@ const footerColumns: FooterColumn[] = [
 
 export function Footer() {
   const [openColumn, setOpenColumn] = useState<string | null>(null)
+  const [newsletterEmail, setNewsletterEmail] = useState('')
+  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false)
+  const [newsletterError, setNewsletterError] = useState<string | null>(null)
+  const [newsletterSuccess, setNewsletterSuccess] = useState(false)
 
   const toggleColumn = (title: string) => {
     setOpenColumn((prev) => (prev === title ? null : title))
+  }
+
+  function utmFromLocation() {
+    if (typeof window === 'undefined') return {}
+    const sp = new URLSearchParams(window.location.search)
+    return {
+      utmSource: sp.get('utm_source') || '',
+      utmMedium: sp.get('utm_medium') || '',
+      utmCampaign: sp.get('utm_campaign') || '',
+      utmTerm: sp.get('utm_term') || '',
+      utmContent: sp.get('utm_content') || '',
+    }
+  }
+
+  async function submitNewsletter(e: React.FormEvent) {
+    e.preventDefault()
+    if (newsletterSubmitting) return
+    setNewsletterError(null)
+    setNewsletterSuccess(false)
+
+    const email = newsletterEmail.trim()
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setNewsletterError('Please enter a valid email.')
+      return
+    }
+
+    setNewsletterSubmitting(true)
+    try {
+      const sourcePath = typeof window !== 'undefined' ? window.location.pathname : ''
+      const payload = {
+        formType: 'mailing_list',
+        sourcePath,
+        sourceFlow: 'footer-newsletter',
+        ...utmFromLocation(),
+        email,
+        optIn: true,
+        sourcePlacement: 'footer',
+      }
+
+      const res = await fetch('/api/forms/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) {
+        const out = await res.json().catch(() => ({}))
+        throw new Error(out?.error || 'Failed to subscribe')
+      }
+
+      setNewsletterSuccess(true)
+      setNewsletterEmail('')
+    } catch (err: any) {
+      setNewsletterError(err?.message || 'Something went wrong. Please try again.')
+    } finally {
+      setNewsletterSubmitting(false)
+    }
   }
 
   return (
@@ -63,14 +123,23 @@ export function Footer() {
           <div className="footer-section footer-newsletter">
             <h3 className="footer-title">Join Our Mailing List</h3>
             <p className="footer-description">Sign up to be the first to know about new arrivals &amp; exclusive offers.</p>
-            <form className="newsletter-form" data-newsletter-form>
-              <input type="email" placeholder="ENTER EMAIL ADDRESS" className="newsletter-input" />
-              <button type="submit" className="newsletter-btn">
+            <form className="newsletter-form" data-newsletter-form onSubmit={submitNewsletter}>
+              <input
+                type="email"
+                placeholder="ENTER EMAIL ADDRESS"
+                className="newsletter-input"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                aria-label="Email address"
+              />
+              <button type="submit" className="newsletter-btn" disabled={newsletterSubmitting} aria-label="Subscribe">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
             </form>
+            {newsletterError && <div className="mt-2 text-xs text-red-700">{newsletterError}</div>}
+            {newsletterSuccess && <div className="mt-2 text-xs text-green-700">You’re on the list.</div>}
           </div>
 
           <div className="footer-links">

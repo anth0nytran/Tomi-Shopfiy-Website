@@ -47,6 +47,78 @@ export function JadeBuilder() {
   const [bailMetal, setBailMetal] = useState<string>('Yellow Gold') 
   const [jadeColor, setJadeColor] = useState<string>('green')
 
+  // Consultation form state
+  const [consultFirstName, setConsultFirstName] = useState('')
+  const [consultLastName, setConsultLastName] = useState('')
+  const [consultEmail, setConsultEmail] = useState('')
+  const [consultPhone, setConsultPhone] = useState('')
+  const [consultDesiredDate, setConsultDesiredDate] = useState('')
+  const [consultByoChain, setConsultByoChain] = useState('')
+  const [consultNotes, setConsultNotes] = useState('')
+  const [consultSubmitting, setConsultSubmitting] = useState(false)
+  const [consultError, setConsultError] = useState<string | null>(null)
+  const [consultSuccess, setConsultSuccess] = useState(false)
+
+  function utmFromLocation() {
+    if (typeof window === 'undefined') return {}
+    const sp = new URLSearchParams(window.location.search)
+    return {
+      utmSource: sp.get('utm_source') || '',
+      utmMedium: sp.get('utm_medium') || '',
+      utmCampaign: sp.get('utm_campaign') || '',
+      utmTerm: sp.get('utm_term') || '',
+      utmContent: sp.get('utm_content') || '',
+    }
+  }
+
+  async function submitConsultation(e: React.FormEvent) {
+    e.preventDefault()
+    if (consultSubmitting) return
+    setConsultError(null)
+    setConsultSuccess(false)
+    setConsultSubmitting(true)
+
+    try {
+      const payload = {
+        formType: 'jade_consultation',
+        sourcePath: '/shop/jade-jewelry',
+        sourceFlow: 'shop->jade-jewelry->consultation',
+        ...utmFromLocation(),
+        firstName: consultFirstName.trim(),
+        lastName: consultLastName.trim(),
+        email: consultEmail.trim(),
+        phone: consultPhone.trim(),
+        desiredDate: consultDesiredDate,
+        jewelryType,
+        chainStyle: chain,
+        chainColor: chainMetal,
+        bailShape,
+        bailColor: bailMetal,
+        byoChain: consultByoChain.trim(),
+        notesOrMessage: consultNotes.trim(),
+        // extra context (kept in rawPayloadJson)
+        jadeColor,
+      }
+
+      const res = await fetch('/api/forms/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) {
+        const out = await res.json().catch(() => ({}))
+        throw new Error(out?.error || 'Failed to submit inquiry')
+      }
+
+      setConsultSuccess(true)
+      setConsultNotes('')
+    } catch (err: any) {
+      setConsultError(err?.message || 'Something went wrong. Please try again.')
+    } finally {
+      setConsultSubmitting(false)
+    }
+  }
+
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
@@ -362,7 +434,7 @@ export function JadeBuilder() {
                 <p className="text-stone-500 font-light">Fill out the form below to work directly with a store associate.</p>
               </div>
 
-              <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+              <form className="space-y-8" onSubmit={submitConsultation}>
                 
                 {/* Name Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -370,6 +442,8 @@ export function JadeBuilder() {
                     <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">First Name</label>
                     <input 
                       type="text" 
+                      value={consultFirstName}
+                      onChange={(e) => setConsultFirstName(e.target.value)}
                       className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
                       placeholder="First Name"
                     />
@@ -378,6 +452,8 @@ export function JadeBuilder() {
                     <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Last Name</label>
                     <input 
                       type="text" 
+                      value={consultLastName}
+                      onChange={(e) => setConsultLastName(e.target.value)}
                       className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
                       placeholder="Last Name"
                     />
@@ -390,6 +466,8 @@ export function JadeBuilder() {
                     <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Phone</label>
                     <input 
                       type="tel" 
+                      value={consultPhone}
+                      onChange={(e) => setConsultPhone(e.target.value)}
                       className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
                       placeholder="(555) 000-0000"
                     />
@@ -400,9 +478,23 @@ export function JadeBuilder() {
                     <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Date</label>
                     <input 
                       type="date" 
+                      value={consultDesiredDate}
+                      onChange={(e) => setConsultDesiredDate(e.target.value)}
                       className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300 text-stone-600"
                     />
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Email</label>
+                  <input
+                    type="email"
+                    value={consultEmail}
+                    onChange={(e) => setConsultEmail(e.target.value)}
+                    className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
+                    placeholder="you@email.com"
+                    required
+                  />
                 </div>
 
                 {/* Chain Preference */}
@@ -413,14 +505,17 @@ export function JadeBuilder() {
                             {/* Chain Style */}
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Style</label>
-                                <select className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors cursor-pointer appearance-none rounded-none">
+                                <select
+                                  value={chain}
+                                  onChange={(e) => setChain(e.target.value)}
+                                  className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors cursor-pointer appearance-none rounded-none"
+                                >
                                     <option value="">Select Chain Style</option>
-                                    <option value="14k Wheat">14k Wheat</option>
-                                    <option value="14k Box">14k Box</option>
-                                    <option value="14k Cable">14k Cable</option>
-                                    <option value="14k Sparkle">14k Sparkle</option>
-                                    <option value="14k Dainty Cable">14k Dainty Cable</option>
-                                    <option value="9k Sparkle">9k Sparkle</option>
+                                    {CHAIN_STYLES.map((style) => (
+                                      <option key={style} value={style}>
+                                        {style}
+                                      </option>
+                                    ))}
                                 </select>
                             </div>
                             
@@ -428,9 +523,16 @@ export function JadeBuilder() {
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Color</label>
                                 <div className="flex gap-4 pt-3">
-                                    {['Yellow Gold', 'White Gold'].map(option => (
+                                    {CHAIN_METALS.map(option => (
                                         <label key={option} className="flex items-center gap-2 cursor-pointer group">
-                                            <input type="radio" name="chain_color" className="w-4 h-4 text-primary focus:ring-primary border-stone-300 accent-primary" />
+                                            <input
+                                              type="radio"
+                                              name="chain_color"
+                                              value={option}
+                                              checked={chainMetal === option}
+                                              onChange={() => setChainMetal(option)}
+                                              className="w-4 h-4 text-primary focus:ring-primary border-stone-300 accent-primary"
+                                            />
                                             <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">{option}</span>
                                         </label>
                                     ))}
@@ -447,9 +549,16 @@ export function JadeBuilder() {
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Shape</label>
                                 <div className="flex flex-wrap gap-4 pt-3">
-                                    {['Round', 'Oval', 'Mini Oval'].map(option => (
+                                    {BAIL_SHAPES.map(option => (
                                         <label key={option} className="flex items-center gap-2 cursor-pointer group">
-                                            <input type="radio" name="bail_shape" className="w-4 h-4 text-primary focus:ring-primary border-stone-300 accent-primary" />
+                                            <input
+                                              type="radio"
+                                              name="bail_shape"
+                                              value={option}
+                                              checked={bailShape === option}
+                                              onChange={() => setBailShape(option)}
+                                              className="w-4 h-4 text-primary focus:ring-primary border-stone-300 accent-primary"
+                                            />
                                             <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">{option}</span>
                                         </label>
                                     ))}
@@ -460,9 +569,16 @@ export function JadeBuilder() {
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Color</label>
                                 <div className="flex gap-4 pt-3">
-                                    {['Yellow Gold', 'White Gold'].map(option => (
+                                    {BAIL_METALS.map(option => (
                                         <label key={option} className="flex items-center gap-2 cursor-pointer group">
-                                            <input type="radio" name="bail_color" className="w-4 h-4 text-primary focus:ring-primary border-stone-300 accent-primary" />
+                                            <input
+                                              type="radio"
+                                              name="bail_color"
+                                              value={option}
+                                              checked={bailMetal === option}
+                                              onChange={() => setBailMetal(option)}
+                                              className="w-4 h-4 text-primary focus:ring-primary border-stone-300 accent-primary"
+                                            />
                                             <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">{option}</span>
                                         </label>
                                     ))}
@@ -477,6 +593,8 @@ export function JadeBuilder() {
                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">BYO Chain</label>
                    <input 
                      type="text" 
+                     value={consultByoChain}
+                     onChange={(e) => setConsultByoChain(e.target.value)}
                      className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
                      placeholder="Type of chain & color"
                    />
@@ -486,17 +604,24 @@ export function JadeBuilder() {
                 <div className="space-y-2">
                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Notes</label>
                    <textarea 
+                     value={consultNotes}
+                     onChange={(e) => setConsultNotes(e.target.value)}
                      className="w-full min-h-[150px] bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors resize-none placeholder:text-stone-300 leading-relaxed"
                      placeholder="Be as specific as possible..."
                    />
                 </div>
 
+                {consultError && <div className="text-sm text-red-700">{consultError}</div>}
+                {consultSuccess && <div className="text-sm text-green-700">Thanks — we received your inquiry.</div>}
+
                 {/* Submit Button */}
                 <div className="pt-6">
                   <button 
+                    type="submit"
+                    disabled={consultSubmitting}
                     className="w-full bg-primary text-white text-xs font-bold uppercase tracking-[0.2em] py-5 hover:bg-stone-800 transition-colors shadow-lg hover:shadow-xl"
                   >
-                    Submit Inquiry
+                    {consultSubmitting ? 'Submitting…' : 'Submit Inquiry'}
                   </button>
                 </div>
               </form>

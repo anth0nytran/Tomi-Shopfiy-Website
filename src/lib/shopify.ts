@@ -88,8 +88,12 @@ export async function getCustomerByToken(accessToken: string): Promise<ShopifyCu
 
 // GraphQL queries for Shopify
 export const GET_PRODUCTS = `
-  query getProducts($first: Int!) {
-    products(first: $first) {
+  query getProducts($first: Int!, $after: String) {
+    products(first: $first, after: $after) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       edges {
         node {
           id
@@ -198,12 +202,42 @@ export async function fetchProducts(first: number) {
   }
   const client = getStorefrontClient()
   try {
-    const res = await client.request(GET_PRODUCTS, { first }) as any
+    const res = await client.request(GET_PRODUCTS, { first, after: null }) as any
     return res?.products?.edges?.map((e: any) => e.node) ?? []
   } catch (error) {
     console.error('fetchProducts failed', error)
     return []
   }
+}
+
+export async function fetchAllProducts(options?: { pageSize?: number; limit?: number }) {
+  const pageSize = Math.min(Math.max(options?.pageSize ?? 250, 1), 250)
+  const limit = Math.max(options?.limit ?? 1000, 1)
+
+  if (!shopifyConfig.storeDomain || !shopifyConfig.serverAccessToken) {
+    if (process.env.NODE_ENV !== 'production') console.warn('Shopify env missing: SHOPIFY_STOREFRONT_API_URL or token')
+    return []
+  }
+
+  const client = getStorefrontClient()
+  const out: any[] = []
+  let after: string | null = null
+
+  while (out.length < limit) {
+    const first = Math.min(pageSize, limit - out.length)
+    const res = (await client.request(GET_PRODUCTS, { first, after })) as any
+
+    const edges = res?.products?.edges ?? []
+    for (const e of edges) out.push(e?.node)
+
+    const pageInfo = res?.products?.pageInfo
+    if (!pageInfo?.hasNextPage) break
+    after = pageInfo?.endCursor ?? null
+    if (!after) break
+    if (edges.length === 0) break
+  }
+
+  return out.filter(Boolean)
 }
 
 export async function fetchProductByHandle(handle: string) {

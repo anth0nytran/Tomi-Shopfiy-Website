@@ -2,6 +2,7 @@ import React from 'react'
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
+import Link from 'next/link'
 
 export default function ReturnsPage() {
   return (
@@ -69,12 +70,12 @@ export default function ReturnsPage() {
                 <p className="text-stone-500 text-sm font-light mb-4">
                   Ready to start a return?
                 </p>
-                <a 
-                  href="/contact" 
+                <Link
+                  href="/contact?intent=returns&source=returns"
                   className="inline-block bg-stone-900 text-white text-xs font-bold uppercase tracking-[0.2em] px-8 py-4 hover:bg-stone-700 transition-colors"
                 >
                   Contact Support
-                </a>
+                </Link>
               </div>
           </div>
 

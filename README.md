@@ -33,6 +33,10 @@ Set these in `.env.local`:
   - `SHOPIFY_OIDC_CLIENT_ID`
   - `SHOPIFY_OIDC_CLIENT_SECRET`
   - `SHOPIFY_OIDC_SCOPES` default `openid email profile`
+- Forms → Google Sheets (service account):
+  - `GOOGLE_SHEETS_SPREADSHEET_ID`: from the Sheet URL (the part after `/d/`)
+  - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
+  - `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY`: keep `\\n` sequences (don’t paste literal newlines)
 
 ## Scripts
 - `npm run dev`: start dev server

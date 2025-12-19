@@ -56,6 +56,12 @@ export default function RepairPage() {
                 >
                   View Returns Policy
                 </Link>
+                <Link
+                  href="/contact?intent=repairs&source=repair"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-stone-900 text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-stone-700 transition-colors"
+                >
+                  Contact Us About Repairs
+                </Link>
               </div>
             </div>
 

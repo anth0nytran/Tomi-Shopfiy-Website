@@ -143,7 +143,7 @@ export default async function ProductPage({ params }: { params: { handle: string
                {/* Description */}
                <div className="border-t border-stone-200 pt-6">
                  <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-stone-900 mb-4">
-                   Details &amp; Specs
+                   Details
                  </h3>
                  <div 
                    className="prose prose-stone prose-sm max-w-none text-stone-600 font-light leading-relaxed"

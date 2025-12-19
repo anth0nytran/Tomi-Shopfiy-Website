@@ -5,7 +5,14 @@ import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import Link from 'next/link'
 
-export default function VisitPage() {
+export default function VisitPage({
+  searchParams,
+}: {
+  searchParams?: Record<string, string | string[] | undefined>
+}) {
+  const source = typeof searchParams?.source === 'string' ? searchParams.source : 'visit'
+  const contactHref = `/contact?intent=appointment&source=${encodeURIComponent(source)}`
+
   return (
     <main className="bg-white flex flex-col">
       <AnnouncementBar />
@@ -77,7 +84,7 @@ export default function VisitPage() {
                 {/* Actions */}
                 <div className="pt-4">
                   <Link 
-                    href="/contact"
+                    href={contactHref}
                     className="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 bg-stone-900 text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-stone-700 transition-colors"
                   >
                     Book Appointment
