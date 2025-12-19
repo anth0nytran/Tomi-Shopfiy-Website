@@ -105,7 +105,7 @@ export function LaunchCountdown() {
 
       if (distance < 0) {
         clearInterval(interval)
-        if (viewState !== 'present' && viewState !== 'revealing' && viewState !== 'unlocked') {
+        if (viewState !== 'present' && viewState !== 'revealing') {
            setViewState('present')
         }
       } else {
