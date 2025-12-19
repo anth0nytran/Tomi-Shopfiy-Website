@@ -20,6 +20,12 @@ export function LaunchCountdown() {
   const [mounted, setMounted] = useState(false)
   const [viewState, setViewState] = useState<'countdown' | 'final' | 'present' | 'revealing' | 'unlocked'>('countdown')
 
+  const accessGatePassword = launchConfig.accessGate.password.trim()
+  const isAccessGateEnabled = accessGatePassword.length > 0
+  const [accessInput, setAccessInput] = useState('')
+  const [accessError, setAccessError] = useState<string | null>(null)
+  const [isAccessFormOpen, setIsAccessFormOpen] = useState(false)
+
   // Mouse tracking for spotlight
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
@@ -48,12 +54,28 @@ export function LaunchCountdown() {
 
   useEffect(() => {
     setMounted(true)
+
+    if (viewState === 'unlocked') return
     
     if (!launchConfig.isEnabled) {
       setIsLocked(false)
       setViewState('unlocked')
       return
     }
+
+    // Password bypass (client-side): if previously granted, unlock immediately.
+    if (isAccessGateEnabled) {
+      try {
+        if (localStorage.getItem(launchConfig.accessGate.storageKey) === '1') {
+          setIsLocked(false)
+          return
+        }
+      } catch {
+        // Ignore storage errors (private mode, disabled storage, etc.)
+      }
+    }
+
+    if (!isLocked) return
 
     const calculateTimeLeft = (targetDate: number) => {
       const now = new Date().getTime()
@@ -106,7 +128,26 @@ export function LaunchCountdown() {
     }, 100)
 
     return () => clearInterval(interval)
-  }, [viewState])
+  }, [viewState, isLocked, isAccessGateEnabled])
+
+  const handleAccessSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault()
+    if (!isAccessGateEnabled) return
+
+    const typed = accessInput.trim()
+    if (typed.length > 0 && typed === accessGatePassword) {
+      try {
+        localStorage.setItem(launchConfig.accessGate.storageKey, '1')
+      } catch {
+        // Best-effort persistence only.
+      }
+      setAccessError(null)
+      setIsLocked(false)
+      return
+    }
+
+    setAccessError('Incorrect password')
+  }
 
   // Handle the presentation sequence
   useEffect(() => {
@@ -360,6 +401,65 @@ export function LaunchCountdown() {
               )}
             </AnimatePresence>
           </div>
+
+          {/* --- INTERNAL ACCESS GATE --- */}
+          {isAccessGateEnabled && viewState === 'countdown' && (
+            <div className="absolute bottom-6 left-1/2 z-[80] w-full max-w-md -translate-x-1/2 px-4 pointer-events-auto">
+              {!isAccessFormOpen ? (
+                <div className="flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAccessError(null)
+                      setIsAccessFormOpen(true)
+                    }}
+                    className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-white/80 backdrop-blur-md hover:bg-white/15 hover:text-white/90"
+                  >
+                    Team Access
+                  </button>
+                </div>
+              ) : (
+                <form
+                  onSubmit={handleAccessSubmit}
+                  className="mx-auto flex w-full items-center gap-2 rounded-full border border-white/20 bg-white/10 p-2 pl-4 backdrop-blur-md shadow-lg"
+                >
+                  <input
+                    type="password"
+                    value={accessInput}
+                    onChange={(e) => {
+                      setAccessInput(e.target.value)
+                      if (accessError) setAccessError(null)
+                    }}
+                    placeholder="Password"
+                    autoComplete="current-password"
+                    className="w-full flex-1 bg-transparent text-sm text-white placeholder:text-white/40 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAccessError(null)
+                      setAccessInput('')
+                      setIsAccessFormOpen(false)
+                    }}
+                    className="shrink-0 rounded-full px-3 py-2 text-xs text-white/70 hover:text-white/90"
+                    aria-label="Close"
+                  >
+                    ✕
+                  </button>
+                  <button
+                    type="submit"
+                    className="shrink-0 rounded-full bg-white/20 px-4 py-2 text-[10px] font-medium uppercase tracking-[0.35em] text-white/90 hover:bg-white/30"
+                  >
+                    Enter
+                  </button>
+                </form>
+              )}
+
+              {accessError && (
+                <p className="mt-2 text-center text-xs text-rose/80">{accessError}</p>
+              )}
+            </div>
+          )}
         </motion.div>
       )}
     </AnimatePresence>
