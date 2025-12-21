@@ -8,6 +8,7 @@ type Props = {
   attributes?: Array<{ key: string; value: string }>
   canSubmit?: boolean
   cannotSubmitMessage?: string
+  autoOpenCart?: boolean
 }
 
 type FeedbackState = { type: 'success' | 'error'; message: string } | null
@@ -21,6 +22,7 @@ export function AddToCartButton({
   attributes,
   canSubmit: canSubmitProp,
   cannotSubmitMessage,
+  autoOpenCart = true,
 }: Props) {
   const [qty, setQty] = useState<number>(1)
   const [submitting, setSubmitting] = useState(false)
@@ -57,7 +59,9 @@ export function AddToCartButton({
         const payload = await res.json().catch(() => ({}))
         throw new Error(payload?.error || 'Failed to add item')
       }
-      document.dispatchEvent(new CustomEvent('tomi:cart:open'))
+      if (autoOpenCart) {
+        document.dispatchEvent(new CustomEvent('tomi:cart:open'))
+      }
       setFeedback({ type: 'success', message: 'Added to your bag.' })
     } catch (error) {
       console.error('Add to cart failed', error)

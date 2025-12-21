@@ -15,11 +15,10 @@ export default async function ShopPage() {
       <AnnouncementBar />
       <Header />
       <div className="flex-1">
-        <ShopExperience initialSlug="all" products={products} />
+        <ShopExperience key="shop-all" initialSlug="all" products={products} />
       </div>
       <Footer />
     </main>
   )
 }
-
 

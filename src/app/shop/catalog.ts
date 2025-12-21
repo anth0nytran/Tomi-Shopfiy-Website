@@ -12,6 +12,7 @@ export type CatalogSlug =
   | 'bracelets'
   | 'anklets'
   | 'earrings'
+  | 'jade'
   | 'studs'
   | 'hoops'
   | 'flat-backs'
@@ -43,12 +44,15 @@ export type ShopifyListProduct = {
   tags?: string[]
   collections?: { edges: Array<{ node: { handle: string } }> }
   images?: { edges: Array<{ node: { url: string; altText?: string | null } }> }
+  options?: Array<{ name: string; values?: string[]; optionValues?: Array<{ name: string | null }> }>
   variants?: {
-    edges: Array<{
-      node: {
-        id: string
-        price: { amount: string; currencyCode: string }
-      }
+    nodes: Array<{
+      id: string
+      title?: string | null
+      availableForSale?: boolean | null
+      selectedOptions?: Array<{ name: string; value: string }>
+      price: { amount: string; currencyCode: string }
+      compareAtPrice?: { amount: string; currencyCode: string } | null
     }>
   }
 }
@@ -170,6 +174,16 @@ export const CATALOG_ENTRIES: CatalogEntry[] = [
     tab: true,
   },
   {
+    slug: 'jade',
+    title: 'JADE',
+    subtitle: 'Serene stones, crafted in solid gold',
+    heroClass: 'shop-hero--jade',
+    navLabel: 'Jade',
+    navGroup: 'categories',
+    filter: productType('Jade'),
+    tab: true,
+  },
+  {
     slug: 'studs',
     title: 'STUDS',
     subtitle: 'Everyday shine, crafted in 14k solid gold',
@@ -246,7 +260,7 @@ export const CATALOG_ENTRIES: CatalogEntry[] = [
     title: 'JADE JEWELRY',
     subtitle: '',
     heroClass: 'shop-hero--jade',
-    navLabel: 'Jade Jewelry',
+    navLabel: 'Custom Jade',
     navGroup: 'custom',
     filter: { kind: 'all' },
     instoreOnly: true,
@@ -278,5 +292,3 @@ export function filterProductsByCatalogEntry(products: ShopifyListProduct[], ent
 }
 
 export const NAV_GROUPS_ORDER = ['featured', 'categories', 'collections', 'custom'] as const
-
-

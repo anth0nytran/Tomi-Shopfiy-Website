@@ -11,6 +11,7 @@ let cartDrawerEl: HTMLElement | null = null
 let cartPanelEl: HTMLElement | null = null
 let cartBodyEl: HTMLElement | null = null
 let cartFooterEl: HTMLElement | null = null
+let cartBackdropEl: HTMLElement | null = null
 
 const CART_CACHE_KEY = 'tomi:last-cart'
 
@@ -92,6 +93,7 @@ function refreshDomRefs() {
   cartPanelEl = document.querySelector('[data-cart-panel]') as HTMLElement | null
   cartBodyEl = document.getElementById('cart-body') as HTMLElement | null
   cartFooterEl = document.getElementById('cart-footer') as HTMLElement | null
+  cartBackdropEl = document.querySelector('.cart-drawer-backdrop') as HTMLElement | null
 
   if (headerEl) {
      headerEl.addEventListener('transitionstart', onHeaderTransitionStart)
@@ -337,12 +339,27 @@ function handleRouteChange() {
     document.body.classList.remove('announcement-hidden')
     announcementEl?.classList.remove('hidden')
     headerEl?.classList.remove('announcement-hidden')
+    // Ensure cart overlay never survives navigation
+    closeCart()
   })
 }
 
 function handleDocumentClick(event: MouseEvent) {
   const target = event.target as HTMLElement | null
   if (!target) return
+  // Safety: if cart-open flag is set but drawer isn't actually open, clear it so the page remains clickable
+  if (document.body.classList.contains('cart-open') && !cartDrawerEl?.classList.contains('is-open')) {
+    document.body.classList.remove('cart-open')
+    cartDrawerEl?.classList.remove('is-open')
+    cartDrawerEl?.setAttribute('aria-hidden', 'true')
+  }
+
+  const anchor = target.closest('a') as HTMLAnchorElement | null
+  // For any normal navigation click (not a cart control), ensure the cart state is cleared so overlays can't swallow clicks.
+  if (anchor && !anchor.closest('.cart-drawer') && !anchor.closest('[data-cart-trigger]')) {
+    closeCart()
+  }
+
   const opener = target.closest('[data-cart-trigger]')
   if (opener) {
     event.preventDefault()
@@ -447,6 +464,7 @@ function openCart() {
   document.body.classList.add('cart-open')
   cartDrawerEl.setAttribute('aria-hidden', 'false')
   cartDrawerEl.classList.add('is-open')
+  if (cartBackdropEl) cartBackdropEl.style.pointerEvents = 'auto'
   if (cartPanelEl) {
     void cartPanelEl.offsetHeight
     cartPanelEl.style.transform = 'translateX(0)'
@@ -458,6 +476,7 @@ function closeCart() {
   if (!cartDrawerEl) return
   cartDrawerEl.setAttribute('aria-hidden', 'true')
   cartDrawerEl.classList.remove('is-open')
+  if (cartBackdropEl) cartBackdropEl.style.pointerEvents = 'none'
   if (cartPanelEl) cartPanelEl.style.transform = ''
   document.body.classList.remove('cart-open')
 }
@@ -566,7 +585,7 @@ async function renderCart(options?: RenderCartOptions) {
             const k = typeof a?.key === 'string' ? a.key : ''
             const v = typeof a?.value === 'string' ? a.value : ''
             if (!k || !v) return ''
-            return `${k}: ${v}`
+            return `<span class="cart-attr">${k}: ${v}</span>`
           })
           .filter(Boolean)
           .join(' • ')}</div>`

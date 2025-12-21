@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import {
   CATALOG_BY_SLUG,
   CatalogEntry,
@@ -16,45 +17,23 @@ const INITIAL_VISIBLE = 12
 
 const FALLBACK_ENTRY = CATALOG_BY_SLUG.all
 
-function getSlugFromPath(path: string): CatalogSlug {
-  const trimmed = path.replace(/\/$/, '')
-  if (trimmed === '' || trimmed === '/shop') return 'all'
-  const segments = trimmed.split('/')
-  const last = segments[segments.length - 1] as CatalogSlug | undefined
-  if (last && CATALOG_BY_SLUG[last]) return last
-  return 'all'
-}
-
 type ShopExperienceProps = {
   initialSlug: CatalogSlug
   products: ShopifyListProduct[]
 }
 
 export function ShopExperience({ initialSlug, products }: ShopExperienceProps) {
-  const [activeSlug, setActiveSlug] = useState<CatalogSlug>(initialSlug)
+  const router = useRouter()
+  // Trust the slug provided by the server route to avoid any client-side path desyncs.
+  const activeSlug = initialSlug
   const [visibleCount, setVisibleCount] = useState(() => Math.min(INITIAL_VISIBLE, products.length))
   const [isAnimating, setIsAnimating] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [sort, setSort] = useState('featured')
 
   useEffect(() => {
-    setActiveSlug(initialSlug)
-  }, [initialSlug])
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const handlePop = () => {
-      const nextSlug = getSlugFromPath(window.location.pathname)
-      setActiveSlug(nextSlug)
-      setVisibleCount(INITIAL_VISIBLE)
-    }
-    window.addEventListener('popstate', handlePop)
-    return () => window.removeEventListener('popstate', handlePop)
-  }, [])
-
-  useEffect(() => {
     setVisibleCount(Math.min(INITIAL_VISIBLE, products.length))
-  }, [products])
+  }, [products, activeSlug])
 
   const entry: CatalogEntry = useMemo(() => CATALOG_BY_SLUG[activeSlug] ?? FALLBACK_ENTRY, [activeSlug])
 
@@ -63,7 +42,7 @@ export function ShopExperience({ initialSlug, products }: ShopExperienceProps) {
   const sortedProducts = useMemo(() => {
     const list = filteredProducts.slice()
     const getPrice = (product: ShopifyListProduct) => {
-      const amount = product.variants?.edges?.[0]?.node?.price?.amount
+      const amount = product.variants?.nodes?.[0]?.price?.amount
       return amount ? parseFloat(amount) : null
     }
     switch (sort) {
@@ -110,14 +89,11 @@ export function ShopExperience({ initialSlug, products }: ShopExperienceProps) {
       if (slug === activeSlug) return
       setIsAnimating(true)
       startTransition(() => {
-        setActiveSlug(slug)
         setVisibleCount(INITIAL_VISIBLE)
-        if (typeof window !== 'undefined') {
-          window.history.pushState(null, '', href)
-        }
+        router.push(href)
       })
     },
-    [activeSlug, startTransition],
+    [activeSlug, startTransition, router],
   )
 
   const handleLoadMore = useCallback(() => {
@@ -174,7 +150,7 @@ export function ShopExperience({ initialSlug, products }: ShopExperienceProps) {
   }
 
   return (
-    <div className={`min-h-screen bg-white flex flex-col transition-opacity duration-300 ${isAnimating || isPending ? 'opacity-70 pointer-events-none' : 'opacity-100'}`}>
+    <div className={`min-h-screen bg-white flex flex-col transition-opacity duration-300 ${isAnimating || isPending ? 'opacity-70' : 'opacity-100'}`}>
       <ShopHero entry={entry} />
       <ShopTabs active={entry.slug} onTabSelect={handleTabSelect} />
       <ShopToolbar

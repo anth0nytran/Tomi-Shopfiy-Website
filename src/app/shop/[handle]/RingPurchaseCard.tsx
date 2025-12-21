@@ -7,9 +7,14 @@ type Props = {
   merchandiseId: string
   available?: boolean
   ringSizes: string[]
+  sizeOptionName?: string | null
+  selectedSize?: string
+  attributesFromParent?: Array<{ key: string; value: string }>
+  onRequestChange?: (value: string) => void
+  onSizeSelect?: (value: string) => void
+  canSubmit?: boolean
+  onRequestSaved?: () => void
 }
-
-const STORAGE_KEY = 'tomi:ring:sizeRequest'
 
 function normalizeSizeList(sizes: string[]) {
   return Array.from(
@@ -21,56 +26,59 @@ function normalizeSizeList(sizes: string[]) {
   )
 }
 
-export function RingPurchaseCard({ merchandiseId, available = true, ringSizes }: Props) {
+export function RingPurchaseCard({
+  merchandiseId,
+  available = true,
+  ringSizes,
+  sizeOptionName,
+  selectedSize: selectedSizeProp,
+  attributesFromParent,
+  onRequestChange,
+  onSizeSelect,
+  canSubmit,
+  onRequestSaved,
+}: Props) {
   const selectId = useId()
   const textareaId = useId()
   const sizes = useMemo(() => normalizeSizeList(ringSizes), [ringSizes])
 
-  const [selectedSize, setSelectedSize] = useState('')
+  const [selectedSize, setSelectedSize] = useState(selectedSizeProp || '')
   const [showRequest, setShowRequest] = useState(false)
   const [requestDraft, setRequestDraft] = useState('')
   const [requestSaved, setRequestSaved] = useState('')
 
+  // Keep local selection in sync with parent-controlled value (variant selection).
   useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(STORAGE_KEY) || ''
-      if (saved) {
-        setRequestDraft(saved)
-        setRequestSaved(saved)
-      }
-    } catch {
-      // ignore
-    }
-  }, [])
+    setSelectedSize(selectedSizeProp || '')
+  }, [selectedSizeProp])
 
-  const canAdd = available && Boolean(merchandiseId) && (Boolean(selectedSize) || Boolean(requestSaved))
+  const canAdd = available && Boolean(merchandiseId) && (Boolean(selectedSize) || Boolean(requestSaved)) && (canSubmit !== false)
 
   const attributes = useMemo(() => {
     const out: Array<{ key: string; value: string }> = []
+    if (Array.isArray(attributesFromParent)) out.push(...attributesFromParent)
     if (selectedSize) out.push({ key: 'Ring size', value: selectedSize })
     if (!selectedSize && requestSaved) out.push({ key: 'Requested ring size', value: requestSaved })
     return out
-  }, [requestSaved, selectedSize])
+  }, [attributesFromParent, requestSaved, selectedSize])
 
   function saveRequest() {
     const value = requestDraft.trim()
     setRequestSaved(value)
-    try {
-      if (value) window.localStorage.setItem(STORAGE_KEY, value)
-      else window.localStorage.removeItem(STORAGE_KEY)
-    } catch {
-      // ignore
+    onRequestChange?.(value)
+    if (value) {
+      setSelectedSize('')
+      onSizeSelect?.('')
+      onRequestSaved?.()
+      setShowRequest(false)
     }
   }
 
   function clearRequest() {
     setRequestDraft('')
     setRequestSaved('')
-    try {
-      window.localStorage.removeItem(STORAGE_KEY)
-    } catch {
-      // ignore
-    }
+    onRequestChange?.('')
+    onRequestSaved?.()
   }
 
   return (
@@ -86,9 +94,13 @@ export function RingPurchaseCard({ merchandiseId, available = true, ringSizes }:
             onChange={(e) => {
               const next = e.target.value
               setSelectedSize(next)
+              onSizeSelect?.(next)
               if (next) {
                 // If they picked a valid size, we don't want to send a custom request too.
                 setRequestSaved('')
+                onRequestChange?.('')
+              } else if (!next && sizeOptionName) {
+                onSizeSelect?.('')
               }
             }}
             className="w-full bg-[#F9F8F6] border-b border-stone-300 py-4 px-3 text-stone-900 font-medium focus:outline-none focus:border-stone-900 transition-colors"

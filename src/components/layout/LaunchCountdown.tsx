@@ -24,7 +24,7 @@ export function LaunchCountdown() {
   const isAccessGateEnabled = accessGatePassword.length > 0
   const [accessInput, setAccessInput] = useState('')
   const [accessError, setAccessError] = useState<string | null>(null)
-  const [isAccessFormOpen, setIsAccessFormOpen] = useState(false)
+  const [isAccessFormOpen, setIsAccessFormOpen] = useState(true)
 
   // Mouse tracking for spotlight
   const mouseX = useMotionValue(0)
@@ -403,7 +403,7 @@ export function LaunchCountdown() {
           </div>
 
           {/* --- INTERNAL ACCESS GATE --- */}
-          {isAccessGateEnabled && viewState === 'countdown' && (
+          {isAccessGateEnabled && (viewState === 'countdown' || viewState === 'final') && (
             <div className="absolute bottom-6 left-1/2 z-[80] w-full max-w-md -translate-x-1/2 px-4 pointer-events-auto">
               {!isAccessFormOpen ? (
                 <div className="flex justify-center">

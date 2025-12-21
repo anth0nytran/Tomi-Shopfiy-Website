@@ -14,21 +14,23 @@ import { ChevronDown } from 'lucide-react'
 const TAB_ENTRIES = CATALOG_ENTRIES.filter((entry) => entry.tab)
 
 // Shop heading images - map slug to image file name
-// Files are in /public/assets/shop headings/
+// Map headings to files. Prefer the upscaled set in /public/new_shop_headings when available.
+// Slugs without a new file keep their original /public/assets/shop headings art.
 const SHOP_HEADING_IMAGES: Partial<Record<CatalogSlug, string>> = {
   'new-arrivals': '/assets/shop headings/new arrivals.png',
-  'best-sellers': '/assets/shop headings/best sellers.png',
-  all: '/assets/shop headings/shop all.png',
+  'best-sellers': '/new_shop_headings/BESTSELLERS.jpg',
+  all: '/new_shop_headings/SHOP%20ALL.jpg',
   rings: '/assets/shop headings/rings.png',
-  necklaces: '/assets/shop headings/necklaces.png',
+  necklaces: '/new_shop_headings/NECKLACES.jpg',
   bracelets: '/assets/shop headings/bracelets.png',
-  anklets: '/assets/headers/ANKLETS.jpg',
-  earrings: '/assets/shop headings/earrings.png',
+  anklets: '/new_shop_headings/ANKLETS.jpg',
+  earrings: '/new_shop_headings/EARRINGS.jpg',
+  jade: '/new_shop_headings/PREMADE_JADE.png',
   flutter: '/assets/shop headings/flutter.png',
   refined: '/assets/shop headings/refined.png',
-  embellish: '/assets/shop headings/embellish.png',
-  moonlight: '/assets/headers/MOONLIGHT.jpg',
-  'jade-jewelry': '/assets/headers/JADE%20JEWELRY.jpg',
+  embellish: '/new_shop_headings/EMBELLISH.jpg',
+  moonlight: '/new_shop_headings/MOONLIGHT.jpg',
+  'jade-jewelry': '/new_shop_headings/JADE%20JEWELRY.jpg',
   'one-of-a-kind-vintage': '/assets/shop headings/one of a kind.png',
 }
 
@@ -45,7 +47,7 @@ export function ShopHero({ entry }: { entry: CatalogEntry }) {
           alt={`${entry.title} hero`}
           fill
           className="object-cover object-center"
-          sizes="100vw"
+          sizes="(min-width: 1536px) 1400px, (min-width: 1280px) 1200px, (min-width: 1024px) 1000px, 100vw"
           priority
           quality={90}
         />
@@ -223,12 +225,13 @@ export function ShopToolbar({
 export function ProductCard({ product, index }: { product: ShopifyListProduct; index: number }) {
   const primaryImage = product.images?.edges?.[0]?.node
   const secondaryImage = product.images?.edges?.[1]?.node
-  const primaryVariant = product.variants?.edges?.[0]?.node
+  const primaryVariant = product.variants?.nodes?.[0]
   const priceAmount = primaryVariant?.price?.amount
   const priceCurrency = primaryVariant?.price?.currencyCode
   const formattedPrice = priceAmount
     ? new Intl.NumberFormat(undefined, { style: 'currency', currency: priceCurrency }).format(parseFloat(priceAmount))
     : null
+  const inStock = product.variants?.nodes?.some((v) => v?.availableForSale) ?? false
   
   // Stagger animation delay
   const delay = (index % 12) * 50
@@ -277,9 +280,10 @@ export function ProductCard({ product, index }: { product: ShopifyListProduct; i
         <h3 className="text-sm text-stone-900 font-medium group-hover:text-stone-600 transition-colors">
           {product.title}
         </h3>
-        <p className="text-xs text-stone-500 tracking-wide">
-          {formattedPrice}
-        </p>
+        <p className="text-xs text-stone-500 tracking-wide">{formattedPrice}</p>
+        {!inStock ? (
+          <p className="text-[11px] text-red-500 tracking-wide font-medium">Sold out</p>
+        ) : null}
       </div>
     </Link>
   )

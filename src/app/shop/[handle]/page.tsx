@@ -4,11 +4,10 @@ import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import Link from 'next/link'
 import { fetchProductByHandle } from '@/lib/shopify'
-import { AddToCartButton } from '@/components/cart/AddToCartButton'
 import { CATALOG_BY_SLUG } from '../catalog'
 import { ChevronLeft } from 'lucide-react'
 import { ProductGallery } from '../ProductGallery'
-import { RingPurchaseCard } from './RingPurchaseCard'
+import { VariantPurchase } from './VariantPurchase'
 
 function parseRingSizesFromMetafield(value: unknown): string[] {
   if (typeof value !== 'string') return []
@@ -50,26 +49,61 @@ export default async function ProductPage({ params }: { params: { handle: string
   }
 
   const galleryImages = product.images?.edges?.map((edge: any) => edge.node) ?? []
-  const firstVariant = product.variants?.edges?.[0]?.node
-  const price = firstVariant?.price
+  const variants = product.variants?.nodes ?? []
+  const firstVariant = variants?.[0]
   const collections = product.collections?.edges?.map((edge: any) => edge.node) ?? []
   const primaryCollection = collections[0]
   const collectionEntry = primaryCollection?.handle && CATALOG_BY_SLUG[primaryCollection.handle as keyof typeof CATALOG_BY_SLUG]
   const descriptionHtml = product.descriptionHtml || product.description || ''
-  const priceLabel = price ? new Intl.NumberFormat(undefined, { style: 'currency', currency: price.currencyCode }).format(parseFloat(price.amount)) : null
   const stockLabel = firstVariant?.availableForSale ? 'In stock' : 'Out of stock'
   const isRing =
     `${product.productType || ''}`.toLowerCase().includes('ring') ||
     collections.some((c: any) => `${c?.handle || ''}`.toLowerCase() === 'rings' || `${c?.title || ''}`.toLowerCase().includes('ring'))
 
-  const ringSizes = parseRingSizesFromMetafield(product?.availableRingSizes?.value)
+  const sizeOption = product.options?.find((opt: any) => `${opt?.name || ''}`.toLowerCase().includes('size'))
+  const sizeValues: string[] =
+    sizeOption?.values?.map((v: any) => `${v}`.trim()).filter(Boolean) ||
+    sizeOption?.optionValues?.map((v: any) => `${v?.name || ''}`.trim()).filter(Boolean) ||
+    []
+
+  // If size variants exist, we render those above; use metafield-only sizes as a request helper when no size option is present.
+  const ringSizes = sizeValues.length ? [] : parseRingSizesFromMetafield(product?.availableRingSizes?.value)
   
-  const metaEntries = [
-    product.productType ? { label: 'Category', value: product.productType } : null,
-    collections.length ? { label: 'Collections', value: collections.map((collection: any) => collection.title).join(', ') } : null,
-    product.vendor ? { label: 'Maker', value: product.vendor } : null,
-    firstVariant?.sku ? { label: 'SKU', value: firstVariant.sku } : null,
-  ].filter(Boolean) as { label: string; value: string }[]
+  const normalizeMeta = (value: string) => value.trim().toLowerCase().replace(/s$/, '')
+  const seenMeta = new Set<string>()
+  const metaEntries: { label: string; value: string }[] = []
+
+  const categoryValue = `${product.productType || ''}`.trim()
+  if (categoryValue) {
+    const key = normalizeMeta(categoryValue)
+    if (key) {
+      seenMeta.add(key)
+      metaEntries.push({ label: 'Category', value: categoryValue })
+    }
+  }
+
+  const uniqueCollections: string[] = []
+  for (const collection of collections) {
+    const title = `${collection?.title || ''}`.trim()
+    const key = normalizeMeta(title)
+    if (!title || !key) continue
+    const already = seenMeta.has(key) || uniqueCollections.some((v) => normalizeMeta(v) === key)
+    if (!already) {
+      uniqueCollections.push(title)
+    }
+  }
+  if (uniqueCollections.length) {
+    uniqueCollections.forEach((value) => seenMeta.add(normalizeMeta(value)))
+    metaEntries.push({ label: 'Collections', value: uniqueCollections.join(', ') })
+  }
+
+  const vendorValue = `${product.vendor || ''}`.trim()
+  if (vendorValue && vendorValue.toLowerCase() !== 'tomi') {
+    const key = normalizeMeta(vendorValue)
+    if (key && !seenMeta.has(key)) {
+      metaEntries.push({ label: 'Maker', value: vendorValue })
+    }
+  }
 
   return (
     <main className="bg-white flex flex-col">
@@ -111,31 +145,15 @@ export default async function ProductPage({ params }: { params: { handle: string
              <h1 className="font-heading text-4xl md:text-5xl text-stone-900 mb-8 leading-tight">
                {product.title}
              </h1>
-
+            
              {/* Purchase Card - Clean & Minimal */}
-             <div className="bg-white border border-stone-100 p-8 mb-10 shadow-sm">
-               <div className="flex justify-between items-start mb-8">
-              <div>
-                   <span className="block text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400 mb-2">Price</span>
-                   <span className="text-3xl md:text-4xl text-stone-900 font-light">{priceLabel}</span>
-              </div>
-                 
-                 <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${firstVariant?.availableForSale ? 'bg-[#efdada] text-stone-900' : 'bg-stone-200 text-stone-500'}`}>
-                   <span className={`w-1.5 h-1.5 rounded-full ${firstVariant?.availableForSale ? 'bg-stone-900' : 'bg-stone-400'}`} />
-                {stockLabel}
-              </div>
-            </div>
-
-            {isRing ? (
-              <RingPurchaseCard
-                merchandiseId={firstVariant?.id || ''}
-                available={!!firstVariant?.availableForSale}
-                ringSizes={ringSizes}
-              />
-            ) : (
-              <AddToCartButton merchandiseId={firstVariant?.id || ''} available={!!firstVariant?.availableForSale} />
-            )}
-          </div>
+             <VariantPurchase
+               productTitle={product.title}
+               options={product.options ?? []}
+               variants={variants}
+               isRing={isRing}
+               ringSizes={ringSizes}
+             />
 
              {/* Details Accordion / Sections */}
              <div className="space-y-8">

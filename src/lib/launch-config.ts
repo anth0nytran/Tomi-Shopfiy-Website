@@ -1,6 +1,6 @@
 export const launchConfig = {
   // Master switch for the countdown
-  isEnabled: true,
+  isEnabled: false,
   
   // Target launch date: December 22nd, 2025 at 10:00 AM CST (UTC-6)
   targetDate: "2025-12-22T10:00:00-06:00",

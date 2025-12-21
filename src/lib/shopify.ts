@@ -103,6 +103,10 @@ export const GET_PRODUCTS = `
           createdAt
           productType
           tags
+          options {
+            name
+            values
+          }
           collections(first: 10) {
             edges {
               node {
@@ -120,16 +124,69 @@ export const GET_PRODUCTS = `
               }
             }
           }
-          variants(first: 1) {
-            edges {
-              node {
-                id
-                price {
-                  amount
-                  currencyCode
-                }
-              }
+          variants(first: 250) {
+            nodes {
+              id
+              title
+              availableForSale
+              selectedOptions { name value }
+              price { amount currencyCode }
+              compareAtPrice { amount currencyCode }
             }
+          }
+        }
+      }
+    }
+  }
+`
+
+// Product by handle
+export const GET_PRODUCT_BY_HANDLE = gql`
+  query productByHandle($handle: String!, $selectedOptions: [SelectedOptionInput!]!) {
+    product(handle: $handle) {
+      id
+      title
+      description
+      descriptionHtml
+      handle
+      productType
+      vendor
+      availableRingSizes: metafield(namespace: "custom", key: "available_ring_sizes") {
+        type
+        value
+      }
+      options {
+        name
+        values
+      }
+      images(first: 6) {
+        edges { node { url altText } }
+      }
+      variants(first: 250) {
+        nodes {
+          id
+          title
+          sku
+          availableForSale
+          selectedOptions { name value }
+          price { amount currencyCode }
+          compareAtPrice { amount currencyCode }
+        }
+      }
+      variantBySelectedOptions(selectedOptions: $selectedOptions) {
+        id
+        title
+        sku
+        availableForSale
+        selectedOptions { name value }
+        price { amount currencyCode }
+        compareAtPrice { amount currencyCode }
+      }
+      collections(first: 6) {
+        edges {
+          node {
+            handle
+            title
           }
         }
       }
@@ -149,45 +206,6 @@ export const GET_COLLECTIONS = `
           image {
             url
             altText
-          }
-        }
-      }
-    }
-  }
-`
-
-// Product by handle
-export const GET_PRODUCT_BY_HANDLE = gql`
-  query productByHandle($handle: String!) {
-    product(handle: $handle) {
-      id
-      title
-      description
-      descriptionHtml
-      handle
-      productType
-      availableRingSizes: metafield(namespace: "custom", key: "available_ring_sizes") {
-        type
-        value
-      }
-      images(first: 6) {
-        edges { node { url altText } }
-      }
-      variants(first: 10) {
-        edges {
-          node {
-            id
-            title
-            availableForSale
-            price { amount currencyCode }
-          }
-        }
-      }
-      collections(first: 6) {
-        edges {
-          node {
-            handle
-            title
           }
         }
       }
@@ -240,14 +258,19 @@ export async function fetchAllProducts(options?: { pageSize?: number; limit?: nu
   return out.filter(Boolean)
 }
 
-export async function fetchProductByHandle(handle: string) {
+export async function fetchProductByHandle(handle: string, selectedOptions?: Array<{ name: string; value: string }>) {
   if (!shopifyConfig.storeDomain || !shopifyConfig.publicAccessToken) {
     if (process.env.NODE_ENV !== 'production') console.warn('Shopify env missing: cannot fetch product by handle')
     return null
   }
-  const client = getStorefrontClient()
-  const res = await client.request(GET_PRODUCT_BY_HANDLE, { handle }) as any
-  return res?.product ?? null
+  try {
+    const client = getStorefrontClient()
+    const res = await client.request(GET_PRODUCT_BY_HANDLE, { handle, selectedOptions: selectedOptions ?? [] }) as any
+    return res?.product ?? null
+  } catch (error) {
+    if (process.env.NODE_ENV !== 'production') console.error('fetchProductByHandle failed', error)
+    return null
+  }
 }
 
 const SEARCH_PRODUCTS = gql`
@@ -260,6 +283,7 @@ const SEARCH_PRODUCTS = gql`
           handle
           productType
           description
+          options { name values }
           images(first: 1) {
             edges {
               node {
@@ -268,14 +292,13 @@ const SEARCH_PRODUCTS = gql`
               }
             }
           }
-          variants(first: 1) {
-            edges {
-              node {
-                price {
-                  amount
-                  currencyCode
-                }
-              }
+          variants(first: 10) {
+            nodes {
+              id
+              availableForSale
+              selectedOptions { name value }
+              price { amount currencyCode }
+              compareAtPrice { amount currencyCode }
             }
           }
         }
@@ -304,7 +327,7 @@ export async function searchProducts(query: string, first = 8): Promise<SearchRe
     return edges.map((edge: any) => {
       const node = edge?.node
       const image = node?.images?.edges?.[0]?.node ?? null
-      const variant = node?.variants?.edges?.[0]?.node ?? null
+      const variant = node?.variants?.nodes?.[0] ?? null
       return {
         id: node?.id,
         title: node?.title,

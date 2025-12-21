@@ -30,7 +30,9 @@ const navGroups: NavGroup[] = [
     key: 'categories',
     title: 'Categories',
     entries: CATALOG_ENTRIES.filter(
-      (entry) => entry.navGroup === 'categories' && ['all', 'necklaces', 'bracelets', 'rings', 'earrings'].includes(entry.slug),
+      (entry) =>
+        entry.navGroup === 'categories' &&
+        ['all', 'necklaces', 'bracelets', 'rings', 'earrings', 'jade'].includes(entry.slug),
     ),
   },
   {

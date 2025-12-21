@@ -32,10 +32,9 @@ export default async function CategoryPage({ params }: { params: { slug: Catalog
       <AnnouncementBar />
       <Header />
       <div className="flex-1">
-        <ShopExperience initialSlug={entry.slug} products={products} />
+        <ShopExperience key={`shop-${entry.slug}`} initialSlug={entry.slug} products={products} />
       </div>
       <Footer />
     </main>
   )
 }
-
