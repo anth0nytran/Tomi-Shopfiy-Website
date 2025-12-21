@@ -119,7 +119,7 @@ export default async function ProductPage({ params }: { params: { handle: string
           Back to shop
         </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
           
           {/* Product Gallery - Large & Clean */}
           <div className="lg:col-span-7">
@@ -127,14 +127,14 @@ export default async function ProductPage({ params }: { params: { handle: string
           </div>
 
           {/* Product Details - Sticky & Editorial */}
-          <div className="lg:col-span-5 lg:sticky lg:top-40">
+          <div className="lg:col-span-5 lg:sticky lg:top-32">
              
              {/* Breadcrumbs */}
-             <nav className="flex items-center gap-2 text-[10px] uppercase tracking-[0.15em] text-stone-400 mb-6">
-               <Link href="/shop" className="hover:text-stone-600">Shop</Link>
-               <span>/</span>
+             <nav className="flex items-center gap-2 text-[10px] uppercase tracking-[0.15em] text-stone-400 mb-8">
+               <Link href="/shop" className="hover:text-stone-900 transition-colors">Shop</Link>
+               <span className="text-stone-300">/</span>
             {primaryCollection ? (
-                 <Link href={collectionEntry ? `/shop/category/${collectionEntry.slug}` : '/shop'} className="text-stone-900 hover:text-stone-600">
+                 <Link href={collectionEntry ? `/shop/category/${collectionEntry.slug}` : '/shop'} className="text-stone-900 hover:text-stone-600 transition-colors">
                    {primaryCollection.title}
                  </Link>
                ) : (
@@ -142,7 +142,7 @@ export default async function ProductPage({ params }: { params: { handle: string
                )}
           </nav>
 
-             <h1 className="font-heading text-4xl md:text-5xl text-stone-900 mb-8 leading-tight">
+             <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl text-stone-900 mb-10 leading-none">
                {product.title}
              </h1>
             
@@ -156,35 +156,35 @@ export default async function ProductPage({ params }: { params: { handle: string
              />
 
              {/* Details Accordion / Sections */}
-             <div className="space-y-8">
+             <div className="space-y-10 mt-12">
                
                {/* Description */}
-               <div className="border-t border-stone-200 pt-6">
-                 <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-stone-900 mb-4">
-                   Details
+               <div className="border-t border-stone-100 pt-8">
+                 <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400 mb-6">
+                   Description
                  </h3>
                  <div 
-                   className="prose prose-stone prose-sm max-w-none text-stone-600 font-light leading-relaxed"
+                   className="prose prose-stone prose-sm max-w-none text-stone-600 font-light leading-loose"
                    dangerouslySetInnerHTML={{ __html: descriptionHtml }} 
                  />
                </div>
 
                {/* Product Notes */}
-               <div className="border-t border-stone-200 pt-6">
-                 <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-stone-900 mb-4">
-                   Product Notes
+               <div className="border-t border-stone-100 pt-8">
+                 <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400 mb-6">
+                   Specifications
                  </h3>
                  {metaEntries.length > 0 ? (
-                   <dl className="grid grid-cols-1 gap-4">
+                   <dl className="grid grid-cols-1 gap-y-3">
                   {metaEntries.map((entry) => (
-                       <div key={entry.label} className="flex justify-between items-baseline border-b border-stone-100 pb-2 last:border-0">
-                         <dt className="text-xs font-bold uppercase tracking-widest text-stone-500">{entry.label}</dt>
-                         <dd className="text-sm text-stone-900 text-right font-medium">{entry.value}</dd>
+                       <div key={entry.label} className="flex justify-between items-baseline pb-3 border-b border-stone-50 last:border-0">
+                         <dt className="text-[11px] font-medium uppercase tracking-widest text-stone-500">{entry.label}</dt>
+                         <dd className="text-sm text-stone-900 text-right font-light">{entry.value}</dd>
                     </div>
                   ))}
                 </dl>
               ) : (
-                   <p className="text-sm text-stone-500 italic">No additional notes available.</p>
+                   <p className="text-sm text-stone-400 italic font-light">No additional notes available.</p>
               )}
                </div>
 

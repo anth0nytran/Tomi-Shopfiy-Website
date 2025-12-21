@@ -90,9 +90,12 @@ function findVariant(
 
 function formatMoney(price?: { amount: string; currencyCode: string } | null) {
   if (!price?.amount) return null
-  return new Intl.NumberFormat(undefined, { style: 'currency', currency: price.currencyCode }).format(
-    parseFloat(price.amount),
-  )
+  return new Intl.NumberFormat(undefined, {
+    style: 'currency',
+    currency: price.currencyCode,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(parseFloat(price.amount))
 }
 
 export function VariantPurchase({ productTitle, options, variants, isRing, ringSizes }: Props) {
@@ -280,41 +283,43 @@ export function VariantPurchase({ productTitle, options, variants, isRing, ringS
   }
 
   return (
-    <div className="bg-white border border-stone-100 p-8 mb-10 shadow-sm space-y-8">
-      <div className="flex justify-between items-start">
+    <div className="space-y-8">
+      <div className="flex justify-between items-start border-b border-stone-100 pb-6">
         <div>
-          <span className="block text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400 mb-2">Price</span>
+          <h2 className="sr-only">Price</h2>
           <div className="flex items-baseline gap-3">
-            <span className="text-3xl md:text-4xl text-stone-900 font-light">{priceLabel ?? '—'}</span>
+            <span className="text-3xl md:text-4xl text-stone-900 font-light tracking-tight">{priceLabel ?? '—'}</span>
             {compareLabel && compareLabel !== priceLabel ? (
-              <span className="text-sm text-stone-400 line-through">{compareLabel}</span>
+              <span className="text-sm text-stone-400 line-through decoration-stone-300">{compareLabel}</span>
             ) : null}
           </div>
         </div>
 
-        <div
-          className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
-            !selectionComplete
-              ? 'bg-stone-200 text-stone-500'
-              : buttonAvailable
-                ? 'bg-[#efdada] text-stone-900'
-                : 'bg-stone-200 text-stone-500'
-          }`}
-        >
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${
-              !selectionComplete ? 'bg-stone-400' : buttonAvailable ? 'bg-stone-900' : 'bg-stone-400'
+        <div className="flex flex-col items-end gap-1">
+          <div
+            className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] ${
+              !selectionComplete
+                ? 'bg-stone-100 text-stone-400'
+                : buttonAvailable
+                  ? 'bg-emerald-50 text-emerald-700'
+                  : 'bg-stone-100 text-stone-400'
             }`}
-          />
-          {!selectionComplete ? 'Select size or save custom' : buttonAvailable ? 'In stock' : 'Out of stock'}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                !selectionComplete ? 'bg-stone-300' : buttonAvailable ? 'bg-emerald-500' : 'bg-stone-300'
+              }`}
+            />
+            {!selectionComplete ? 'Select Options' : buttonAvailable ? 'In Stock' : 'Out of Stock'}
+          </div>
         </div>
       </div>
 
       {hasOptions ? (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {displayOptions.map((opt) => (
             <div key={opt.name} className="space-y-3">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">{opt.name}</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-stone-900">{opt.name}</p>
               <div className="flex flex-wrap gap-2">
                 {opt.values.map((value) => {
                   const isActive = selectedOptions[opt.name!] === value
@@ -323,10 +328,10 @@ export function VariantPurchase({ productTitle, options, variants, isRing, ringS
                       key={`${opt.name}-${value}`}
                       type="button"
                       onClick={() => handleSelect(opt.name!, value)}
-                      className={`rounded-full border px-4 py-2 text-xs font-medium transition-all ${
+                      className={`min-w-[48px] h-12 px-4 rounded-none border text-xs font-medium transition-all duration-200 uppercase tracking-wider ${
                         isActive
                           ? 'border-stone-900 bg-stone-900 text-white'
-                          : 'border-stone-200 bg-white text-stone-700 hover:border-stone-400'
+                          : 'border-stone-200 bg-transparent text-stone-900 hover:border-stone-900'
                       }`}
                     >
                       {value}
@@ -362,36 +367,31 @@ export function VariantPurchase({ productTitle, options, variants, isRing, ringS
           canSubmit={selectionComplete && !!merchandiseId}
         />
       ) : (
-        <AddToCartButton
-          merchandiseId={merchandiseId}
-          available={buttonAvailable}
-          attributes={cartAttributes}
-          canSubmit={selectionComplete && !!merchandiseId}
-          cannotSubmitMessage="Select a size or save a size request to add to bag."
-        />
+        <div className="pt-2">
+           <AddToCartButton
+            merchandiseId={merchandiseId}
+            available={buttonAvailable}
+            attributes={cartAttributes}
+            canSubmit={selectionComplete && !!merchandiseId}
+            cannotSubmitMessage="Select a size or save a size request to add to bag."
+          />
+        </div>
       )}
 
       {showSelectionDetails ? (
-        <div className="text-xs text-stone-400 leading-relaxed">
-          <p className="font-bold uppercase tracking-[0.15em] mb-2">Selection</p>
-          {selectionParts.length ? (
-            <div className="flex flex-wrap gap-2 text-stone-700">
-              {selectionParts.map((part) => (
-                <span
-                  key={part}
-                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-stone-100 border border-stone-200 text-[11px] font-medium text-stone-700"
-                >
-                  {part}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <p className="text-stone-700 font-medium">{selectionLabel}</p>
-          )}
+        <div className="text-xs text-stone-500 leading-relaxed border-t border-stone-100 pt-6">
+          <div className="flex flex-wrap gap-x-1 items-baseline">
+            <span className="font-bold uppercase tracking-[0.15em] text-stone-900">Selection:</span>
+            {selectionParts.length ? (
+              <span className="font-medium text-stone-900">{selectionParts.join(' / ')}</span>
+            ) : (
+              <span className="italic text-stone-400">None</span>
+            )}
+          </div>
           {requestedSizeNote ? (
-            <p className="text-stone-600 mt-1">
-              Requested size:{' '}
-              <span className="font-medium text-stone-800">
+            <p className="text-stone-600 mt-2 bg-stone-50 p-3 text-[11px]">
+              <span className="font-bold">Note:</span> Requested size{' '}
+              <span className="font-medium text-stone-900">
                 {requestedSizeNote}
                 {sizeOptionName ? ' (custom)' : ''}
               </span>

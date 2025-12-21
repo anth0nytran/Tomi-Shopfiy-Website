@@ -85,87 +85,93 @@ export function RingPurchaseCard({
     <div className="space-y-6">
       {sizes.length > 0 ? (
         <div>
-          <label htmlFor={selectId} className="block text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400 mb-2">
+          <label htmlFor={selectId} className="block text-[11px] font-bold uppercase tracking-[0.15em] text-stone-900 mb-3">
             Ring size
           </label>
-          <select
-            id={selectId}
-            value={selectedSize}
-            onChange={(e) => {
-              const next = e.target.value
-              setSelectedSize(next)
-              onSizeSelect?.(next)
-              if (next) {
-                // If they picked a valid size, we don't want to send a custom request too.
-                setRequestSaved('')
-                onRequestChange?.('')
-              } else if (!next && sizeOptionName) {
-                onSizeSelect?.('')
-              }
-            }}
-            className="w-full bg-[#F9F8F6] border-b border-stone-300 py-4 px-3 text-stone-900 font-medium focus:outline-none focus:border-stone-900 transition-colors"
-          >
-            <option value="">Select a size</option>
-            {sizes.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+             <select
+              id={selectId}
+              value={selectedSize}
+              onChange={(e) => {
+                const next = e.target.value
+                setSelectedSize(next)
+                onSizeSelect?.(next)
+                if (next) {
+                  // If they picked a valid size, we don't want to send a custom request too.
+                  setRequestSaved('')
+                  onRequestChange?.('')
+                } else if (!next && sizeOptionName) {
+                  onSizeSelect?.('')
+                }
+              }}
+              className="w-full appearance-none rounded-none border border-stone-200 bg-transparent py-3 px-4 text-sm text-stone-900 font-medium focus:border-stone-900 focus:outline-none transition-colors cursor-pointer hover:border-stone-400"
+            >
+              <option value="">Select a size</option>
+              {sizes.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-stone-500">
+               <svg className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                 <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+               </svg>
+            </div>
+          </div>
         </div>
       ) : null}
 
-      <div className="border-t border-stone-200 pt-5">
+      <div className="pt-2">
         <button
           type="button"
-          className="w-full flex items-center justify-between text-left"
+          className="group flex items-center gap-2 text-left"
           onClick={() => setShowRequest((v) => !v)}
           aria-expanded={showRequest ? 'true' : 'false'}
         >
-          <span className="text-xs font-bold uppercase tracking-[0.15em] text-stone-900">Not seeing your size?</span>
-          <span className="text-stone-500 text-sm">{showRequest ? '−' : '+'}</span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-stone-500 group-hover:text-stone-900 transition-colors border-b border-transparent group-hover:border-stone-900 pb-0.5">
+            Can&apos;t find your size?
+          </span>
         </button>
 
         {showRequest ? (
-          <div className="mt-4 space-y-3">
-            <p className="text-sm text-stone-600 leading-relaxed">
-              You&apos;re in luck! Our rings are made-to-order, which means we can absolutely place an order for you with your
-              true, desired size.
+          <div className="mt-4 bg-stone-50 p-6 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+            <p className="text-sm text-stone-600 leading-relaxed font-light">
+              We make our rings to order, so we can craft your exact size. 
+              Enter your desired size below and click save.
             </p>
-            <p className="text-sm text-stone-600 leading-relaxed">
-              Please use the text box below to indicate the desired size you would like to order, and we will use this
-              information to package your order accordingly. You may proceed to your cart after saving.{' '}
-              <span className="text-red-500">Your information will not be saved if you do not click SAVE.</span>
-            </p>
+            
+            <div className="space-y-3">
+              <textarea
+                id={textareaId}
+                value={requestDraft}
+                onChange={(e) => setRequestDraft(e.target.value)}
+                placeholder="e.g. Size 6.5"
+                rows={2}
+                className="w-full rounded-none border border-stone-200 bg-white p-3 text-sm text-stone-900 placeholder:text-stone-400 focus:border-stone-900 focus:outline-none focus:ring-0 transition-colors"
+              />
 
-            <textarea
-              id={textareaId}
-              value={requestDraft}
-              onChange={(e) => setRequestDraft(e.target.value)}
-              placeholder="EX: Size 6 for the white gold ring, and size 9 for the yellow gold"
-              rows={3}
-              className="w-full rounded-xl border border-stone-300 bg-white p-4 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-300"
-            />
-
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={saveRequest}
-                className="inline-flex items-center justify-center px-5 py-2.5 bg-stone-900 text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-stone-700 transition-colors"
-              >
-                Save
-              </button>
-              <button
-                type="button"
-                onClick={clearRequest}
-                className="inline-flex items-center justify-center px-4 py-2.5 border border-stone-300 text-stone-900 text-xs font-bold uppercase tracking-[0.2em] hover:bg-stone-50 transition-colors"
-              >
-                Clear
-              </button>
-
-              {requestSaved ? (
-                <span className="text-[10px] font-bold uppercase tracking-widest text-stone-500">Saved</span>
-              ) : null}
+              <div className="flex items-center justify-between">
+                 <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={saveRequest}
+                      className="inline-flex items-center justify-center px-6 py-2 bg-stone-900 text-white text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-stone-700 transition-colors"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={clearRequest}
+                      className="inline-flex items-center justify-center px-4 py-2 text-stone-500 text-[10px] font-bold uppercase tracking-[0.2em] hover:text-stone-900 transition-colors"
+                    >
+                      Clear
+                    </button>
+                 </div>
+                 {requestSaved ? (
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">Saved</span>
+                ) : null}
+              </div>
             </div>
           </div>
         ) : null}
@@ -175,7 +181,7 @@ export function RingPurchaseCard({
         merchandiseId={merchandiseId}
         available={available}
         attributes={attributes}
-        canSubmit={canAdd}
+        canSubmit={canSubmit}
         cannotSubmitMessage={!available ? 'Temporarily unavailable.' : 'Select a size or save a size request to add to bag.'}
       />
     </div>

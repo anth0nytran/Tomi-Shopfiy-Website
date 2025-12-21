@@ -229,7 +229,12 @@ export function ProductCard({ product, index }: { product: ShopifyListProduct; i
   const priceAmount = primaryVariant?.price?.amount
   const priceCurrency = primaryVariant?.price?.currencyCode
   const formattedPrice = priceAmount
-    ? new Intl.NumberFormat(undefined, { style: 'currency', currency: priceCurrency }).format(parseFloat(priceAmount))
+    ? new Intl.NumberFormat(undefined, {
+        style: 'currency',
+        currency: priceCurrency,
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(parseFloat(priceAmount))
     : null
   const inStock = product.variants?.nodes?.some((v) => v?.availableForSale) ?? false
   
