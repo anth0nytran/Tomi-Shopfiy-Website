@@ -140,6 +140,7 @@ export async function POST(req: NextRequest) {
     'items',
 
     // JadeConsultation
+    'consultationProfile',
     'desiredDate',
     'jewelryType',
     'chainStyle',

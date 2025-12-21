@@ -129,6 +129,7 @@ export const FORM_SHEETS: Record<FormType, { sheetName: string; columns: SheetCo
       { key: 'lastName', label: 'Last Name' },
       { key: 'email', label: 'Email' },
       { key: 'phone', label: 'Phone' },
+      { key: 'consultationProfile', label: 'Profile' },
       { key: 'desiredDate', label: 'Desired Date' },
       { key: 'jewelryType', label: 'Jewelry Type' },
       { key: 'chainStyle', label: 'Chain Style' },
@@ -263,6 +264,52 @@ async function getOrCreateSheetId(spreadsheetId: string, sheetName: string): Pro
 
 function asA1(sheetName: string, col: string, row: number) {
   return `${sheetName}!${col}${row}`
+}
+
+function findSingleMissingIndex(existing: string[], expected: string[]) {
+  // Returns the index in `expected` that is missing from `existing` if and only if:
+  // - expected has exactly 1 more item than existing
+  // - existing matches expected in order, excluding the missing item
+  if (expected.length !== existing.length + 1) return null
+  let i = 0
+  let j = 0
+  let missingIndex: number | null = null
+  while (i < expected.length && j < existing.length) {
+    if (expected[i] === existing[j]) {
+      i++
+      j++
+      continue
+    }
+    if (missingIndex !== null) return null
+    missingIndex = i
+    i++
+  }
+  if (j !== existing.length) return null
+  if (missingIndex === null) missingIndex = expected.length - 1
+  return missingIndex
+}
+
+async function insertSheetColumn(spreadsheetId: string, sheetId: number, index: number) {
+  const auth = getSheetsAuth()
+  const sheets = google.sheets({ version: 'v4', auth })
+  await sheets.spreadsheets.batchUpdate({
+    spreadsheetId,
+    requestBody: {
+      requests: [
+        {
+          insertDimension: {
+            range: {
+              sheetId,
+              dimension: 'COLUMNS',
+              startIndex: index,
+              endIndex: index + 1,
+            },
+            inheritFromBefore: true,
+          },
+        },
+      ],
+    },
+  })
 }
 
 function tabCountFormula(sheetName: string) {
@@ -586,6 +633,37 @@ async function ensureHeaderRow(
     normalizedExisting.length === expectedLabels.length && normalizedExisting.every((h, i) => h === expectedLabels[i])
   const matchesKeys =
     normalizedExisting.length === expectedKeys.length && normalizedExisting.every((h, i) => h === expectedKeys[i])
+
+  // Safe one-time schema migration: JadeConsultation missing just the new "Profile" column.
+  // This avoids hard failures when we add a column in code while the live sheet still has the old header.
+  if (sheetName === FORM_SHEETS.jade_consultation.sheetName && !matchesLabels) {
+    const missingLabelIdx = findSingleMissingIndex(normalizedExisting, expectedLabels)
+    if (missingLabelIdx !== null && expectedLabels[missingLabelIdx] === 'Profile') {
+      await insertSheetColumn(spreadsheetId, sheetId, missingLabelIdx)
+      await sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range: `${sheetName}!A1`,
+        valueInputOption: 'RAW',
+        requestBody: { values: [columns.map((c) => c.label)] },
+      })
+      await applyNiceFormatting(spreadsheetId, sheetId, sheetName, columns)
+      return
+    }
+
+    // Also handle legacy "keys as headers" variant missing the new key.
+    const missingKeyIdx = findSingleMissingIndex(normalizedExisting, expectedKeys)
+    if (missingKeyIdx !== null && expectedKeys[missingKeyIdx] === 'consultationProfile') {
+      await insertSheetColumn(spreadsheetId, sheetId, missingKeyIdx)
+      await sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range: `${sheetName}!A1`,
+        valueInputOption: 'RAW',
+        requestBody: { values: [columns.map((c) => c.label)] },
+      })
+      await applyNiceFormatting(spreadsheetId, sheetId, sheetName, columns)
+      return
+    }
+  }
 
   if (matchesKeys && !matchesLabels) {
     // Migrate legacy header row (internal keys) -> nice labels

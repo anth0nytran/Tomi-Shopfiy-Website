@@ -33,9 +33,11 @@ const BAIL_METALS = ['Yellow Gold', 'White Gold']
 // --- Components ---
 
 type ViewState = 'selection' | 'online-order' | 'consultation-choice' | 'consultation-familiar' | 'consultation-guidance'
+type ConsultationProfile = 'Familiar' | 'Guidance' | ''
 
 export function JadeBuilder() {
   const [view, setView] = useState<ViewState>('selection')
+  const [consultationProfile, setConsultationProfile] = useState<ConsultationProfile>('')
 
   // Shared State
   const [jewelryType, setJewelryType] = useState<'necklace' | 'bracelet'>('necklace')
@@ -79,26 +81,41 @@ export function JadeBuilder() {
     setConsultSubmitting(true)
 
     try {
-      const payload = {
+      const basePayload: any = {
         formType: 'jade_consultation',
         sourcePath: '/shop/jade-jewelry',
-        sourceFlow: 'shop->jade-jewelry->consultation',
+        sourceFlow:
+          consultationProfile === 'Familiar'
+            ? 'shop->jade-jewelry->consultation->familiar'
+            : consultationProfile === 'Guidance'
+              ? 'shop->jade-jewelry->consultation->guidance'
+              : 'shop->jade-jewelry->consultation',
         ...utmFromLocation(),
         firstName: consultFirstName.trim(),
         lastName: consultLastName.trim(),
         email: consultEmail.trim(),
         phone: consultPhone.trim(),
-        desiredDate: consultDesiredDate,
-        jewelryType,
-        chainStyle: chain,
-        chainColor: chainMetal,
-        bailShape,
-        bailColor: bailMetal,
-        byoChain: consultByoChain.trim(),
+        consultationProfile,
         notesOrMessage: consultNotes.trim(),
         // extra context (kept in rawPayloadJson)
         jadeColor,
       }
+
+      // Only include customization fields if the user picked the Familiar path.
+      // For Guidance, leave those sheet columns blank (per your request).
+      const payload =
+        consultationProfile === 'Familiar'
+          ? {
+              ...basePayload,
+              desiredDate: consultDesiredDate,
+              jewelryType,
+              chainStyle: chain,
+              chainColor: chainMetal,
+              bailShape,
+              bailColor: bailMetal,
+              byoChain: consultByoChain.trim(),
+            }
+          : basePayload
 
       const res = await fetch('/api/forms/submit', {
         method: 'POST',
@@ -220,7 +237,7 @@ export function JadeBuilder() {
                   </div>
                   
                   <p className="text-stone-500 font-light leading-relaxed mb-6">
-                    Work one-on-one with our team. Sourcing specific stones, custom carvings, or unique settings? Let's discuss your vision directly.
+                    Work one-on-one with our team. Sourcing specific stones, custom carvings, or unique settings? Let&apos;s discuss your vision directly.
                   </p>
 
                   <div className="mt-auto flex items-center text-primary text-xs font-bold uppercase tracking-[0.2em] group-hover:translate-x-2 transition-transform">
@@ -254,7 +271,7 @@ export function JadeBuilder() {
             <div className="bg-white p-8 md:p-12 border border-stone-100 shadow-sm">
               <div className="mb-10 text-center">
                 <h2 className="font-heading text-3xl md:text-4xl text-primary mb-3">Online Order</h2>
-                <p className="text-stone-500 font-light">Tell us what you love, and we'll find the perfect match.</p>
+                <p className="text-stone-500 font-light">Tell us what you love, and we&apos;ll find the perfect match.</p>
               </div>
 
               {/* Type Tabs */}
@@ -443,7 +460,10 @@ export function JadeBuilder() {
               
               {/* Profile 1: Familiar */}
               <button 
-                onClick={() => setView('consultation-familiar')}
+                onClick={() => {
+                  setConsultationProfile('Familiar')
+                  setView('consultation-familiar')
+                }}
                 className="group relative flex flex-col bg-white border border-stone-200 hover:border-primary/30 hover:shadow-xl transition-all duration-500 overflow-hidden text-left min-h-[400px]"
               >
                 <div className="absolute top-0 left-0 w-full h-2 bg-stone-100 group-hover:bg-primary transition-colors duration-500" />
@@ -454,7 +474,7 @@ export function JadeBuilder() {
                   </div>
                   
                   <p className="text-stone-600 font-light leading-relaxed mb-6 text-lg">
-                    "I am familiar with the Jade Bar customizations (i.e., I know what chains are offered, and I know if I want a bail or not) and would like the additional assistance of a store team member to order my jade."
+                    &ldquo;I am familiar with the Jade Bar customizations (i.e., I know what chains are offered, and I know if I want a bail or not) and would like the additional assistance of a store team member to order my jade.&rdquo;
                   </p>
 
                   <div className="mt-auto flex items-center text-primary text-xs font-bold uppercase tracking-[0.2em] group-hover:translate-x-2 transition-transform">
@@ -465,7 +485,10 @@ export function JadeBuilder() {
 
               {/* Profile 2: Guidance */}
               <button 
-                onClick={() => setView('consultation-guidance')}
+                onClick={() => {
+                  setConsultationProfile('Guidance')
+                  setView('consultation-guidance')
+                }}
                 className="group relative flex flex-col bg-white border border-stone-200 hover:border-primary/30 hover:shadow-xl transition-all duration-500 overflow-hidden text-left min-h-[400px]"
               >
                 <div className="absolute top-0 left-0 w-full h-2 bg-stone-100 group-hover:bg-primary transition-colors duration-500" />
@@ -476,7 +499,7 @@ export function JadeBuilder() {
                   </div>
                   
                   <p className="text-stone-600 font-light leading-relaxed mb-6 text-lg">
-                    "I am interested in the Jade Bar, but I am not familiar with the options, and I would like a store team member to guide me through the customization process."
+                    &ldquo;I am interested in the Jade Bar, but I am not familiar with the options, and I would like a store team member to guide me through the customization process.&rdquo;
                   </p>
 
                   <div className="mt-auto flex items-center text-primary text-xs font-bold uppercase tracking-[0.2em] group-hover:translate-x-2 transition-transform">
@@ -721,7 +744,7 @@ export function JadeBuilder() {
             <div className="bg-white p-8 md:p-16 shadow-sm border border-stone-100">
               <div className="mb-10 text-center">
                 <h2 className="font-heading text-3xl md:text-4xl text-primary mb-3">Consultation Request</h2>
-                <p className="text-stone-500 font-light">We'll guide you through the process.</p>
+                <p className="text-stone-500 font-light">We&apos;ll guide you through the process.</p>
               </div>
 
               <form className="space-y-8" onSubmit={submitConsultation}>
