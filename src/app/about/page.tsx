@@ -13,13 +13,13 @@ export default function AboutPage() {
 
       <div className="flex-1">
         {/* Hero / Intro Statement */}
-        <section className="relative pt-32 pb-16 md:pt-44 md:pb-24 px-6 bg-[#F9F8F6]">
-          <div className="container mx-auto max-w-4xl text-center">
-            <span className="block text-xs font-bold tracking-[0.2em] uppercase text-stone-400 mb-6">
+        <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 bg-[#F9F8F6]">
+          <div className="container mx-auto max-w-3xl text-center">
+            <span className="block text-xs font-medium tracking-[0.2em] uppercase text-stone-500 mb-8">
               Our Mission
             </span>
-            <h1 className="font-heading text-3xl md:text-5xl lg:text-6xl text-stone-900 leading-[1.15] mb-4">
-              We believe in <span className="italic font-light text-stone-500">affordable</span> gold jewelry, 
+            <h1 className="font-heading text-4xl md:text-5xl text-stone-900 leading-tight mb-6">
+              We believe in <span className="italic font-light text-stone-600">affordable</span> gold jewelry, 
               <br className="hidden md:block" />
               and we are making it happen in Houston.
             </h1>
@@ -27,8 +27,8 @@ export default function AboutPage() {
       </section>
 
         {/* Featured Image - Editorial Style */}
-        <section className="w-full px-6 md:px-12 pb-20 bg-[#F9F8F6]">
-          <div className="relative w-full max-w-[1400px] mx-auto aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-stone-100">
+        <section className="w-full px-6 md:px-12 pb-24 bg-[#F9F8F6]">
+          <div className="relative w-full max-w-[1400px] mx-auto aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-stone-100 rounded-xl">
           <Image
             src="/assets/about%20us.jpg"
             alt="Inside Tomi studio — craftsmanship and gold jewelry"
@@ -42,17 +42,17 @@ export default function AboutPage() {
       </section>
 
         {/* Story Content */}
-        <section className="py-20 md:py-32 bg-white">
+        <section className="py-24 md:py-40 bg-white">
           <div className="container mx-auto px-6 md:px-12">
-            <div className="flex flex-col md:flex-row gap-12 md:gap-20 items-start justify-between max-w-5xl mx-auto">
-              <div className="w-full md:w-1/3 md:sticky md:top-32">
+            <div className="flex flex-col md:flex-row gap-16 md:gap-24 items-start justify-center max-w-6xl mx-auto">
+              <div className="w-full md:w-1/3 md:sticky md:top-40">
                 <h3 className="font-heading text-3xl md:text-4xl text-stone-900 mb-6">
                   Timeless &amp; Attainable
                 </h3>
                 <div className="h-[1px] w-12 bg-stone-300" />
           </div>
 
-              <div className="w-full md:w-2/3 text-base md:text-lg text-stone-600 font-light leading-relaxed space-y-8 text-balance">
+              <div className="w-full md:w-1/2 text-base md:text-lg text-stone-600 font-light leading-relaxed space-y-10 text-balance">
                 <p>
                   At tomi, we believe that fine jewelry should be both timeless and attainable. 
                   Our mission is to create gold jewelry that honors sustainable practices, 
