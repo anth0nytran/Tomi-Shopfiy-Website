@@ -19,7 +19,8 @@ const footerColumns: FooterColumn[] = [
     links: [
       { label: 'Account', href: '/account' },
       { label: 'Jewelry Care Guide', href: '/guide' },
-      { label: 'Terms & Privacy', href: '#' },
+      { label: 'Privacy Policy', href: '/privacy' },
+      { label: 'Terms of Service', href: '/terms' },
     ],
   },
   {

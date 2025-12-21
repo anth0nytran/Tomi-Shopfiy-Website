@@ -48,6 +48,18 @@ export default function ContactPage({
                     <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-stone-900 mb-2">Email</h3>
                     <a href="mailto:hello@tomijewelry.com" className="text-stone-600 hover:text-stone-900 transition-colors">Support@tomijewelry.com</a>
                   </div>
+
+                  <div>
+                    <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-stone-900 mb-2">Partnerships & Collabs</h3>
+                    <p className="text-stone-600 mb-1">Interested in partnering with us?</p>
+                    <a href="mailto:marketing@tomijewelry.com" className="text-stone-600 hover:text-stone-900 transition-colors">marketing@tomijewelry.com</a>
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-stone-900 mb-2">Careers</h3>
+                    <a href="mailto:support@tomijewelry.com" className="text-stone-600 hover:text-stone-900 transition-colors">support@tomijewelry.com</a>
+                  </div>
+
                   <div>
                     <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-stone-900 mb-2">Showroom</h3>
                     <p className="text-stone-600">2810 Riverby Rd. STE 104<br/>Houston, Texas 77020</p>

@@ -30,14 +30,27 @@ export function ShopExperience({ initialSlug, products }: ShopExperienceProps) {
   const [isAnimating, setIsAnimating] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [sort, setSort] = useState('featured')
+  const [subFilter, setSubFilter] = useState('all')
 
   useEffect(() => {
     setVisibleCount(Math.min(INITIAL_VISIBLE, products.length))
+    setSubFilter('all') // Reset subfilter when switching categories
   }, [products, activeSlug])
 
   const entry: CatalogEntry = useMemo(() => CATALOG_BY_SLUG[activeSlug] ?? FALLBACK_ENTRY, [activeSlug])
 
-  const filteredProducts = useMemo(() => filterProductsByCatalogEntry(products, entry), [products, entry])
+  const filteredProducts = useMemo(() => {
+    const base = filterProductsByCatalogEntry(products, entry)
+    if (activeSlug === 'earrings' && subFilter !== 'all') {
+      return base.filter((p) => {
+        // Reuse the logic from catalog.ts if possible, or do a simple check
+        // Ideally export matchesProductType or just check simple string inclusion/normalization
+        const type = (p.productType || '').toLowerCase()
+        return type.includes(subFilter.toLowerCase())
+      })
+    }
+    return base
+  }, [products, entry, activeSlug, subFilter])
 
   const sortedProducts = useMemo(() => {
     const list = filteredProducts.slice()
@@ -159,6 +172,11 @@ export function ShopExperience({ initialSlug, products }: ShopExperienceProps) {
         isUpdating={isAnimating || isPending}
         sort={sort}
         onSortChange={handleSortChange}
+        subFilter={subFilter}
+        onSubFilterChange={(val) => {
+          setSubFilter(val)
+          setVisibleCount(INITIAL_VISIBLE)
+        }}
       />
       
       {inventoryCount === 0 ? (

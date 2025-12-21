@@ -38,9 +38,12 @@ export default function ReturnsPage() {
                 <div className="flex gap-6 items-start">
                   <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-[#efdada] text-stone-900 font-bold text-xs">1</span>
                   <div>
-                    <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-stone-900 mb-2">Refund Window</h3>
+                    <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-stone-900 mb-2">Refund Policy</h3>
+                    <p className="text-stone-600 font-light leading-relaxed mb-2">
+                      Full refund available within <strong>30 days</strong> of purchase. After 30 days, customers are eligible for <strong>store credit only</strong>. After 45 days, no returns, refunds, or exchanges will be accepted.
+                    </p>
                     <p className="text-stone-600 font-light leading-relaxed">
-                      We offer a <strong>30-day window</strong> for a full refund to your original payment method, and a <strong>45-day window</strong> for store credit exchanges.
+                      Refunds will be issued to the original payment method, minus the <strong>15% restocking fee</strong> and return shipping cost.
                     </p>
                   </div>
                 </div>
@@ -63,6 +66,16 @@ export default function ReturnsPage() {
                       For hygiene reasons, earrings used during a piercing appointment cannot be returned. Custom pieces are final sale.
                     </p>
                   </div>
+                </div>
+
+                <div className="flex gap-6 items-start">
+                   <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-[#efdada] text-stone-900 font-bold text-xs">4</span>
+                   <div>
+                     <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-stone-900 mb-2">Lost/Stolen Packages</h3>
+                     <p className="text-stone-600 font-light leading-relaxed">
+                       Once carrier confirms delivery, customer is responsible. We recommend customers file claims with the carrier for lost packages. We&apos;ll assist with documentation but cannot offer refunds/replacements for carrier-confirmed deliveries.
+                     </p>
+                   </div>
                 </div>
               </div>
 

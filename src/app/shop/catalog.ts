@@ -179,7 +179,7 @@ export const CATALOG_ENTRIES: CatalogEntry[] = [
     subtitle: 'Serene stones, crafted in solid gold',
     heroClass: 'shop-hero--jade',
     navLabel: 'Jade',
-    navGroup: 'categories',
+    navGroup: 'collections',
     filter: productType('Jade'),
     tab: true,
   },

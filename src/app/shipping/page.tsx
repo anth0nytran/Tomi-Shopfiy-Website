@@ -36,53 +36,25 @@ export default function ShippingPage() {
                 <div className="space-y-10">
                   {/* US */}
                   <div>
-                    <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-stone-900 mb-4">United States</h3>
+                    <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-stone-900 mb-4">Domestic</h3>
                     <div className="bg-stone-50 p-6 rounded-sm space-y-6">
                       <div className="grid md:grid-cols-2 gap-4 border-b border-stone-200 pb-4 last:border-0 last:pb-0">
-                        <div>
-                          <p className="font-bold text-stone-800">Standard</p>
-                          <p className="text-xs text-stone-500 italic">3 to 4 business days</p>
-                          <p className="text-xs text-stone-500 mt-1">Texas residents may experience faster delivery times.</p>
-                        </div>
-                        <div className="text-right md:text-left">
-                          <p className="text-stone-700">UPS Ground ($11-14+)</p>
-                        </div>
-                      </div>
-                      
-                      <div className="grid md:grid-cols-2 gap-4">
                         <div>
                           <p className="font-bold text-stone-800">Express</p>
                           <p className="text-xs text-stone-500 italic">1 to 2 business days</p>
                         </div>
                         <div className="text-right md:text-left">
-                          <p className="text-stone-700">UPS Next Day Air ($25-50+)</p>
+                          <p className="text-stone-700">Flat Rate $20</p>
                         </div>
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Canada */}
-                  <div>
-                    <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-stone-900 mb-4">Canada</h3>
-                    <div className="bg-stone-50 p-6 rounded-sm space-y-6">
-                      <div className="grid md:grid-cols-2 gap-4 border-b border-stone-200 pb-4">
-                        <div>
-                          <p className="font-bold text-stone-800">Standard International</p>
-                          <p className="text-xs text-stone-500 italic">2 to 3 business days</p>
-                        </div>
-                        <div className="text-right md:text-left space-y-1">
-                          <p className="text-stone-700">UPS Standard ($20+)</p>
-                          <p className="text-stone-700">UPS Worldwide Expedited ($30+)</p>
-                        </div>
-                      </div>
-
+                      
                       <div className="grid md:grid-cols-2 gap-4">
                         <div>
-                          <p className="font-bold text-stone-800">Express International</p>
-                          <p className="text-xs text-stone-500 italic">1 to 2 business days</p>
+                          <p className="font-bold text-stone-800">Standard</p>
+                          <p className="text-xs text-stone-500 italic">1 to 5 business days</p>
                         </div>
                         <div className="text-right md:text-left">
-                          <p className="text-stone-700">UPS Worldwide Saver ($34+)</p>
+                          <p className="text-stone-700">Flat Rate $8</p>
                         </div>
                       </div>
                     </div>
@@ -91,27 +63,36 @@ export default function ShippingPage() {
                   {/* International */}
                   <div>
                     <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-stone-900 mb-4">International</h3>
-                    <p className="text-xs text-stone-500 mb-4">Shipping rates may vary based on destination country.</p>
                     <div className="bg-stone-50 p-6 rounded-sm space-y-6">
                       <div className="grid md:grid-cols-2 gap-4 border-b border-stone-200 pb-4">
                         <div>
-                          <p className="font-bold text-stone-800">Standard International</p>
-                          <p className="text-xs text-stone-500 italic">6 to 12 business days</p>
+                          <p className="font-bold text-stone-800">Express International</p>
+                          <p className="text-xs text-stone-500 italic">1 to 5 business days</p>
                         </div>
-                        <div className="text-right md:text-left">
-                          <p className="text-stone-700">UPS Worldwide Expedited</p>
+                        <div className="text-right md:text-left space-y-1">
+                          <p className="text-stone-700">Flat Rate $45.00</p>
                         </div>
                       </div>
 
                       <div className="grid md:grid-cols-2 gap-4">
                         <div>
-                          <p className="font-bold text-stone-800">Express International</p>
-                          <p className="text-xs text-stone-500 italic">1 to 5 business days</p>
+                          <p className="font-bold text-stone-800">Standard International</p>
+                          <p className="text-xs text-stone-500 italic">6 to 12 business days</p>
                         </div>
                         <div className="text-right md:text-left">
-                          <p className="text-stone-700">UPS Worldwide Express</p>
+                          <p className="text-stone-700">Flat Rate $25.00</p>
                         </div>
                       </div>
+                    </div>
+                  </div>
+
+                  {/* Lost/Stolen Packages */}
+                  <div>
+                    <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-stone-900 mb-4">Lost or Stolen Packages</h3>
+                    <div className="bg-stone-50 p-6 rounded-sm">
+                      <p className="text-stone-600 font-light leading-relaxed text-sm">
+                        Once the carrier confirms delivery, the customer is responsible for the package. We recommend customers file claims with the carrier for lost packages. We will assist with reasonable documentation when available but cannot offer refunds or replacements for carrier-confirmed deliveries.
+                      </p>
                     </div>
                   </div>
 
@@ -136,6 +117,10 @@ export default function ShippingPage() {
                   <div className="flex gap-4">
                      <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-stone-300 mt-2.5"></span>
                      <p>After 45 days, no returns, refunds, or exchanges will be accepted.</p>
+                  </div>
+                  <div className="flex gap-4">
+                     <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-stone-300 mt-2.5"></span>
+                     <p>Refunds will be issued to the original payment method, minus the <strong>15% restocking fee</strong> and return shipping cost.</p>
                   </div>
                 </div>
               </div>
@@ -162,6 +147,7 @@ export default function ShippingPage() {
     </main>
   )
 }
+
 
 
 

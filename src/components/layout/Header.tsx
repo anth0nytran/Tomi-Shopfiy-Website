@@ -32,7 +32,7 @@ const navGroups: NavGroup[] = [
     entries: CATALOG_ENTRIES.filter(
       (entry) =>
         entry.navGroup === 'categories' &&
-        ['all', 'necklaces', 'bracelets', 'rings', 'earrings', 'jade'].includes(entry.slug),
+        ['all', 'necklaces', 'bracelets', 'anklets', 'rings', 'earrings'].includes(entry.slug),
     ),
   },
   {

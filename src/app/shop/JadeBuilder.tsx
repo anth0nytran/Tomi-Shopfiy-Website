@@ -32,7 +32,7 @@ const BAIL_METALS = ['Yellow Gold', 'White Gold']
 
 // --- Components ---
 
-type ViewState = 'selection' | 'online-order' | 'consultation'
+type ViewState = 'selection' | 'online-order' | 'consultation-choice' | 'consultation-familiar' | 'consultation-guidance'
 
 export function JadeBuilder() {
   const [view, setView] = useState<ViewState>('selection')
@@ -153,27 +153,32 @@ export function JadeBuilder() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl px-4">
               
-              {/* Card 1: Online Order */}
-              <button 
-                onClick={() => setView('online-order')}
-                className="group relative flex flex-col bg-white border border-stone-200 hover:border-primary/30 hover:shadow-xl transition-all duration-500 overflow-hidden text-left h-[500px]"
+              {/* Card 1: Online Order (Disabled / Coming Soon) */}
+              <div 
+                className="group relative flex flex-col bg-white border border-stone-200 overflow-hidden text-left h-[500px] cursor-not-allowed select-none"
               >
-                <div className="absolute top-0 left-0 w-full h-2 bg-stone-100 group-hover:bg-primary transition-colors duration-500" />
+                {/* Subtle overlay only on hover to indicate disabled state */}
+                <div className="absolute inset-0 z-20 bg-white/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="bg-stone-900 text-white px-5 py-2 text-[10px] font-bold uppercase tracking-[0.2em] shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                    Coming Soon
+                  </span>
+                </div>
+
+                <div className="absolute top-0 left-0 w-full h-2 bg-stone-100" />
                 
-                <div className="relative h-64 w-full overflow-hidden bg-stone-50">
-                   {/* Placeholder for visual - using simple color block or abstract pattern if no specific image fits perfectly yet */}
-                   <div className="absolute inset-0 bg-white flex items-center justify-center group-hover:scale-105 transition-transform duration-700">
-                      <Sparkles className="w-16 h-16 text-stone-200 group-hover:text-primary/20 transition-colors" />
+                <div className="relative h-64 w-full overflow-hidden bg-stone-50 group-hover:grayscale transition-all duration-500">
+                   <div className="absolute inset-0 bg-white flex items-center justify-center">
+                      <Sparkles className="w-16 h-16 text-stone-200" />
                    </div>
                    <Image 
                       src="/assets/choosing_your_chain.jpg" 
                       alt="Jade materials" 
                       fill 
-                      className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500" 
+                      className="object-cover opacity-80" 
                     />
                 </div>
 
-                <div className="p-8 md:p-10 flex flex-col flex-1">
+                <div className="p-8 md:p-10 flex flex-col flex-1 group-hover:opacity-60 transition-opacity duration-300">
                   <div className="flex items-center gap-3 mb-4">
                      <span className="w-8 h-8 rounded-full bg-[#efdada] flex items-center justify-center text-primary text-xs font-bold">01</span>
                      <h3 className="font-heading text-2xl text-stone-900">Online Order</h3>
@@ -183,15 +188,15 @@ export function JadeBuilder() {
                     Perfect if you trust our styling. Select your preferences (color, metal, chain) and we will hand-pick a beautiful jade piece that matches your vibe.
                   </p>
 
-                  <div className="mt-auto flex items-center text-primary text-xs font-bold uppercase tracking-[0.2em] group-hover:translate-x-2 transition-transform">
+                  <div className="mt-auto flex items-center text-stone-400 text-xs font-bold uppercase tracking-[0.2em]">
                     Start Order <ArrowRight className="w-4 h-4 ml-2" />
                   </div>
                 </div>
-              </button>
+              </div>
 
               {/* Card 2: Consultation */}
               <button 
-                onClick={() => setView('consultation')}
+                onClick={() => setView('consultation-choice')}
                 className="group relative flex flex-col bg-white border border-stone-200 hover:border-primary/30 hover:shadow-xl transition-all duration-500 overflow-hidden text-left h-[500px]"
               >
                 <div className="absolute top-0 left-0 w-full h-2 bg-stone-100 group-hover:bg-primary transition-colors duration-500" />
@@ -215,7 +220,7 @@ export function JadeBuilder() {
                   </div>
                   
                   <p className="text-stone-500 font-light leading-relaxed mb-6">
-                    Work one-on-one with our team. Sourcing specific stones, custom carvings, or unique settings? Let&apos;s discuss your vision directly.
+                    Work one-on-one with our team. Sourcing specific stones, custom carvings, or unique settings? Let's discuss your vision directly.
                   </p>
 
                   <div className="mt-auto flex items-center text-primary text-xs font-bold uppercase tracking-[0.2em] group-hover:translate-x-2 transition-transform">
@@ -249,7 +254,7 @@ export function JadeBuilder() {
             <div className="bg-white p-8 md:p-12 border border-stone-100 shadow-sm">
               <div className="mb-10 text-center">
                 <h2 className="font-heading text-3xl md:text-4xl text-primary mb-3">Online Order</h2>
-                <p className="text-stone-500 font-light">Tell us what you love, and we&apos;ll find the perfect match.</p>
+                <p className="text-stone-500 font-light">Tell us what you love, and we'll find the perfect match.</p>
               </div>
 
               {/* Type Tabs */}
@@ -410,10 +415,84 @@ export function JadeBuilder() {
         )}
 
 
-        {/* --- Consultation View --- */}
-        {view === 'consultation' && (
+        {/* --- Consultation Choice View --- */}
+        {view === 'consultation-choice' && (
           <motion.div
-            key="consultation"
+            key="consultation-choice"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="flex flex-col items-center justify-center py-10"
+          >
+            <button 
+              onClick={() => setView('selection')}
+              className="group flex items-center text-stone-400 hover:text-primary transition-colors mb-8 text-xs font-bold uppercase tracking-widest self-start md:self-center md:-ml-[800px]"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+              Back
+            </button>
+
+            <div className="text-center mb-12 max-w-2xl">
+              <h2 className="font-heading text-3xl md:text-4xl text-primary mb-6">
+                Continue with the profile that best describes you:
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl px-4">
+              
+              {/* Profile 1: Familiar */}
+              <button 
+                onClick={() => setView('consultation-familiar')}
+                className="group relative flex flex-col bg-white border border-stone-200 hover:border-primary/30 hover:shadow-xl transition-all duration-500 overflow-hidden text-left min-h-[400px]"
+              >
+                <div className="absolute top-0 left-0 w-full h-2 bg-stone-100 group-hover:bg-primary transition-colors duration-500" />
+                
+                <div className="p-8 md:p-10 flex flex-col flex-1">
+                  <div className="flex items-center gap-3 mb-6">
+                     <span className="w-8 h-8 rounded-full bg-[#efdada] flex items-center justify-center text-primary text-xs font-bold">A</span>
+                  </div>
+                  
+                  <p className="text-stone-600 font-light leading-relaxed mb-6 text-lg">
+                    "I am familiar with the Jade Bar customizations (i.e., I know what chains are offered, and I know if I want a bail or not) and would like the additional assistance of a store team member to order my jade."
+                  </p>
+
+                  <div className="mt-auto flex items-center text-primary text-xs font-bold uppercase tracking-[0.2em] group-hover:translate-x-2 transition-transform">
+                    Select Profile <ArrowRight className="w-4 h-4 ml-2" />
+                  </div>
+                </div>
+              </button>
+
+              {/* Profile 2: Guidance */}
+              <button 
+                onClick={() => setView('consultation-guidance')}
+                className="group relative flex flex-col bg-white border border-stone-200 hover:border-primary/30 hover:shadow-xl transition-all duration-500 overflow-hidden text-left min-h-[400px]"
+              >
+                <div className="absolute top-0 left-0 w-full h-2 bg-stone-100 group-hover:bg-primary transition-colors duration-500" />
+                
+                <div className="p-8 md:p-10 flex flex-col flex-1">
+                  <div className="flex items-center gap-3 mb-6">
+                     <span className="w-8 h-8 rounded-full bg-[#efdada] flex items-center justify-center text-primary text-xs font-bold">B</span>
+                  </div>
+                  
+                  <p className="text-stone-600 font-light leading-relaxed mb-6 text-lg">
+                    "I am interested in the Jade Bar, but I am not familiar with the options, and I would like a store team member to guide me through the customization process."
+                  </p>
+
+                  <div className="mt-auto flex items-center text-primary text-xs font-bold uppercase tracking-[0.2em] group-hover:translate-x-2 transition-transform">
+                    Select Profile <ArrowRight className="w-4 h-4 ml-2" />
+                  </div>
+                </div>
+              </button>
+
+            </div>
+          </motion.div>
+        )}
+
+        {/* --- Consultation Familiar (Detailed) --- */}
+        {view === 'consultation-familiar' && (
+          <motion.div
+            key="consultation-familiar"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -421,17 +500,17 @@ export function JadeBuilder() {
             className="max-w-3xl mx-auto"
           >
              <button 
-              onClick={() => setView('selection')}
+              onClick={() => setView('consultation-choice')}
               className="group flex items-center text-stone-400 hover:text-primary transition-colors mb-8 text-xs font-bold uppercase tracking-widest"
             >
               <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-              Back to Selection
+              Back to Profiles
             </button>
 
             <div className="bg-white p-8 md:p-16 shadow-sm border border-stone-100">
               <div className="mb-10 text-center">
-                <h2 className="font-heading text-3xl md:text-4xl text-primary mb-3">Consultation</h2>
-                <p className="text-stone-500 font-light">Fill out the form below to work directly with a store associate.</p>
+                <h2 className="font-heading text-3xl md:text-4xl text-primary mb-3">Custom Order Request</h2>
+                <p className="text-stone-500 font-light">Please provide your customization details below.</p>
               </div>
 
               <form className="space-y-8" onSubmit={submitConsultation}>
@@ -446,6 +525,7 @@ export function JadeBuilder() {
                       onChange={(e) => setConsultFirstName(e.target.value)}
                       className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
                       placeholder="First Name"
+                      required
                     />
                   </div>
                   <div className="space-y-2">
@@ -456,6 +536,7 @@ export function JadeBuilder() {
                       onChange={(e) => setConsultLastName(e.target.value)}
                       className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
                       placeholder="Last Name"
+                      required
                     />
                   </div>
                 </div>
@@ -473,28 +554,18 @@ export function JadeBuilder() {
                     />
                   </div>
 
-                  {/* Date Field */}
+                  {/* Email Field */}
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Date</label>
-                    <input 
-                      type="date" 
-                      value={consultDesiredDate}
-                      onChange={(e) => setConsultDesiredDate(e.target.value)}
-                      className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300 text-stone-600"
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Email</label>
+                    <input
+                      type="email"
+                      value={consultEmail}
+                      onChange={(e) => setConsultEmail(e.target.value)}
+                      className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
+                      placeholder="you@email.com"
+                      required
                     />
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Email</label>
-                  <input
-                    type="email"
-                    value={consultEmail}
-                    onChange={(e) => setConsultEmail(e.target.value)}
-                    className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
-                    placeholder="you@email.com"
-                    required
-                  />
                 </div>
 
                 {/* Chain Preference */}
@@ -596,7 +667,7 @@ export function JadeBuilder() {
                      value={consultByoChain}
                      onChange={(e) => setConsultByoChain(e.target.value)}
                      className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
-                     placeholder="Type of chain & color"
+                     placeholder="Type of chain & color (optional)"
                    />
                 </div>
 
@@ -607,7 +678,115 @@ export function JadeBuilder() {
                      value={consultNotes}
                      onChange={(e) => setConsultNotes(e.target.value)}
                      className="w-full min-h-[150px] bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors resize-none placeholder:text-stone-300 leading-relaxed"
-                     placeholder="Be as specific as possible..."
+                     placeholder="Any additional details..."
+                   />
+                </div>
+
+                {consultError && <div className="text-sm text-red-700">{consultError}</div>}
+                {consultSuccess && <div className="text-sm text-green-700">Thanks — we received your inquiry.</div>}
+
+                {/* Submit Button */}
+                <div className="pt-6">
+                  <button 
+                    type="submit"
+                    disabled={consultSubmitting}
+                    className="w-full bg-primary text-white text-xs font-bold uppercase tracking-[0.2em] py-5 hover:bg-stone-800 transition-colors shadow-lg hover:shadow-xl"
+                  >
+                    {consultSubmitting ? 'Submitting…' : 'Submit Inquiry'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </motion.div>
+        )}
+
+        {/* --- Consultation Guidance (Simple) --- */}
+        {view === 'consultation-guidance' && (
+          <motion.div
+            key="consultation-guidance"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="max-w-3xl mx-auto"
+          >
+             <button 
+              onClick={() => setView('consultation-choice')}
+              className="group flex items-center text-stone-400 hover:text-primary transition-colors mb-8 text-xs font-bold uppercase tracking-widest"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+              Back to Profiles
+            </button>
+
+            <div className="bg-white p-8 md:p-16 shadow-sm border border-stone-100">
+              <div className="mb-10 text-center">
+                <h2 className="font-heading text-3xl md:text-4xl text-primary mb-3">Consultation Request</h2>
+                <p className="text-stone-500 font-light">We'll guide you through the process.</p>
+              </div>
+
+              <form className="space-y-8" onSubmit={submitConsultation}>
+                
+                {/* Name Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">First Name</label>
+                    <input 
+                      type="text" 
+                      value={consultFirstName}
+                      onChange={(e) => setConsultFirstName(e.target.value)}
+                      className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
+                      placeholder="First Name"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Last Name</label>
+                    <input 
+                      type="text" 
+                      value={consultLastName}
+                      onChange={(e) => setConsultLastName(e.target.value)}
+                      className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
+                      placeholder="Last Name"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Phone Field */}
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Phone</label>
+                    <input 
+                      type="tel" 
+                      value={consultPhone}
+                      onChange={(e) => setConsultPhone(e.target.value)}
+                      className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
+                      placeholder="(555) 000-0000"
+                    />
+                  </div>
+
+                  {/* Email Field */}
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Email</label>
+                    <input
+                      type="email"
+                      value={consultEmail}
+                      onChange={(e) => setConsultEmail(e.target.value)}
+                      className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
+                      placeholder="you@email.com"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Notes */}
+                <div className="space-y-2">
+                   <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Notes</label>
+                   <textarea 
+                     value={consultNotes}
+                     onChange={(e) => setConsultNotes(e.target.value)}
+                     className="w-full min-h-[150px] bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors resize-none placeholder:text-stone-300 leading-relaxed"
+                     placeholder="Tell us a bit about what you're looking for..."
                    />
                 </div>
 

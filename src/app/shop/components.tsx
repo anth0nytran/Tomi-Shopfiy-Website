@@ -20,7 +20,7 @@ const SHOP_HEADING_IMAGES: Partial<Record<CatalogSlug, string>> = {
   'new-arrivals': '/assets/shop headings/new arrivals.png',
   'best-sellers': '/new_shop_headings/BESTSELLERS.jpg',
   all: '/new_shop_headings/SHOP%20ALL.jpg',
-  rings: '/assets/shop headings/rings.png',
+  rings: '/new_shop_headings/RINGS.jpg',
   necklaces: '/new_shop_headings/NECKLACES.jpg',
   bracelets: '/assets/shop headings/bracelets.png',
   anklets: '/new_shop_headings/ANKLETS.jpg',
@@ -162,18 +162,24 @@ export function ShopToolbar({
   isUpdating,
   sort,
   onSortChange,
+  subFilter,
+  onSubFilterChange,
 }: {
   entry: CatalogEntry
   count: number
   isUpdating?: boolean
   sort: string
   onSortChange?: (value: string) => void
+  subFilter?: string
+  onSubFilterChange?: (value: string) => void
 }) {
   const formattedCount = new Intl.NumberFormat().format(count)
   const label = `${formattedCount} ${count === 1 ? 'Item' : 'Items'}`
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     onSortChange?.(event.target.value)
   }
+
+  const isEarrings = entry.slug === 'earrings'
 
   return (
     <section className="py-12 md:py-16 bg-white">
@@ -187,6 +193,38 @@ export function ShopToolbar({
               {entry.subtitle}
             </p>
           )}
+
+          {isEarrings && onSubFilterChange ? (
+            <div className="mt-8 flex flex-wrap justify-center gap-6 md:gap-8 border-b border-stone-100 pb-8 w-full max-w-lg mx-auto">
+              {[
+                { label: 'All', value: 'all' },
+                { label: 'Studs', value: 'Stud' },
+                { label: 'Hoops', value: 'Hoop' },
+                { label: 'Flat Backs', value: 'Flat Back' },
+              ].map((opt) => {
+                const isActive = (subFilter || 'all') === opt.value
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => onSubFilterChange(opt.value)}
+                    className={`text-xs font-bold uppercase tracking-[0.2em] transition-all relative pb-1 ${
+                      isActive
+                        ? 'text-stone-900'
+                        : 'text-stone-400 hover:text-stone-600'
+                    }`}
+                  >
+                    {opt.label}
+                    <span 
+                      className={`absolute bottom-0 left-0 w-full h-[1px] bg-stone-900 transform transition-transform duration-300 ${
+                        isActive ? 'scale-x-100' : 'scale-x-0'
+                      }`} 
+                    />
+                  </button>
+                )
+              })}
+            </div>
+          ) : null}
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center border-t border-stone-200 pt-6 gap-4">
@@ -247,7 +285,7 @@ export function ProductCard({ product, index }: { product: ShopifyListProduct; i
       className="group block animate-fade-in-up fill-mode-both"
       style={{ animationDelay: `${delay}ms` }}
     >
-      <div className="relative aspect-square overflow-hidden bg-white mb-3">
+      <div className="relative aspect-[4/5] overflow-hidden bg-white mb-3">
         {primaryImage?.url ? (
           <>
             <Image
@@ -287,7 +325,7 @@ export function ProductCard({ product, index }: { product: ShopifyListProduct; i
         </h3>
         <p className="text-xs text-stone-500 tracking-wide">{formattedPrice}</p>
         {!inStock ? (
-          <p className="text-[11px] text-red-500 tracking-wide font-medium">Sold out</p>
+          <p className="text-[10px] font-bold text-red-600 tracking-widest uppercase mt-1">Sold Out</p>
         ) : null}
       </div>
     </Link>
