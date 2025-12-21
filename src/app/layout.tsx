@@ -52,6 +52,14 @@ export default function RootLayout({
           html { height: 100%; }
           body { min-height: 100%; min-height: 100dvh; margin: 0; display: flex; flex-direction: column; }
         ` }} />
+        <Script id="klaviyo-onsite-queue" strategy="beforeInteractive">
+          {`window._klOnsite = window._klOnsite || [];`}
+        </Script>
+        <Script
+          id="klaviyo-onsite"
+          src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=WJKaN6"
+          strategy="afterInteractive"
+        />
         <Script id="set-header-vars" strategy="beforeInteractive">
           {`(function(){function setVars(){try{var s=document.getElementById('tomi-root-vars');if(!s){s=document.createElement('style');s.id='tomi-root-vars';document.head.appendChild(s);}var b=document.querySelector('.announcement-bar');var h=document.querySelector('.header');var bh=b?Math.round(b.getBoundingClientRect().height)||0:0;var hh=h?Math.round(h.getBoundingClientRect().height)||72:72;s.textContent=':root{--header-top:'+bh+'px;--header-offset:'+(bh+hh+2)+'px;}';}catch(e){}} if(document.readyState!=='loading'){setVars();}else{document.addEventListener('DOMContentLoaded', setVars);} })();`}
         </Script>

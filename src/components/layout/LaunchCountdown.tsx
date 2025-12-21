@@ -1,12 +1,13 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { launchConfig } from '@/lib/launch-config'
 import { motion, AnimatePresence, useMotionValue, useMotionTemplate } from 'framer-motion'
 import { GlassFilter } from '../ui/liquid-glass'
 import { Starfield } from '../ui/Starfield'
 import { PolaroidScatter } from '../ui/PolaroidScatter'
+import { primeKlaviyoTeaserOnce } from '@/lib/klaviyo'
 
 export function LaunchCountdown() {
   const [timeLeft, setTimeLeft] = useState({
@@ -19,6 +20,7 @@ export function LaunchCountdown() {
   const [isLocked, setIsLocked] = useState(launchConfig.isEnabled)
   const [mounted, setMounted] = useState(false)
   const [viewState, setViewState] = useState<'countdown' | 'final' | 'present' | 'revealing' | 'unlocked'>('countdown')
+  const hasPrimedKlaviyo = useRef(false)
 
   const accessGatePassword = launchConfig.accessGate.password.trim()
   const isAccessGateEnabled = accessGatePassword.length > 0
@@ -49,6 +51,14 @@ export function LaunchCountdown() {
     return () => {
       document.body.style.overflow = ''
       document.documentElement.style.overflow = ''
+    }
+  }, [isLocked])
+
+  // Prime Klaviyo teaser only after the countdown unlocks.
+  useEffect(() => {
+    if (!isLocked && !hasPrimedKlaviyo.current) {
+      primeKlaviyoTeaserOnce()
+      hasPrimedKlaviyo.current = true
     }
   }, [isLocked])
 
