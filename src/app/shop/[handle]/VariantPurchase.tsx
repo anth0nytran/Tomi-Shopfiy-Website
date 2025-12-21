@@ -144,8 +144,9 @@ export function VariantPurchase({ productTitle, options, variants, isRing, ringS
 
   const sizeOptionName = optionNames.find((n) => n.toLowerCase().includes('size')) || null
   const colorOptionName = optionNames.find((n) => n.toLowerCase().includes('color')) || null
-  const sizeOption =
-    sizeOptionName && normalizedOptions.find((opt) => normalizeName(opt.name) === normalizeName(sizeOptionName))
+  const sizeOption = sizeOptionName
+    ? normalizedOptions.find((opt) => normalizeName(opt.name) === normalizeName(sizeOptionName))
+    : undefined
   const optionNamesWithoutSize = sizeOptionName ? optionNames.filter((n) => n !== sizeOptionName) : optionNames
   const displayOptions =
     isRing && sizeOptionName
