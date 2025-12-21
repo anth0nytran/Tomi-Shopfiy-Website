@@ -31,10 +31,14 @@ function cleanupOldEntries() {
   const now = Date.now()
   if (now - lastCleanup < 60_000) return // Only clean once per minute
   lastCleanup = now
-  for (const [ip, record] of ipSubmissions.entries()) {
+  const toDelete: string[] = []
+  ipSubmissions.forEach((record, ip) => {
     if (now - record.windowStart > RATE_LIMIT_WINDOW_MS * 2) {
-      ipSubmissions.delete(ip)
+      toDelete.push(ip)
     }
+  })
+  for (let i = 0; i < toDelete.length; i++) {
+    ipSubmissions.delete(toDelete[i]!)
   }
 }
 
