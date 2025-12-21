@@ -23,7 +23,7 @@ const SPOTLIGHTS: HighlightTile[] = [
       title: 'Moonlight',
     body: 'Soft jade tones with a luminous finish for every stack. The moonlight collection brings a subtle glow to your everyday style.',
       ctaLabel: 'shop collection',
-      href: '/jade-bar',
+      href: '/shop/category/moonlight',
       image: { src: '/assets/moonstone.jpeg', alt: 'Moonlight collection rings' },
     },
     {
@@ -32,7 +32,7 @@ const SPOTLIGHTS: HighlightTile[] = [
       title: 'Flutter',
     body: 'Airy silhouettes that float over skin like light. Inspired by the delicate movement of butterfly wings.',
       ctaLabel: 'shop collection',
-      href: '/jade-bar',
+      href: '/shop/category/flutter',
       image: { src: '/assets/flutter.png', alt: 'Flutter layered necklace' },
     },
     {
@@ -41,7 +41,7 @@ const SPOTLIGHTS: HighlightTile[] = [
       title: 'Refine',
     body: 'Streamlined pieces designed to polish your everyday look. The definition of modern elegance.',
       ctaLabel: 'shop collection',
-      href: '/jade-bar',
+      href: '/shop/category/refined',
       image: { src: '/assets/refine.jpg', alt: 'Refine collection hoops' },
     },
     {
@@ -50,7 +50,7 @@ const SPOTLIGHTS: HighlightTile[] = [
       title: 'Embellish',
     body: 'Mix-and-match accents that invite endless layering. Create a look that is uniquely yours with these versatile pieces.',
       ctaLabel: 'shop collection',
-      href: '/jade-bar',
+      href: '/shop/category/embellish',
       image: { src: '/assets/embellish.jpg', alt: 'Embellish collection display' },
     },
     {
