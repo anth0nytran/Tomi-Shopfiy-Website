@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server'
 
+// This route fetches live data from a remote sheet (no-store),
+// so it must always run dynamically at request time.
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 const SHEET_CSV =
   'https://docs.google.com/spreadsheets/d/e/2PACX-1vRTLxVqOIbxu7rPJamZUUELT1QNT6S0PcQAgVDF7g5-Xf9wFkFBs5GkWgrzjSJHp895QDbHIPmLj--n/pub?output=csv'
 

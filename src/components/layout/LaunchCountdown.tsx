@@ -7,7 +7,6 @@ import { motion, AnimatePresence, useMotionValue, useMotionTemplate } from 'fram
 import { GlassFilter } from '../ui/liquid-glass'
 import { Starfield } from '../ui/Starfield'
 import { PolaroidScatter } from '../ui/PolaroidScatter'
-import { primeKlaviyoTeaserOnce } from '@/lib/klaviyo'
 
 export function LaunchCountdown() {
   const [timeLeft, setTimeLeft] = useState({
@@ -20,7 +19,6 @@ export function LaunchCountdown() {
   const [isLocked, setIsLocked] = useState(launchConfig.isEnabled)
   const [mounted, setMounted] = useState(false)
   const [viewState, setViewState] = useState<'countdown' | 'final' | 'present' | 'revealing' | 'unlocked'>('countdown')
-  const hasPrimedKlaviyo = useRef(false)
 
   const accessGatePassword = launchConfig.accessGate.password.trim()
   const isAccessGateEnabled = accessGatePassword.length > 0
@@ -54,14 +52,6 @@ export function LaunchCountdown() {
     }
   }, [isLocked])
 
-  // Prime Klaviyo teaser only after the countdown unlocks.
-  useEffect(() => {
-    if (!isLocked && !hasPrimedKlaviyo.current) {
-      primeKlaviyoTeaserOnce()
-      hasPrimedKlaviyo.current = true
-    }
-  }, [isLocked])
-
   useEffect(() => {
     setMounted(true)
 
@@ -76,6 +66,16 @@ export function LaunchCountdown() {
     // Password bypass (client-side): if previously granted, unlock immediately.
     if (isAccessGateEnabled) {
       try {
+        // Optional cleanup: remove any older versioned keys so localStorage doesn't accumulate.
+        const base = launchConfig.accessGate.storageKeyBase
+        const currentKey = launchConfig.accessGate.storageKey
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const k = localStorage.key(i)
+          if (!k) continue
+          if (k.startsWith(`${base}:`) && k !== currentKey) localStorage.removeItem(k)
+          if (k === base) localStorage.removeItem(k) // legacy pre-version key
+        }
+
         if (localStorage.getItem(launchConfig.accessGate.storageKey) === '1') {
           setIsLocked(false)
           return

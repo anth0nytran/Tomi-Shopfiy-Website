@@ -1,6 +1,43 @@
 import { NextRequest } from 'next/server'
 import { appendFormRow, FormType } from '@/lib/sheets'
 
+// --- Simple in-memory rate limiter (per serverless instance) ---
+// Limits: 5 submissions per IP per 60 seconds
+const RATE_LIMIT_WINDOW_MS = 60_000
+const RATE_LIMIT_MAX = 5
+const ipSubmissions = new Map<string, { count: number; windowStart: number }>()
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const record = ipSubmissions.get(ip)
+
+  if (!record || now - record.windowStart > RATE_LIMIT_WINDOW_MS) {
+    // New window
+    ipSubmissions.set(ip, { count: 1, windowStart: now })
+    return false
+  }
+
+  if (record.count >= RATE_LIMIT_MAX) {
+    return true
+  }
+
+  record.count++
+  return false
+}
+
+// Periodically clean old entries to prevent memory leak (runs on each request, quick check)
+let lastCleanup = Date.now()
+function cleanupOldEntries() {
+  const now = Date.now()
+  if (now - lastCleanup < 60_000) return // Only clean once per minute
+  lastCleanup = now
+  for (const [ip, record] of ipSubmissions.entries()) {
+    if (now - record.windowStart > RATE_LIMIT_WINDOW_MS * 2) {
+      ipSubmissions.delete(ip)
+    }
+  }
+}
+
 function isFormType(value: unknown): value is FormType {
   return (
     value === 'contact_us' ||
@@ -54,6 +91,16 @@ function formatSubmittedAtCst(date: Date) {
 }
 
 export async function POST(req: NextRequest) {
+  // Rate limiting
+  cleanupOldEntries()
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown'
+  if (isRateLimited(ip)) {
+    return new Response(JSON.stringify({ error: 'Too many submissions. Please wait a minute and try again.' }), {
+      status: 429,
+      headers: { 'Content-Type': 'application/json', 'Retry-After': '60' },
+    })
+  }
+
   const body = await req.json().catch(() => null)
   if (!body || typeof body !== 'object') {
     return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {

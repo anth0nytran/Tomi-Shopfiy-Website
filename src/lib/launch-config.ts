@@ -15,7 +15,11 @@ export const launchConfig = {
   // Set `NEXT_PUBLIC_LAUNCH_ACCESS_PASSWORD` in your `.env` or hosting provider env vars.
   accessGate: {
     password: process.env.NEXT_PUBLIC_LAUNCH_ACCESS_PASSWORD ?? '',
-    storageKey: 'tomi_launch_access_granted',
+    // When you bump NEXT_PUBLIC_LAUNCH_ACCESS_RESET_TOKEN and redeploy,
+    // everybody will be required to re-enter the password (old localStorage keys won't match).
+    storageKeyBase: 'tomi_launch_access_granted',
+    resetToken: (process.env.NEXT_PUBLIC_LAUNCH_ACCESS_RESET_TOKEN ?? '0').trim() || '0',
+    storageKey: `tomi_launch_access_granted:${(process.env.NEXT_PUBLIC_LAUNCH_ACCESS_RESET_TOKEN ?? '0').trim() || '0'}`,
   },
 }
 
