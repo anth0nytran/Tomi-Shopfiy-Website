@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { openKlaviyoFormById } from '@/lib/klaviyo'
+import { waitForLaunchUnlocked } from '@/lib/launch-unlock'
 
 type Props = {
   formId: string
@@ -54,20 +55,32 @@ export function KlaviyoDelayedOpenForm({
       }
     }
 
-    const timer = window.setTimeout(() => {
-      // If Klaviyo already opened something (or the user opened it), don't double-open.
-      if (hasActiveKlaviyoPopup()) return
+    let cancelled = false
+    let timer: number | null = null
 
-      try {
-        if (!force && ttlMs > 0) localStorage.setItem(key, String(Date.now()))
-      } catch {
-        // ignore
-      }
+    void (async () => {
+      // IMPORTANT: do not start the delay timer until the launch countdown is actually unlocked.
+      await waitForLaunchUnlocked()
+      if (cancelled) return
 
-      openKlaviyoFormById(formId)
-    }, delayMs)
+      timer = window.setTimeout(() => {
+        // If Klaviyo already opened something (or the user opened it), don't double-open.
+        if (hasActiveKlaviyoPopup()) return
 
-    return () => window.clearTimeout(timer)
+        try {
+          if (!force && ttlMs > 0) localStorage.setItem(key, String(Date.now()))
+        } catch {
+          // ignore
+        }
+
+        openKlaviyoFormById(formId)
+      }, delayMs)
+    })()
+
+    return () => {
+      cancelled = true
+      if (timer) window.clearTimeout(timer)
+    }
   }, [delayMs, excludePaths, formId, pathname, suppressDays])
 
   return null

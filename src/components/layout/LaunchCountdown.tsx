@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { launchConfig } from '@/lib/launch-config'
+import { markLaunchUnlocked } from '@/lib/launch-unlock'
 import { motion, AnimatePresence, useMotionValue, useMotionTemplate } from 'framer-motion'
 import { GlassFilter } from '../ui/liquid-glass'
 import { Starfield } from '../ui/Starfield'
@@ -25,6 +26,7 @@ export function LaunchCountdown() {
   const [accessInput, setAccessInput] = useState('')
   const [accessError, setAccessError] = useState<string | null>(null)
   const [isAccessFormOpen, setIsAccessFormOpen] = useState(true)
+  const didMarkUnlocked = useRef(false)
 
   // Mouse tracking for spotlight
   const mouseX = useMotionValue(0)
@@ -51,6 +53,21 @@ export function LaunchCountdown() {
       document.documentElement.style.overflow = ''
     }
   }, [isLocked])
+
+  // Let the rest of the app know when the site is actually unlocked.
+  useEffect(() => {
+    if (!mounted) return
+    if (didMarkUnlocked.current) return
+    if (!launchConfig.isEnabled) {
+      didMarkUnlocked.current = true
+      markLaunchUnlocked()
+      return
+    }
+    if (!isLocked) {
+      didMarkUnlocked.current = true
+      markLaunchUnlocked()
+    }
+  }, [isLocked, mounted])
 
   useEffect(() => {
     setMounted(true)

@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { trackKlaviyoEvent } from '@/lib/klaviyo'
+import { waitForLaunchUnlocked } from '@/lib/launch-unlock'
 
 type Props = {
   eventName?: string
@@ -28,25 +29,37 @@ export function KlaviyoDelayedTrack({
       }
     }
 
-    const timer = window.setTimeout(() => {
-      if (oncePerSession) {
-        try {
-          sessionStorage.setItem(key, '1')
-        } catch {
-          // ignore
+    let cancelled = false
+    let timer: number | null = null
+
+    void (async () => {
+      // IMPORTANT: do not start the delay timer until the launch countdown is actually unlocked.
+      await waitForLaunchUnlocked()
+      if (cancelled) return
+
+      timer = window.setTimeout(() => {
+        if (oncePerSession) {
+          try {
+            sessionStorage.setItem(key, '1')
+          } catch {
+            // ignore
+          }
         }
-      }
 
-      trackKlaviyoEvent(eventName, {
-        pathname,
-        url: window.location.href,
-        referrer: document.referrer || undefined,
-        title: document.title || undefined,
-        delayMs,
-      })
-    }, delayMs)
+        trackKlaviyoEvent(eventName, {
+          pathname,
+          url: window.location.href,
+          referrer: document.referrer || undefined,
+          title: document.title || undefined,
+          delayMs,
+        })
+      }, delayMs)
+    })()
 
-    return () => window.clearTimeout(timer)
+    return () => {
+      cancelled = true
+      if (timer) window.clearTimeout(timer)
+    }
   }, [delayMs, eventName, oncePerSession, pathname])
 
   return null
