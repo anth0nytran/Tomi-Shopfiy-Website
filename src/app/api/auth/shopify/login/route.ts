@@ -20,13 +20,14 @@ export async function GET(req: NextRequest) {
 
   const redirectUri = getCustomerAccountRedirectUri()
   const authUrl = new URL(env.customerAccount.authUrl)
+  const configuredScope =
+    env.customerAccount.scopes ?? 'openid email customer-account-api:full'
+  const scopeParts = configuredScope.split(/\s+/).filter(Boolean)
+  const scope = scopeParts.includes('openid') ? configuredScope : `openid ${configuredScope}`
   authUrl.searchParams.set('response_type', 'code')
   authUrl.searchParams.set('client_id', env.customerAccount.clientId)
   authUrl.searchParams.set('redirect_uri', redirectUri)
-  authUrl.searchParams.set(
-    'scope',
-    env.customerAccount.scopes ?? 'openid email customer-account-api:full'
-  )
+  authUrl.searchParams.set('scope', scope)
   authUrl.searchParams.set('code_challenge', challenge)
   authUrl.searchParams.set('code_challenge_method', 'S256')
   authUrl.searchParams.set('state', state)

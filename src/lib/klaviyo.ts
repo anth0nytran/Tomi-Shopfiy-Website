@@ -6,6 +6,7 @@ const TEASER_PRIME_STYLE_ID = 'kl-teaser-prime-hide'
 declare global {
   interface Window {
     _klOnsite?: KlaviyoQueue
+    _learnq?: Array<unknown> | { push: (item: unknown) => number }
   }
 }
 
@@ -17,6 +18,30 @@ export function openKlaviyoForm() {
   }
 
   window._klOnsite.push(['openForm', FORM_ID])
+}
+
+export function openKlaviyoFormById(formId: string) {
+  if (typeof window === 'undefined') return
+
+  if (!window._klOnsite || typeof window._klOnsite.push !== 'function') {
+    window._klOnsite = []
+  }
+
+  window._klOnsite.push(['openForm', formId])
+}
+
+export function trackKlaviyoEvent(
+  eventName: string,
+  properties: Record<string, unknown> = {},
+) {
+  if (typeof window === 'undefined') return
+
+  // Klaviyo listens on window._learnq for client-side "track" events.
+  const q = (window._learnq && typeof (window._learnq as { push?: unknown }).push === 'function')
+    ? window._learnq
+    : (window._learnq = [])
+
+  ;(q as { push: (item: unknown) => number }).push(['track', eventName, properties])
 }
 
 // Call once per session to let Klaviyo render the built-in teaser without needing a manual CTA first.

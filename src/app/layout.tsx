@@ -5,6 +5,9 @@ import { ClientInit } from '@/components/ClientInit'
 import Script from 'next/script'
 import { Providers } from '@/components/Providers'
 import localFont from 'next/font/local'
+import { Analytics } from '@vercel/analytics/next'
+import { KlaviyoDelayedTrack } from '@/components/KlaviyoDelayedTrack'
+import { KlaviyoDelayedOpenForm } from '@/components/KlaviyoDelayedOpenForm'
 
 const recklessNeue = localFont({
   src: [
@@ -27,11 +30,32 @@ const neueHaasGrotesk = localFont({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXTAUTH_URL ?? 'http://localhost:3000'),
   title: 'Tomi - Solid Gold Jewelry in Houston',
   description: 'Solid gold jewelry that shines best on you. Timeless designs, not microtrends.',
   icons: {
     icon: '/assets/pink_tomi_logo.png',
     shortcut: '/assets/pink_tomi_logo.png',
+  },
+  openGraph: {
+    title: 'Tomi - Solid Gold Jewelry in Houston',
+    description: 'Solid gold jewelry that shines best on you. Timeless designs, not microtrends.',
+    type: 'website',
+    images: [
+      {
+        // iMessage link previews generally prefer PNG/JPG over SVG.
+        url: '/assets/large tomi logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Tomi',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Tomi - Solid Gold Jewelry in Houston',
+    description: 'Solid gold jewelry that shines best on you. Timeless designs, not microtrends.',
+    images: ['/assets/large tomi logo.png'],
   },
 }
 
@@ -68,11 +92,14 @@ export default function RootLayout({
         <Providers>
           <LaunchCountdown />
           <ClientInit />
+          <KlaviyoDelayedTrack />
+          <KlaviyoDelayedOpenForm formId="YvugMg" delayMs={7000} suppressDays={7} />
           <div className="relative z-20 bg-white mb-[100vh] rounded-b-[3rem] md:rounded-b-[5rem] shadow-2xl flex flex-col min-h-screen">
             {children}
           </div>
           <TomiReveal height="100vh" variant="editorial" />
         </Providers>
+        <Analytics />
       </body>
     </html>
   )

@@ -12,6 +12,7 @@ import { verifyState } from '@/lib/auth/state'
 type TokenPayload = {
   access_token: string
   customer_access_token?: string
+  id_token?: string
   expires_in?: number
   refresh_token?: string
   customer_refresh_token?: string
@@ -62,6 +63,7 @@ export async function GET(req: NextRequest) {
     const payload = (await response.json()) as TokenPayload
     const accessToken = payload.customer_access_token ?? payload.access_token
     const refreshToken = payload.customer_refresh_token ?? payload.refresh_token
+    const idToken = payload.id_token
 
     if (!accessToken) {
       console.error('Shopify token response missing usable access token', payload)
@@ -73,6 +75,7 @@ export async function GET(req: NextRequest) {
       token: accessToken,
       expiresAt: payload.expires_in ? now + payload.expires_in * 1000 : undefined,
       refreshToken,
+      idToken,
       refreshExpiresAt: payload.refresh_token_expires_in
         ? now + payload.refresh_token_expires_in * 1000
         : undefined,

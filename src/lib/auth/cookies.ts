@@ -19,6 +19,11 @@ export type CustomerSession = {
   expiresAt?: number
   refreshToken?: string
   refreshExpiresAt?: number
+  /**
+   * OIDC ID token (JWT). Some Shopify logout endpoints require this as `id_token_hint`.
+   * Optional because not all token responses include it and not all logout URLs need it.
+   */
+  idToken?: string
 }
 
 function encodeSession(session: CustomerSession) {

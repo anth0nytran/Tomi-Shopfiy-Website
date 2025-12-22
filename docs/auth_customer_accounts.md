@@ -22,12 +22,15 @@ SESSION_SECRET=generate-a-long-random-string
 ```
 
 3. Configure the same redirect URLs inside Shopify Admin. Add your Vercel/production domain plus `http://localhost:3000` for development.
+4. Set the Customer Accounts client **Logout URI** to:
+   - `https://your-domain.com/api/auth/shopify/post-logout`
 
 ## Flow Overview
 
 - `/api/auth/shopify/login`: generates PKCE verifier, stores state/returnTo in httpOnly cookies, and redirects to Shopify's OAuth screen.
 - `/api/auth/shopify/callback`: exchanges the code for a customer access token, stores it in secure cookies (with optional refresh token info), and redirects back to the requested page.
 - `/api/auth/shopify/logout`: clears local session and bounces through Shopify logout.
+- `/api/auth/shopify/post-logout`: Shopify redirects here after it clears its own session; we then redirect to `/account` in a signed-out state.
 - `/account`: server-rendered page that shows the signed-in viewer’s email, saved addresses, and last 5 orders. When no session exists, it renders a “Sign in” state and links to the login route.
 - `/api/cart/checkout`: before redirecting shoppers to Shopify checkout, we attach the customer access token via `cartBuyerIdentityUpdate` so checkout is already aware of the shopper.
 
