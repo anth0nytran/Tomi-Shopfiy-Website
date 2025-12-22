@@ -15,12 +15,22 @@ function normalizeCheckoutRedirect(req: NextRequest, checkoutUrl: string) {
   if (!checkoutUrl || !shopifyConfig.storeDomain) return checkoutUrl
 
   try {
-    const url = new URL(checkoutUrl)
-
     const configuredStoreDomain = shopifyConfig.storeDomain
       .trim()
       .replace(/^https?:\/\//i, '')
       .replace(/\/.*$/, '')
+
+    // If Shopify returns a relative path (e.g. "/cart/c/..."), force it onto Shopify's domain.
+    if (checkoutUrl.startsWith('/')) {
+      return `https://${configuredStoreDomain}${checkoutUrl}`
+    }
+
+    // Protocol-relative URL (e.g. //domain/path)
+    if (checkoutUrl.startsWith('//')) {
+      return `https:${checkoutUrl}`
+    }
+
+    const url = new URL(checkoutUrl)
 
     const forwardedHost = req.headers.get('x-forwarded-host')
     const hostHeader = req.headers.get('host')
