@@ -8,6 +8,7 @@ import localFont from 'next/font/local'
 import { Analytics } from '@vercel/analytics/next'
 import { KlaviyoDelayedTrack } from '@/components/KlaviyoDelayedTrack'
 import { KlaviyoDelayedOpenForm } from '@/components/KlaviyoDelayedOpenForm'
+import { getPublicSiteOrigin } from '@/lib/site-url'
 
 const recklessNeue = localFont({
   src: [
@@ -30,7 +31,7 @@ const neueHaasGrotesk = localFont({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXTAUTH_URL ?? 'http://localhost:3000'),
+  metadataBase: new URL(getPublicSiteOrigin()),
   title: 'Tomi - Solid Gold Jewelry in Houston',
   description: 'Solid gold jewelry that shines best on you. Timeless designs, not microtrends.',
   icons: {

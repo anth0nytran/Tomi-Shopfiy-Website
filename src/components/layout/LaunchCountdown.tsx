@@ -19,7 +19,7 @@ export function LaunchCountdown() {
   })
   const [isLocked, setIsLocked] = useState(launchConfig.isEnabled)
   const [mounted, setMounted] = useState(false)
-  const [viewState, setViewState] = useState<'countdown' | 'final' | 'present' | 'revealing' | 'unlocked'>('countdown')
+  const [viewState, setViewState] = useState<'countdown' | 'final' | 'unlocked'>('countdown')
 
   const accessGatePassword = launchConfig.accessGate.password.trim()
   const isAccessGateEnabled = accessGatePassword.length > 0
@@ -71,6 +71,19 @@ export function LaunchCountdown() {
 
   useEffect(() => {
     setMounted(true)
+
+    // Test mode should mirror production: once it "opens", it should stay open on refresh.
+    if (launchConfig.testMode.enabled) {
+      try {
+        if (sessionStorage.getItem('tomi_launch_test_opened') === '1') {
+          setIsLocked(false)
+          setViewState('unlocked')
+          return
+        }
+      } catch {
+        // ignore
+      }
+    }
 
     if (viewState === 'unlocked') return
     
@@ -132,9 +145,16 @@ export function LaunchCountdown() {
 
       if (distance < 0) {
         clearInterval(interval)
-        if (viewState !== 'present' && viewState !== 'revealing') {
-           setViewState('present')
+        if (launchConfig.testMode.enabled) {
+          try {
+            sessionStorage.setItem('tomi_launch_test_opened', '1')
+            sessionStorage.removeItem('tomi_launch_target')
+          } catch {
+            // ignore
+          }
         }
+        // Immediately trigger the curtain exit animation by unlocking.
+        setIsLocked(false)
       } else {
         // State transitions - Use exact 5 to avoid jumping
         if (totalSeconds <= 5 && totalSeconds > 0 && viewState !== 'final') {
@@ -152,7 +172,7 @@ export function LaunchCountdown() {
           totalSeconds
         })
       }
-    }, 100)
+    }, 1000)
 
     return () => clearInterval(interval)
   }, [viewState, isLocked, isAccessGateEnabled])
@@ -176,32 +196,14 @@ export function LaunchCountdown() {
     setAccessError('Incorrect password')
   }
 
-  // Handle the presentation sequence
-  useEffect(() => {
-    if (viewState === 'present') {
-      const timer = setTimeout(() => {
-        setViewState('revealing') // Transition to 'revealing' to hide text
-      }, 5000) 
-      return () => clearTimeout(timer)
-    }
-
-    if (viewState === 'revealing') {
-       // Wait for text to fade out (e.g. 1s) then unlock to trigger curtains
-       const timer = setTimeout(() => {
-          setIsLocked(false)
-       }, 1000)
-       return () => clearTimeout(timer)
-    }
-  }, [viewState])
-
   // Don't render until mounted to match server HTML as best as possible, 
   // but to prevent flash, layout should handle initial state or we return a simple block.
   // We'll return a basic block if not mounted but enabledConfig is true
   if (!mounted) {
-    // Return a simple blocking div to prevent content flash during hydration
-    return (
-       <div className="fixed inset-0 z-[9999] bg-[#1a231b]" />
-    )
+    // Avoid a full-screen flash when countdown is disabled (the common production case).
+    // Only block during hydration when the countdown is actually enabled.
+    if (!launchConfig.isEnabled) return null
+    return <div className="fixed inset-0 z-[9999] bg-[#1a231b]" />
   }
   
   if (viewState === 'unlocked') return null
@@ -228,18 +230,18 @@ export function LaunchCountdown() {
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden bg-transparent" // Transparent bg to allow see-through
           onMouseMove={handleMouseMove}
         >
-          {/* --- CURTAINS (The Reveal) --- */}
-          {/* Top Curtain */}
+          {/* --- CURTAINS (Sideways Reveal) --- */}
+          {/* Left Curtain */}
           <motion.div 
-            className="absolute top-0 left-0 w-full h-1/2 bg-[#1a231b]/80 backdrop-blur-md z-0 border-b border-white/10"
-            initial={{ y: 0 }}
-            exit={{ y: "-100%", transition: { duration: 1.5, ease: [0.77, 0, 0.175, 1], delay: 0.2 } }}
+            className="absolute top-0 left-0 h-full w-1/2 bg-[#1a231b]/80 backdrop-blur-md z-0 border-r border-white/10"
+            initial={{ x: 0 }}
+            exit={{ x: "-100%", transition: { duration: 1.5, ease: [0.77, 0, 0.175, 1], delay: 0.2 } }}
           />
-          {/* Bottom Curtain */}
+          {/* Right Curtain */}
           <motion.div 
-            className="absolute bottom-0 left-0 w-full h-1/2 bg-[#1a231b]/80 backdrop-blur-md z-0 border-t border-white/10"
-            initial={{ y: 0 }}
-            exit={{ y: "100%", transition: { duration: 1.5, ease: [0.77, 0, 0.175, 1], delay: 0.2 } }}
+            className="absolute top-0 right-0 h-full w-1/2 bg-[#1a231b]/80 backdrop-blur-md z-0 border-l border-white/10"
+            initial={{ x: 0 }}
+            exit={{ x: "100%", transition: { duration: 1.5, ease: [0.77, 0, 0.175, 1], delay: 0.2 } }}
           />
 
           {/* --- ATMOSPHERE CONTAINER (Fades out before curtains split) --- */}
@@ -296,19 +298,6 @@ export function LaunchCountdown() {
               >
                 <PolaroidScatter />
               </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* --- FLASH EFFECT (Transition to Present) --- */}
-          <AnimatePresence>
-            {viewState === 'present' && (
-              <motion.div
-                key="flash"
-                className="absolute inset-0 z-[50] bg-white pointer-events-none"
-                initial={{ opacity: 1 }}
-                animate={{ opacity: 0 }}
-                transition={{ duration: 1.5, ease: "easeOut" }}
-              />
             )}
           </AnimatePresence>
 
@@ -381,49 +370,6 @@ export function LaunchCountdown() {
                    >
                      {timeLeft.totalSeconds}
                    </motion.div>
-                </motion.div>
-              )}
-
-              {/* PHASE 3: PRESENTATION - "GRAND REVEAL" */}
-              {/* Only show text if NOT revealing or unlocked. 
-                  When we go to 'revealing', this block will exit due to AnimatePresence. */}
-              {viewState === 'present' && (
-                <motion.div 
-                  key="present"
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  className="flex flex-col items-center justify-center text-center w-full"
-                >
-                  <div className="overflow-hidden p-2">
-                    <motion.h2 
-                        custom={0}
-                        variants={textReveal}
-                        className="font-heading text-6xl md:text-[8vw] leading-[1.1] text-rose mb-2 md:mb-6 text-balance max-w-5xl drop-shadow-2xl"
-                    >
-                        Welcome to
-                    </motion.h2>
-                  </div>
-                  
-                  <div className="overflow-hidden p-4">
-                    <motion.h2 
-                        custom={1}
-                        variants={textReveal}
-                        className="font-heading text-7xl md:text-[10vw] leading-[0.9] text-white mb-8 md:mb-12 drop-shadow-[0_0_50px_rgba(255,255,255,0.3)]"
-                    >
-                        Tomi Jewelry
-                    </motion.h2>
-                  </div>
-
-                  <div className="overflow-hidden p-2">
-                     <motion.p 
-                        custom={2}
-                        variants={textReveal}
-                        className="font-body text-sm md:text-xl text-rose/70 tracking-[0.5em] uppercase border-t border-rose/30 pt-8 mt-4"
-                     >
-                        Happy Shopping
-                     </motion.p>
-                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

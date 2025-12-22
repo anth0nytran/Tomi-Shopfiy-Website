@@ -1,6 +1,5 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
-console.log('Button component loaded')
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'outline-light' | 'secondary'
   size?: 'sm' | 'md' | 'lg'

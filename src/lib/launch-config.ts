@@ -1,14 +1,19 @@
 export const launchConfig = {
   // Master switch for the countdown
-  isEnabled: true,
+  // Env-driven so prod can’t be accidentally blocked by a committed boolean.
+  isEnabled: process.env.NEXT_PUBLIC_LAUNCH_COUNTDOWN_ENABLED === 'true',
   
   // Target launch date: December 22nd, 2025 at 10:00 AM CST (UTC-6)
   targetDate: "2025-12-22T10:00:00-06:00",
   
   // Test mode configuration for development
   testMode: {
-    enabled: false, // Set to true to test the unlocking behavior
-    durationInSeconds: 10, // How long the countdown lasts in test mode
+    // Enable to test the unlock behavior without waiting for the real targetDate.
+    enabled: process.env.NEXT_PUBLIC_LAUNCH_TEST_MODE === 'true',
+    durationInSeconds: Math.max(
+      1,
+      parseInt(process.env.NEXT_PUBLIC_LAUNCH_TEST_DURATION_SECONDS ?? '10', 10) || 10,
+    ),
   },
 
   // Optional password gate (client-side) to bypass the countdown for internal access.

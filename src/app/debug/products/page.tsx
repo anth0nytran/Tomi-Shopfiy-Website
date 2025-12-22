@@ -1,6 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { fetchProducts } from '@/lib/shopify'
+import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -77,6 +78,10 @@ function Summary({ products }: { products: ProductNode[] }) {
 }
 
 export default async function DebugProductsPage() {
+  // Production safety: this page should never be publicly accessible unless explicitly enabled.
+  const enabled = process.env.DEBUG_ROUTES_ENABLED === 'true'
+  if (!enabled) notFound()
+
   // Fetch a reasonable number to inspect; adjust as needed
   const products = (await fetchProducts(100)) as ProductNode[]
 

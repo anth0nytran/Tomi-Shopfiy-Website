@@ -499,6 +499,22 @@ function formatMoney(amount: number, currency: string) {
   }
 }
 
+function escapeHtml(value: unknown) {
+  // Minimal escaping to safely inject untrusted strings into HTML templates.
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function safeHrefPathSegment(value: unknown) {
+  // Prevent breaking out of the intended path (or injecting quotes) when building hrefs.
+  // For Shopify handles, encodeURIComponent is appropriate.
+  return encodeURIComponent(String(value ?? '').trim())
+}
+
 function setCheckoutUrl(url?: string) {
   const cta = cartFooterEl?.querySelector('.cart-cta') as HTMLAnchorElement | null
   if (!cta) return
@@ -585,17 +601,24 @@ async function renderCart(options?: RenderCartOptions) {
             const k = typeof a?.key === 'string' ? a.key : ''
             const v = typeof a?.value === 'string' ? a.value : ''
             if (!k || !v) return ''
-            return `<span class="cart-attr">${k}: ${v}</span>`
+            return `<span class="cart-attr">${escapeHtml(k)}: ${escapeHtml(v)}</span>`
           })
           .filter(Boolean)
           .join(' • ')}</div>`
       : ''
+
+    const productTitle = escapeHtml(p?.title || '')
+    const productHandle = safeHrefPathSegment(p?.handle || '')
+    const productAlt = escapeHtml(img?.altText || '')
+    const imgUrl = typeof img?.url === 'string' ? img.url : ''
+    const imgTag = imgUrl ? `<img src="${escapeHtml(imgUrl)}" alt="${productAlt}" />` : ''
+
     return `
       <div class="cart-item" data-line-id="${n.id}">
-        <a class="cart-item-link" href="/shop/${p?.handle || ''}" aria-label="View ${p?.title || 'product'}">
-          <div class="cart-item-media">${img?.url ? `<img src="${img.url}" alt="${img?.altText || ''}" />` : ''}</div>
+        <a class="cart-item-link" href="/shop/${productHandle}" aria-label="View ${productTitle || 'product'}">
+          <div class="cart-item-media">${imgTag}</div>
           <div class="cart-item-info">
-            <div class="cart-item-title">${p?.title || ''}</div>
+            <div class="cart-item-title">${productTitle}</div>
             <div class="cart-item-sub">Qty ${n.quantity}</div>
             ${attrsHtml}
           </div>
