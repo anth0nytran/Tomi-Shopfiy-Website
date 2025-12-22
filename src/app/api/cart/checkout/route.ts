@@ -6,51 +6,35 @@ import { buildAbsoluteUrl } from '@/lib/http'
 
 const CART_COOKIE = 'cartId'
 
-function normalizeCheckoutRedirect(req: NextRequest, checkoutUrl: string) {
-  // Shopify's `checkoutUrl` is often based on the store's "primary domain".
-  // In headless setups the primary domain can point at this Next.js app,
-  // which causes `/cart/c/...` to 404 on our side.
-  // Fix by forcing the checkout host to the configured Shopify store domain
-  // when the returned URL points back at the current request host.
-  if (!checkoutUrl || !shopifyConfig.storeDomain) return checkoutUrl
+/**
+ * TEMP FIX: Normalize checkout URL to ALWAYS go to Shopify-owned host.
+ * - If relative ("/cart/c/..."), prefix with https://<STORE>.myshopify.com
+ * - If protocol-relative ("//domain/..."), add https:
+ * - Otherwise return unchanged (do NOT rewrite based on request host)
+ *
+ * This avoids the redirect loop caused by myshopify <-> primary domain bouncing.
+ */
+function normalizeCheckoutRedirect(checkoutUrl: string) {
+  if (!checkoutUrl) return checkoutUrl
 
-  try {
-    const configuredStoreDomain = shopifyConfig.storeDomain
-      .trim()
-      .replace(/^https?:\/\//i, '')
-      .replace(/\/.*$/, '')
+  const shopifyHost = (shopifyConfig.storeDomain || '')
+    .trim()
+    .replace(/^https?:\/\//i, '')
+    .replace(/\/.*$/, '') // hostname only
 
-    // If Shopify returns a relative path (e.g. "/cart/c/..."), force it onto Shopify's domain.
-    if (checkoutUrl.startsWith('/')) {
-      return `https://${configuredStoreDomain}${checkoutUrl}`
-    }
-
-    // Protocol-relative URL (e.g. //domain/path)
-    if (checkoutUrl.startsWith('//')) {
-      return `https:${checkoutUrl}`
-    }
-
-    const url = new URL(checkoutUrl)
-
-    const forwardedHost = req.headers.get('x-forwarded-host')
-    const hostHeader = req.headers.get('host')
-    const requestHost = (forwardedHost || hostHeader || req.nextUrl.host || '').toLowerCase()
-    const requestHostname = requestHost.split(',')[0]?.trim().split(':')[0] // handle proxies + ports
-
-    const current = requestHostname?.replace(/^www\./, '')
-    const checkoutHost = url.hostname.toLowerCase().replace(/^www\./, '')
-
-    // Only rewrite if checkout is pointing back at THIS site.
-    if (current && checkoutHost === current) {
-      url.protocol = 'https:'
-      url.hostname = configuredStoreDomain
-      return url.toString()
-    }
-
-    return checkoutUrl
-  } catch {
-    return checkoutUrl
+  // Shopify can return a relative path like "/cart/c/..."
+  if (checkoutUrl.startsWith('/')) {
+    return `https://${shopifyHost}${checkoutUrl}`
   }
+
+  // Protocol-relative URL like "//domain/path"
+  if (checkoutUrl.startsWith('//')) {
+    return `https:${checkoutUrl}`
+  }
+
+  // Otherwise do NOT rewrite hosts — let Shopify's returned URL stand as-is.
+  // This prevents us from accidentally rewriting to our storefront domain.
+  return checkoutUrl
 }
 
 export async function GET(req: NextRequest) {
@@ -70,5 +54,5 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return NextResponse.redirect(normalizeCheckoutRedirect(req, cart.checkoutUrl))
+  return NextResponse.redirect(normalizeCheckoutRedirect(cart.checkoutUrl))
 }
