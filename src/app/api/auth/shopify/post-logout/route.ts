@@ -21,10 +21,3 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   return GET(req)
 }
-
-import { NextRequest, NextResponse } from 'next/server'
-import { buildAbsoluteUrl } from '@/lib/http'
-
-export async function GET(req: NextRequest) {
-  return NextResponse.redirect(buildAbsoluteUrl(req, '/'))
-}
