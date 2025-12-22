@@ -14,8 +14,25 @@ export async function POST(req: NextRequest) {
   const postLogoutUrl = new URL('/api/auth/shopify/post-logout', origin)
 
   // 2) Bounce through Shopify logout to fully end the customer session there as well
-  const shopifyLogoutUrl = new URL(env.customerAccount.logoutUrl)
+  // Some Shopify/OIDC logout endpoints require an `id_token_hint` and will error ("Invalid id_token").
+  // For Customer Accounts (OAuth + PKCE), the correct logout endpoint is `/account/logout`.
+  const configured = new URL(env.customerAccount.logoutUrl)
+  const shopOrigin = new URL(env.customerAccount.authUrl).origin
+  const shouldForceAccountLogout =
+    configured.pathname !== '/account/logout' ||
+    configured.searchParams.has('id_token_hint') ||
+    configured.search.includes('id_token') ||
+    configured.pathname.includes('end_session') ||
+    configured.pathname.includes('endsession')
+
+  const shopifyLogoutUrl = shouldForceAccountLogout
+    ? new URL('/account/logout', shopOrigin)
+    : configured
+
+  // Shopify Customer Accounts docs use `return_to`. Some storefront logout flows use `return_url`.
+  // Setting both makes this resilient across variations.
   shopifyLogoutUrl.searchParams.set('return_to', postLogoutUrl.toString())
+  shopifyLogoutUrl.searchParams.set('return_url', postLogoutUrl.toString())
 
   // 303 converts POST -> GET on redirect targets (avoid resubmitting POST)
   const res = NextResponse.redirect(shopifyLogoutUrl, { status: 303 })
