@@ -71,6 +71,13 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Script
+          id="umami"
+          src="https://cloud.umami.is/script.js"
+          data-website-id="c3608ebe-37a7-42d1-99b1-4961bc67ef92"
+          strategy="afterInteractive"
+          defer
+        />
         {/* Critical CSS for sticky footer - prevents layout shift */}
         <style dangerouslySetInnerHTML={{ __html: `
           html { height: 100%; }

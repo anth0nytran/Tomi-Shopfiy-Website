@@ -27,9 +27,10 @@ export default function VisitPage({
           src="/assets/visit us.png"
           alt="Tomi Jewelry showroom"
           fill
-              className="object-cover"
+          className="object-cover"
           priority
-              sizes="(max-width: 768px) 100vw, 50vw"
+          quality={100}
+          sizes="(max-width: 768px) 200vw, 100vw"
         />
           </div>
 
