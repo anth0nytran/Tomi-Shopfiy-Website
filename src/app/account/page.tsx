@@ -3,7 +3,6 @@ import { AnnouncementBar } from '@/components/layout/AnnouncementBar'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { env } from '@/lib/env'
-import { getAccountNotice } from '@/lib/auth/cookies'
 import { fetchCustomerOverview } from '@/lib/customer-account'
 import { getCustomerAccessToken } from '@/lib/auth/session'
 import { formatPrice } from '@/lib/utils'
@@ -14,38 +13,12 @@ export const revalidate = 0
 
 const SIGN_IN_URL = '/api/auth/shopify/login?returnTo=/account'
 
-function AccountFlash() {
-  const notice = getAccountNotice()
-  if (!notice) return null
-
-  const content =
-    notice === 'loggedOut'
-      ? { title: 'Signed out', copy: 'You’ve been signed out of your account.' }
-      : notice === 'authError'
-        ? { title: 'Sign-in interrupted', copy: 'We couldn’t verify your sign-in. Please try again.' }
-        : { title: 'Sign-in failed', copy: 'We couldn’t complete sign-in. Please try again.' }
-
-  return (
-    <div className="container mx-auto px-6 max-w-6xl mb-8">
-      <div className="bg-white border border-stone-200 px-6 py-4 rounded-sm">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-stone-900 mb-1">
-          {content.title}
-        </p>
-        <p className="text-sm text-stone-600 font-light">
-          {content.copy}
-        </p>
-      </div>
-    </div>
-  )
-}
-
 function AccountShell({ children }: { children: React.ReactNode }) {
   return (
     <main className="bg-[#F9F8F6] flex flex-col">
       <AnnouncementBar />
       <Header />
       <div className="pt-32 pb-24 flex-1">
-        <AccountFlash />
         {children}
       </div>
       <Footer />

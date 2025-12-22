@@ -8,6 +8,7 @@ import { CATALOG_BY_SLUG } from '../catalog'
 import { ChevronLeft } from 'lucide-react'
 import { ProductGallery } from '../ProductGallery'
 import { VariantPurchase } from './VariantPurchase'
+import { BackToShop } from '@/components/shop/BackToShop'
 
 function parseRingSizesFromMetafield(value: unknown): string[] {
   if (typeof value !== 'string') return []
@@ -111,13 +112,7 @@ export default async function ProductPage({ params }: { params: { handle: string
       <Header />
 
       <div className="pt-44 pb-24 px-6 md:px-12 container mx-auto max-w-7xl flex-1">
-        <Link 
-          href="/shop" 
-          className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-stone-500 hover:text-stone-900 transition-colors mb-12"
-        >
-          <ChevronLeft className="w-3 h-3" />
-          Back to shop
-        </Link>
+        <BackToShop />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
           
@@ -131,6 +126,8 @@ export default async function ProductPage({ params }: { params: { handle: string
              
              {/* Breadcrumbs */}
              <nav className="flex items-center gap-2 text-[10px] uppercase tracking-[0.15em] text-stone-400 mb-8">
+               <Link href="/" className="hover:text-stone-900 transition-colors">Home</Link>
+               <span className="text-stone-300">/</span>
                <Link href="/shop" className="hover:text-stone-900 transition-colors">Shop</Link>
                <span className="text-stone-300">/</span>
             {primaryCollection ? (

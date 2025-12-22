@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   setOAuthState(signature)
   setReturnTo(returnTo)
 
-  const redirectUri = getCustomerAccountRedirectUri(req)
+  const redirectUri = getCustomerAccountRedirectUri()
   const authUrl = new URL(env.customerAccount.authUrl)
   authUrl.searchParams.set('response_type', 'code')
   authUrl.searchParams.set('client_id', env.customerAccount.clientId)

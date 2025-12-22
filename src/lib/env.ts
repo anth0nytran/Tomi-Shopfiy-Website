@@ -13,9 +13,6 @@ type Env = {
   }
 }
 
-import type { NextRequest } from 'next/server'
-import { getRequestOrigin } from '@/lib/http'
-
 function ensure(name: string, value: string | undefined) {
   if (!value) throw new Error(`Missing required env var: ${name}`)
   return value
@@ -44,23 +41,16 @@ if (customerAccountsEnabled) {
   env.customerAccount.authUrl = ensure('SHOPIFY_CA_AUTH_URL', env.customerAccount.authUrl)
   env.customerAccount.tokenUrl = ensure('SHOPIFY_CA_TOKEN_URL', env.customerAccount.tokenUrl)
   env.customerAccount.logoutUrl = ensure('SHOPIFY_CA_LOGOUT_URL', env.customerAccount.logoutUrl)
+  env.customerAccount.redirectUri = ensure('SHOPIFY_CA_REDIRECT_URI', env.customerAccount.redirectUri)
   env.customerAccount.apiUrl = ensure('SHOPIFY_CA_CUSTOMER_API_URL', env.customerAccount.apiUrl)
   env.customerAccount.scopes = ensure('SHOPIFY_CA_SCOPES', env.customerAccount.scopes)
 }
 
-export function getCustomerAccountRedirectUri(req?: NextRequest) {
-  // Prefer the current request origin to avoid cross-domain callback issues
-  // (e.g. after switching from *.vercel.app to a custom domain).
-  if (req) {
-    const origin = getRequestOrigin(req)
-    return `${origin}/api/auth/shopify/callback`
-  }
-
-  // Fallback behavior (mainly useful in non-request contexts):
+export function getCustomerAccountRedirectUri() {
   if (process.env.VERCEL_ENV === 'production' || process.env.NODE_ENV === 'production') {
-    return ensure('SHOPIFY_CA_REDIRECT_URI', env.customerAccount.redirectUri)
+    return env.customerAccount.redirectUri
   }
-  return env.customerAccount.redirectUriLocal || ensure('SHOPIFY_CA_REDIRECT_URI', env.customerAccount.redirectUri)
+  return env.customerAccount.redirectUriLocal || env.customerAccount.redirectUri
 }
 
 export { env }

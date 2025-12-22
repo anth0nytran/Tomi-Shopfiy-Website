@@ -260,7 +260,7 @@ export function ShopToolbar({
   )
 }
 
-export function ProductCard({ product, index }: { product: ShopifyListProduct; index: number }) {
+export function ProductCard({ product, index, returnTo }: { product: ShopifyListProduct; index: number; returnTo?: string }) {
   const primaryImage = product.images?.edges?.[0]?.node
   const secondaryImage = product.images?.edges?.[1]?.node
   const primaryVariant = product.variants?.nodes?.[0]
@@ -279,9 +279,11 @@ export function ProductCard({ product, index }: { product: ShopifyListProduct; i
   // Stagger animation delay
   const delay = (index % 12) * 50
 
+  const href = `/shop/${product.handle}${returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : ''}`
+
   return (
     <Link
-      href={`/shop/${product.handle}`}
+      href={href}
       className="group block animate-fade-in-up fill-mode-both"
       style={{ animationDelay: `${delay}ms` }}
     >

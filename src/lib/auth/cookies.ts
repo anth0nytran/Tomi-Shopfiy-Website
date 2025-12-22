@@ -11,7 +11,6 @@ const SESSION_COOKIE = 'shopify.customer_session'
 const RETURN_TO_COOKIE = 'shopify.return_to'
 const VERIFIER_COOKIE = 'shopify.code_verifier'
 const STATE_COOKIE = 'shopify.oauth_state'
-const ACCOUNT_NOTICE_COOKIE = 'shopify.account_notice'
 
 export type CustomerSession = {
   token: string
@@ -79,19 +78,4 @@ export function consumeOAuthState() {
   const value = store.get(STATE_COOKIE)?.value
   if (value) store.delete(STATE_COOKIE)
   return value
-}
-
-export type AccountNotice = 'loggedOut' | 'authError' | 'tokenError'
-
-export function setAccountNotice(value: AccountNotice, maxAgeSeconds = 20) {
-  cookies().set(ACCOUNT_NOTICE_COOKIE, value, { ...baseCookie, maxAge: maxAgeSeconds })
-}
-
-export function getAccountNotice(): AccountNotice | null {
-  const value = cookies().get(ACCOUNT_NOTICE_COOKIE)?.value as AccountNotice | undefined
-  return value ?? null
-}
-
-export function clearAccountNotice() {
-  cookies().delete(ACCOUNT_NOTICE_COOKIE)
 }

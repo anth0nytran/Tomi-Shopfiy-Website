@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import {
   CATALOG_BY_SLUG,
   CatalogEntry,
@@ -24,18 +24,31 @@ type ShopExperienceProps = {
 
 export function ShopExperience({ initialSlug, products }: ShopExperienceProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+
   // Trust the slug provided by the server route to avoid any client-side path desyncs.
   const activeSlug = initialSlug
   const [visibleCount, setVisibleCount] = useState(() => Math.min(INITIAL_VISIBLE, products.length))
   const [isAnimating, setIsAnimating] = useState(false)
   const [isPending, startTransition] = useTransition()
-  const [sort, setSort] = useState('featured')
-  const [subFilter, setSubFilter] = useState('all')
+  
+  const [sort, setSort] = useState(searchParams.get('sort') || 'featured')
+  const [subFilter, setSubFilter] = useState(searchParams.get('subFilter') || 'all')
 
   useEffect(() => {
     setVisibleCount(Math.min(INITIAL_VISIBLE, products.length))
-    setSubFilter('all') // Reset subfilter when switching categories
+    // Only reset if we don't have URL params (handled by the effect below for URL sync)
+    // But if we switch categories, URL params are cleared by the link navigation, so we should reset.
   }, [products, activeSlug])
+
+  // Sync state with URL params (handles back/forward navigation)
+  useEffect(() => {
+    const s = searchParams.get('sort') || 'featured'
+    const f = searchParams.get('subFilter') || 'all'
+    if (s !== sort) setSort(s)
+    if (f !== subFilter) setSubFilter(f)
+  }, [searchParams, sort, subFilter])
 
   const entry: CatalogEntry = useMemo(() => CATALOG_BY_SLUG[activeSlug] ?? FALLBACK_ENTRY, [activeSlug])
 
@@ -116,9 +129,33 @@ export function ShopExperience({ initialSlug, products }: ShopExperienceProps) {
   const handleSortChange = useCallback((value: string) => {
     setSort(value)
     setVisibleCount(INITIAL_VISIBLE)
-  }, [])
+    
+    const params = new URLSearchParams(searchParams.toString())
+    if (value && value !== 'featured') {
+      params.set('sort', value)
+    } else {
+      params.delete('sort')
+    }
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+  }, [pathname, router, searchParams])
+  
+  const handleSubFilterChange = useCallback((val: string) => {
+    setSubFilter(val)
+    setVisibleCount(INITIAL_VISIBLE)
+
+    const params = new URLSearchParams(searchParams.toString())
+    if (val && val !== 'all') {
+      params.set('subFilter', val)
+    } else {
+      params.delete('subFilter')
+    }
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+  }, [pathname, router, searchParams])
 
   const inventoryCount = filteredProducts.length
+  
+  // Construct the return URL for products
+  const returnUrl = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`
 
   if (entry.instoreOnly) {
     if (entry.slug === 'jade-jewelry') {
@@ -173,10 +210,7 @@ export function ShopExperience({ initialSlug, products }: ShopExperienceProps) {
         sort={sort}
         onSortChange={handleSortChange}
         subFilter={subFilter}
-        onSubFilterChange={(val) => {
-          setSubFilter(val)
-          setVisibleCount(INITIAL_VISIBLE)
-        }}
+        onSubFilterChange={handleSubFilterChange}
       />
       
       {inventoryCount === 0 ? (
@@ -197,7 +231,12 @@ export function ShopExperience({ initialSlug, products }: ShopExperienceProps) {
           <section className="container mx-auto px-4 md:px-8 pb-20" aria-label="Product grid">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-3 gap-y-10 md:gap-x-5 md:gap-y-14">
               {visibleProducts.map((product, index) => (
-                <ProductCard key={product.id ?? `${product.handle}-${index}`} product={product} index={index} />
+                <ProductCard 
+                  key={product.id ?? `${product.handle}-${index}`} 
+                  product={product} 
+                  index={index} 
+                  returnTo={returnUrl}
+                />
               ))}
             </div>
           </section>

@@ -20,16 +20,6 @@ export async function POST(req: NextRequest) {
   // 303 converts POST -> GET on redirect targets (avoid resubmitting POST)
   const res = NextResponse.redirect(shopifyLogoutUrl, { status: 303 })
 
-  // Show a signed-out notice once we land back on `/account`
-  // (cookie is short-lived and will be cleared on next successful sign-in).
-  res.cookies.set('shopify.account_notice', 'loggedOut', {
-    httpOnly: true,
-    sameSite: 'lax',
-    path: '/',
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 20,
-  })
-
   // Local cookie names (see `src/lib/auth/cookies.ts`)
   res.cookies.delete('shopify.customer_session')
   res.cookies.delete('shopify.return_to')
