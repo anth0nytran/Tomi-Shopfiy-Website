@@ -7,11 +7,14 @@ function buildShopifyLogoutUrl(req: NextRequest) {
   const postLogoutRedirect = buildAbsoluteUrl(req, '/account?loggedOut=1').toString()
   const url = new URL(env.customerAccount.logoutUrl)
 
-  // Shopify endpoints vary in which redirect param they accept; set the common ones.
+  // Shopify's Customer Accounts logout URL can be either:
+  // - a simple /account/logout endpoint (supports return_url / return_to), OR
+  // - an OIDC end-session endpoint (requires id_token_hint).
+  //
+  // We do NOT have an ID token stored in this app, so avoid OIDC params like
+  // post_logout_redirect_uri/client_id which can trigger "Invalid id_token".
   url.searchParams.set('return_to', postLogoutRedirect)
   url.searchParams.set('return_url', postLogoutRedirect)
-  url.searchParams.set('post_logout_redirect_uri', postLogoutRedirect)
-  url.searchParams.set('client_id', env.customerAccount.clientId)
 
   return url
 }
