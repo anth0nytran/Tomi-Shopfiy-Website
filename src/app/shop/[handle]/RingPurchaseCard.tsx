@@ -2,6 +2,7 @@
 
 import React, { useEffect, useId, useMemo, useState } from 'react'
 import { AddToCartButton } from '@/components/cart/AddToCartButton'
+import { sortNumericSizes } from '@/lib/utils'
 
 type Props = {
   merchandiseId: string
@@ -40,7 +41,7 @@ export function RingPurchaseCard({
 }: Props) {
   const selectId = useId()
   const textareaId = useId()
-  const sizes = useMemo(() => normalizeSizeList(ringSizes), [ringSizes])
+  const sizes = useMemo(() => sortNumericSizes(normalizeSizeList(ringSizes)), [ringSizes])
 
   const [selectedSize, setSelectedSize] = useState(selectedSizeProp || '')
   const [showRequest, setShowRequest] = useState(false)

@@ -57,7 +57,7 @@ export default function ContactPage({
 
                   <div>
                     <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-stone-900 mb-2">Careers</h3>
-                    <a href="mailto:support@tomijewelry.com" className="text-stone-600 hover:text-stone-900 transition-colors">support@tomijewelry.com</a>
+                    <a href="mailto:careers@tomijewelry.com" className="text-stone-600 hover:text-stone-900 transition-colors">careers@tomijewelry.com</a>
                   </div>
 
                   <div>

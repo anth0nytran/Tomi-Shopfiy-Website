@@ -5,6 +5,8 @@ import {
   consumeCodeVerifier,
   consumeOAuthState,
   consumeReturnTo,
+  setAccountNotice,
+  clearAccountNotice,
   setCustomerSession,
 } from '@/lib/auth/cookies'
 import { verifyState } from '@/lib/auth/state'
@@ -31,11 +33,12 @@ export async function GET(req: NextRequest) {
   const returnTo = consumeReturnTo() || '/account'
 
   if (!code || !state || !storedState || !verifier || !verifyState(state, storedState)) {
-    return NextResponse.redirect(buildAbsoluteUrl(req, '/account?error=auth'))
+    setAccountNotice('authError')
+    return NextResponse.redirect(buildAbsoluteUrl(req, '/account'))
   }
 
   try {
-    const redirectUri = getCustomerAccountRedirectUri()
+    const redirectUri = getCustomerAccountRedirectUri(req)
 
     // Build x-www-form-urlencoded body as Shopify expects
     const body = new URLSearchParams()
@@ -56,7 +59,8 @@ export async function GET(req: NextRequest) {
     if (!response.ok) {
       const text = await response.text()
       console.error('Shopify token exchange failed:', response.status, text)
-      return NextResponse.redirect(buildAbsoluteUrl(req, '/account?error=token'))
+      setAccountNotice('tokenError')
+      return NextResponse.redirect(buildAbsoluteUrl(req, '/account'))
     }
 
     const payload = (await response.json()) as TokenPayload
@@ -65,7 +69,8 @@ export async function GET(req: NextRequest) {
 
     if (!accessToken) {
       console.error('Shopify token response missing usable access token', payload)
-      return NextResponse.redirect(buildAbsoluteUrl(req, '/account?error=token'))
+      setAccountNotice('tokenError')
+      return NextResponse.redirect(buildAbsoluteUrl(req, '/account'))
     }
 
     const now = Date.now()
@@ -79,10 +84,12 @@ export async function GET(req: NextRequest) {
     }
 
     setCustomerSession(session, Math.max(60, payload.expires_in ?? 3600))
+    clearAccountNotice()
 
     return NextResponse.redirect(buildAbsoluteUrl(req, returnTo))
   } catch (err) {
     console.error('Customer Account callback error:', err)
-    return NextResponse.redirect(buildAbsoluteUrl(req, '/account?error=token'))
+    setAccountNotice('tokenError')
+    return NextResponse.redirect(buildAbsoluteUrl(req, '/account'))
   }
 }

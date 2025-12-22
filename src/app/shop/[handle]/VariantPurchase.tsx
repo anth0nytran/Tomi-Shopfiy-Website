@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from 'react'
 import { AddToCartButton } from '@/components/cart/AddToCartButton'
 import { RingPurchaseCard } from './RingPurchaseCard'
+import { sortNumericSizes } from '@/lib/utils'
 
 type PdpOption = { name: string; values?: string[]; optionValues?: Array<{ name: string | null }> }
 type PdpVariant = {
@@ -111,7 +112,8 @@ export function VariantPurchase({ productTitle, options, variants, isRing, ringS
         if (name && name.toLowerCase() === 'title' && values.length === 1 && values[0].toLowerCase() === 'default title') {
           return null
         }
-        return { name, values }
+        const nextValues = name?.toLowerCase().includes('size') ? sortNumericSizes(values) : values
+        return { name, values: nextValues }
       })
       .filter((opt): opt is { name: string; values: string[] } => Boolean(opt?.name && opt?.values.length))
   }, [options])
@@ -157,7 +159,8 @@ export function VariantPurchase({ productTitle, options, variants, isRing, ringS
       : normalizedOptions
   const ringSizeOptions = useMemo(() => {
     const merged = [...(sizeOption?.values ?? []), ...(ringSizes || [])]
-    return Array.from(new Set(merged.map((v) => v.trim()).filter(Boolean)))
+    const deduped = Array.from(new Set(merged.map((v) => v.trim()).filter(Boolean)))
+    return sortNumericSizes(deduped)
   }, [ringSizes, sizeOptionName, sizeOption?.values?.join('|')])
   const currentSelectedSize = sizeOptionName ? selectedOptions[sizeOptionName] || '' : ''
 

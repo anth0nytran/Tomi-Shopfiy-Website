@@ -47,7 +47,7 @@ export function JewelryBoxReveal() {
             <div>
               <Link 
                 href="/shop/category/one-of-a-kind-vintage"
-                className="inline-flex items-center justify-center h-12 px-10 text-sm uppercase tracking-widest border border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-white transition-all duration-300"
+                className="inline-flex items-center justify-center h-12 px-10 text-xs font-bold uppercase tracking-[0.2em] border border-stone-900 text-stone-900 hover:bg-stone-900 hover:text-white transition-all duration-300"
               >
                 shop vintage
               </Link>

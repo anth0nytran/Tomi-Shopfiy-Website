@@ -25,13 +25,13 @@ export function MissionBanner() {
         </h2>
         
         <div className="flex flex-col items-center gap-8">
-          <p className="text-white/95 text-lg md:text-xl font-light tracking-wide max-w-lg leading-relaxed text-balance antialiased drop-shadow-sm">
+          <p className="text-white text-lg md:text-xl font-light tracking-wide max-w-lg leading-relaxed text-balance antialiased drop-shadow-sm">
             Exclusive launches, styling sessions, and community gatherings.
           </p>
           
           <div className="mt-2">
             <GlassButton href="/events">
-              <span className="text-white text-xs font-bold uppercase tracking-[0.25em]">
+              <span className="text-white text-xs font-bold uppercase tracking-[0.2em]">
                 Be in the know
               </span>
             </GlassButton>

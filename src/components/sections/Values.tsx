@@ -20,31 +20,31 @@ export function Values() {
           <div className="hidden md:block absolute top-8 bottom-8 right-1/3 w-[1px] bg-stone-200"></div>
 
           <div className="flex flex-col items-center text-center group">
-            <div className="mb-8 relative w-14 h-14 flex items-center justify-center opacity-90 transition-transform duration-500 group-hover:scale-110">
+            <div className="mb-8 relative w-14 h-14 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
               <Image src="/assets/gem icon background removed.png" alt="Gem icon" width={56} height={56} className="object-contain" />
             </div>
-            <h4 className="text-xs font-bold uppercase tracking-[0.2em] mb-3 text-stone-900">Solid Gold</h4>
-            <p className="text-stone-500 leading-relaxed font-light text-sm md:text-base max-w-[260px]">
+            <h4 className="text-xs font-bold uppercase tracking-[0.2em] mb-4 text-stone-900">Solid Gold</h4>
+            <p className="text-stone-500 leading-relaxed font-light text-sm md:text-base max-w-[280px]">
               Real gold that never oxidizes or discolors. Wear it in the shower, sleep in it, live in it.
             </p>
           </div>
 
           <div className="flex flex-col items-center text-center group">
-            <div className="mb-8 relative w-14 h-14 flex items-center justify-center opacity-90 transition-transform duration-500 group-hover:scale-110">
+            <div className="mb-8 relative w-14 h-14 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
               <Image src="/assets/repair icon Background Removed.png" alt="Repair icon" width={56} height={56} className="object-contain" />
             </div>
-            <h4 className="text-xs font-bold uppercase tracking-[0.2em] mb-3 text-stone-900">Lifetime Warranty</h4>
-            <p className="text-stone-500 leading-relaxed font-light text-sm md:text-base max-w-[260px]">
+            <h4 className="text-xs font-bold uppercase tracking-[0.2em] mb-4 text-stone-900">Lifetime Warranty</h4>
+            <p className="text-stone-500 leading-relaxed font-light text-sm md:text-base max-w-[280px]">
               We stand by our quality. If anything happens to your piece, we will repair or replace it.
             </p>
           </div>
 
           <div className="flex flex-col items-center text-center group">
-            <div className="mb-8 relative w-14 h-14 flex items-center justify-center opacity-90 transition-transform duration-500 group-hover:scale-110">
+            <div className="mb-8 relative w-14 h-14 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
               <Image src="/assets/locket icon Background Removed.png" alt="Gem icon" width={56} height={56} className="object-contain" />
             </div>
-            <h4 className="text-xs font-bold uppercase tracking-[0.2em] mb-3 text-stone-900">Timeless Design</h4>
-            <p className="text-stone-500 leading-relaxed font-light text-sm md:text-base max-w-[260px]">
+            <h4 className="text-xs font-bold uppercase tracking-[0.2em] mb-4 text-stone-900">Timeless Design</h4>
+            <p className="text-stone-500 leading-relaxed font-light text-sm md:text-base max-w-[280px]">
               Focusing on enduring style over fleeting microtrends. Jewelry meant to be passed down.
             </p>
           </div>

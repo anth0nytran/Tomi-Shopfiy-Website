@@ -46,6 +46,7 @@ const Polaroid: React.FC<PolaroidProps> = ({ src, caption, angle = 0, x = 0, y =
           src={src} 
           alt={caption || "Tomi Jewelry"}
           fill
+          sizes="(min-width: 768px) 220px, 120px"
           className="object-cover"
           draggable={false}
         />
@@ -67,10 +68,10 @@ export const PolaroidScatter = () => {
 
   // Collection of images to scatter
   const images = [
-    { src: "/assets/social_pic1.png", caption: "studio vibes ✨", angle: -4, x: -350, y: -180 },
-    { src: "/assets/social_pic2.png", caption: "golden hour", angle: 3, x: 350, y: -180 },
-    { src: "/assets/social_pic3.png", caption: "details", angle: -6, x: -380, y: 150 },
-    { src: "/assets/product_ph1.png", caption: "new collection", angle: 5, x: 380, y: 150 },
+    { src: "/countdown/EOSR4583.jpg", caption: "coming soon", angle: -4, x: -350, y: -180 },
+    { src: "/countdown/EOSR4901.jpg", caption: "almost time", angle: 3, x: 350, y: -180 },
+    { src: "/countdown/IMG_1838.jpg", caption: "tomi", angle: -6, x: -380, y: 150 },
+    { src: "/countdown/IMG_1933.jpg", caption: "counting down", angle: 5, x: 380, y: 150 },
   ]
 
   // Use a different ref for mobile to allow overflow

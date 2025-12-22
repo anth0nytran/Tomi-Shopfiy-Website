@@ -65,6 +65,67 @@ export function Social() {
     return () => clearTimeout(timeout)
   }, [typingIndex, isDeleting])
 
+  // --- Infinite Scroll Logic ---
+
+  // 1. Triple the slides so we have [A, B, C] ... [A, B, C] ... [A, B, C]
+  // Ideally just duplicating once (double) is enough if we manage it well,
+  // but tripling is safer for "start in middle".
+  const displaySlides = React.useMemo(() => {
+    // If we have very few slides, we might need more copies to fill the screen.
+    // For simplicity, let's just triple them.
+    return [
+      ...slides.map((s) => ({ ...s, uniqueKey: `${s.id}-p` })),
+      ...slides.map((s) => ({ ...s, uniqueKey: `${s.id}-c` })),
+      ...slides.map((s) => ({ ...s, uniqueKey: `${s.id}-n` })),
+    ]
+  }, [slides])
+
+  // 2. Initialize scroll position to the middle set
+  React.useEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+
+    // Wait for layout
+    const initScroll = () => {
+      const slide = track.querySelector<HTMLElement>('[data-slide]')
+      if (!slide) return
+
+      const slideWidth = slide.clientWidth
+      const gap = parseFloat(getComputedStyle(track).columnGap || '16')
+      const singleSetWidth = (slideWidth + gap) * slides.length
+
+      // Scroll to start of the middle set
+      track.scrollLeft = singleSetWidth
+    }
+
+    // Small timeout to ensure DOM is ready/images loaded enough to have width
+    const t = setTimeout(initScroll, 100)
+    return () => clearTimeout(t)
+  }, [slides]) // Re-run if slides change
+
+  // 3. Monitor scroll to loop silently
+  const handleScroll = React.useCallback(() => {
+    const track = trackRef.current
+    if (!track) return
+
+    const slide = track.querySelector<HTMLElement>('[data-slide]')
+    if (!slide) return
+
+    const slideWidth = slide.clientWidth
+    const gap = parseFloat(getComputedStyle(track).columnGap || '16')
+    const singleSetWidth = (slideWidth + gap) * slides.length
+
+    // If we scrolled too far left (into first set), jump to middle set
+    if (track.scrollLeft < 50) { // arbitrary buffer
+       track.scrollLeft += singleSetWidth
+    }
+    // If we scrolled too far right (into third set), jump back to middle set
+    else if (track.scrollLeft >= singleSetWidth * 2 - 50) {
+       track.scrollLeft -= singleSetWidth
+    }
+  }, [slides.length])
+
+
   const scrollCarousel = React.useCallback((direction: 'prev' | 'next') => {
     if (!trackRef.current) return
     const track = trackRef.current
@@ -72,6 +133,7 @@ export function Social() {
     const slideWidth = slide?.clientWidth ?? 220
     const gap = parseFloat(getComputedStyle(track).columnGap || '16')
     const offset = slideWidth + gap
+
     track.scrollBy({ left: direction === 'next' ? offset : -offset, behavior: 'smooth' })
   }, [])
 
@@ -97,9 +159,13 @@ export function Social() {
                 <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
-            <div className="social-track" ref={trackRef}>
-              {slides.map((slide, idx) => (
-                <div key={slide.id} className="social-slide" data-slide>
+            <div 
+              className="social-track" 
+              ref={trackRef} 
+              onScroll={handleScroll}
+            >
+              {displaySlides.map((slide, idx) => (
+                <div key={slide.uniqueKey} className="social-slide" data-slide>
                   {slide.href ? (
                     <a href={slide.href} target="_blank" rel="noreferrer" className="block w-full h-full">
                       <Image
@@ -108,7 +174,7 @@ export function Social() {
                         fill
                         sizes="(min-width: 1024px) 220px, (min-width: 768px) 45vw, 72vw"
                         className="social-slide-media"
-                        priority={idx === 0}
+                        priority={idx < slides.length * 2 && idx >= slides.length} // prioritize middle set
                         unoptimized
                       />
                     </a>
@@ -119,7 +185,7 @@ export function Social() {
                       fill
                       sizes="(min-width: 1024px) 220px, (min-width: 768px) 45vw, 72vw"
                       className="social-slide-media"
-                      priority={idx === 0}
+                      priority={idx < slides.length * 2 && idx >= slides.length}
                       unoptimized
                     />
                   )}
@@ -137,4 +203,3 @@ export function Social() {
     </section>
   )
 }
-
