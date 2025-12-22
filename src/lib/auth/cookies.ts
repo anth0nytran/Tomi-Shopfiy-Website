@@ -1,5 +1,7 @@
 import { cookies } from 'next/headers'
 
+type CookieDeleter = { delete: (name: string) => void }
+
 const baseCookie = {
   httpOnly: true,
   sameSite: 'lax' as const,
@@ -45,6 +47,19 @@ export function getCustomerSession(): CustomerSession | null {
 
 export function clearCustomerSession() {
   cookies().delete(SESSION_COOKIE)
+}
+
+/**
+ * Clears all cookies used by the Customer Accounts OAuth flow + stored session.
+ *
+ * Important: In Route Handlers, prefer passing `res.cookies` so the deletions are
+ * guaranteed to be included on the outgoing response.
+ */
+export function clearCustomerAuthCookies(store: CookieDeleter = cookies()) {
+  store.delete(SESSION_COOKIE)
+  store.delete(RETURN_TO_COOKIE)
+  store.delete(VERIFIER_COOKIE)
+  store.delete(STATE_COOKIE)
 }
 
 export function setReturnTo(value: string, maxAgeSeconds = 300) {

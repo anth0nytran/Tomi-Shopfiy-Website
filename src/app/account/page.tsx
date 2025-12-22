@@ -8,9 +8,6 @@ import { getCustomerAccessToken } from '@/lib/auth/session'
 import { formatPrice } from '@/lib/utils'
 import { ChevronRight, ChevronDown } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-
 const SIGN_IN_URL = '/api/auth/shopify/login?returnTo=/account'
 
 function AccountShell({ children }: { children: React.ReactNode }) {
