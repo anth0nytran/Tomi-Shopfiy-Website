@@ -157,11 +157,12 @@ export function VariantPurchase({ productTitle, options, variants, isRing, ringS
     isRing && sizeOptionName
       ? normalizedOptions.filter((opt) => normalizeName(opt.name) !== normalizeName(sizeOptionName))
       : normalizedOptions
+  const sizeOptionValuesKey = sizeOption?.values?.join('|') ?? ''
   const ringSizeOptions = useMemo(() => {
     const merged = [...(sizeOption?.values ?? []), ...(ringSizes || [])]
     const deduped = Array.from(new Set(merged.map((v) => v.trim()).filter(Boolean)))
     return sortNumericSizes(deduped)
-  }, [ringSizes, sizeOptionName, sizeOption?.values?.join('|')])
+  }, [ringSizes, sizeOption?.values, sizeOptionValuesKey])
   const currentSelectedSize = sizeOptionName ? selectedOptions[sizeOptionName] || '' : ''
 
   const selectedVariantStrict = useMemo(

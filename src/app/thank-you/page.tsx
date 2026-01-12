@@ -35,8 +35,8 @@ function ThankYouContent() {
         )}
 
         <p className="text-stone-500 font-light mb-8 leading-relaxed">
-          We've received your order and will begin preparing it right away. 
-          You'll receive an email confirmation shortly with tracking details.
+          We&apos;ve received your order and will begin preparing it right away. 
+          You&apos;ll receive an email confirmation shortly with tracking details.
         </p>
 
         <div className="space-y-3">
