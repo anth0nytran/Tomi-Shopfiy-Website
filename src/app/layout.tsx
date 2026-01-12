@@ -79,6 +79,20 @@ export default function RootLayout({
           strategy="afterInteractive"
           defer
         />
+        {/* Google Analytics */}
+        <Script
+          id="gtag-js"
+          src="https://www.googletagmanager.com/gtag/js?id=G-FC5YQ3CJDF"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-FC5YQ3CJDF');
+          `}
+        </Script>
         {/* Critical CSS for sticky footer - prevents layout shift */}
         <style dangerouslySetInnerHTML={{ __html: `
           html { height: 100%; }

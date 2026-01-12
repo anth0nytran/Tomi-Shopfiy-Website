@@ -45,6 +45,14 @@ export async function GET(req: NextRequest) {
   const cart = await getCart(cartId)
   if (!cart?.checkoutUrl) return fallback
 
+  // DEBUG: Log what Shopify returns vs what we redirect to
+  const finalUrl = normalizeCheckoutRedirect(cart.checkoutUrl)
+  console.log('[Checkout Debug]', {
+    shopifyReturned: cart.checkoutUrl,
+    weRedirectTo: finalUrl,
+    storeDomain: shopifyConfig.storeDomain,
+  })
+
   const token = await getCustomerAccessToken()
   if (token) {
     try {
