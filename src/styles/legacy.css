@@ -2135,7 +2135,7 @@ body:not(.has-hero) .mobile-nav-toggle {
   font-size: clamp(0.82rem, 1.05vw, 0.98rem);
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  margin: 0;
+  margin: 0.75rem 0 0;
   line-height: 1.2;
   color: rgba(255, 255, 255, 0.95);
   font-weight: 300;
