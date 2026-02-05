@@ -1,11 +1,13 @@
 import React from 'react'
+import Link from 'next/link'
 
 export function AnnouncementBar() {
   return (
-    <div className="announcement-bar" data-section-type="announcement">
+    <Link href="/shop" className="announcement-bar" data-section-type="announcement">
       <p className="announcement-text">
-        See It. Feel It. Love It. The Jade Bar is <span className="announcement-highlight">In-Store Only</span>.
+        our sweetheart collection is now live! find something you adore
       </p>
-    </div>
+    </Link>
   )
 }
+

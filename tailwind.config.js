@@ -15,6 +15,7 @@ module.exports = {
         white: '#ffffff',
         black: '#000000',
         'tomi-text': '#38473b',
+        'tomi-outline': '#7f0504',
       },
       fontFamily: {
         body: ['Neue Haas Grotesk Display', 'sans-serif'],

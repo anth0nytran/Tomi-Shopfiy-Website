@@ -8,7 +8,7 @@ export function Hero() {
         <div className="hero-background" data-anim="scale-in" data-delay="80">
           <video
             className="hero-bg-video"
-            src="/assets/homepage video.mov"
+            src="/tomi landing page update - LNY.mp4"
             autoPlay
             muted
             loop
@@ -18,10 +18,9 @@ export function Hero() {
         </div>
         <div className="hero-content">
           <h1 className="hero-title" data-anim="slide-up" data-delay="200">
-            <span className="hero-title-line">today&#39;s gem,</span>
-            <span className="hero-title-line">tomorrow&#39;s gift</span>
+            <span className="hero-title-line">gift good fortune</span>
           </h1>
-          <p className="hero-subtitle" data-anim="slide-up" data-delay="400">solid gold jewelry that shines best on you</p>
+          <p className="hero-subtitle" data-anim="slide-up" data-delay="400">this Lunar New Year with our best-selling jade pieces</p>
           <Link href="/shop" className="btn btn--primary" data-anim="slide-up" data-delay="600">
             SHOP NOW
           </Link>

@@ -110,7 +110,7 @@ export async function Header() {
           <div className="nav-center">
             <Link href="/" className="logo-link" aria-label="Tomi home">
               <Image
-                src="/assets/large%20tomi%20logo.png"
+                src="/tomi red logo.svg"
                 alt="Tomi logo"
                 width={200}
                 height={250}
