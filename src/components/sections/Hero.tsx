@@ -21,7 +21,7 @@ export function Hero() {
             <span className="hero-title-line">gift good fortune</span>
           </h1>
           <p className="hero-subtitle" data-anim="slide-up" data-delay="400">this Lunar New Year with our best-selling jade pieces</p>
-          <Link href="/shop" className="btn btn--primary" data-anim="slide-up" data-delay="600">
+          <Link href="/shop/category/new-arrivals" className="btn btn--primary" data-anim="slide-up" data-delay="600">
             SHOP NOW
           </Link>
         </div>

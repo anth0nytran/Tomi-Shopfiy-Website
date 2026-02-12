@@ -5,7 +5,7 @@ export function AnnouncementBar() {
   return (
     <Link href="/shop" className="announcement-bar" data-section-type="announcement">
       <p className="announcement-text">
-        our sweetheart collection is now live! find something you adore
+        LUNAR NEW YEAR CHARMS PRE-ORDER OPENS FRIDAY, FEBRUARY 13TH.
       </p>
     </Link>
   )
