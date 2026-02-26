@@ -116,7 +116,7 @@ export const GET_PRODUCTS = `
               }
             }
           }
-          images(first: 2) {
+          images(first: 4) {
             edges {
               node {
                 url

@@ -42,17 +42,17 @@ export default function JadeBarPage() {
         {/* Hero Section */}
         <section className="relative w-full h-[85vh] min-h-[600px] flex items-end pb-20 md:pb-32 overflow-hidden">
           <div className="absolute inset-0 z-0">
-            <Image 
-              src="/assets/jade%20bar%20hero.png" 
-              alt="Tomi Jade Bar" 
-              fill 
+            <Image
+              src="/assets/jade%20bar%20hero.png"
+              alt="Tomi Jade Bar"
+              fill
               className="object-cover"
               priority
               quality={95}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
           </div>
-          
+
           <div className="relative z-10 px-6 md:px-12 container mx-auto w-full">
             <div className="max-w-3xl">
               <span className="block text-xs font-bold tracking-[0.2em] uppercase mb-4 text-white/90">
@@ -73,16 +73,16 @@ export default function JadeBarPage() {
         <section className="py-24 bg-white border-b border-stone-100">
           <div className="container mx-auto px-6 max-w-6xl">
             <div className="text-center mb-16">
-               <span className="text-xs font-bold tracking-[0.2em] uppercase text-stone-400">
-                 Significance
-               </span>
-               <h2 className="font-heading text-3xl md:text-4xl text-stone-900 mt-3">
-                 Why we wear jade
-               </h2>
+              <span className="text-xs font-bold tracking-[0.2em] uppercase text-stone-400">
+                Significance
+              </span>
+              <h2 className="font-heading text-3xl md:text-4xl text-stone-900 mt-3">
+                Why we wear jade
+              </h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-0 relative">
-              
+
               {/* Item 1 */}
               <div className="flex flex-col items-center text-center md:px-12 group">
                 <div className="w-16 h-16 rounded-full bg-[#efdada]/20 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-500">
@@ -101,7 +101,7 @@ export default function JadeBarPage() {
               <div className="flex flex-col items-center text-center md:px-12 group">
                 <div className="w-16 h-16 rounded-full bg-[#efdada]/20 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-500">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 21c4-3 7-6 7-10a7 7 0 10-14 0c0 4 3 7 7 10z" /></svg>
-            </div>
+                </div>
                 <h3 className="font-heading text-2xl text-stone-900 mb-2">For Health</h3>
                 <p className="text-sm text-stone-500 font-light leading-relaxed">
                   Promoting balance, vitality, and emotional well-being.
@@ -115,7 +115,7 @@ export default function JadeBarPage() {
               <div className="flex flex-col items-center text-center md:px-12 group">
                 <div className="w-16 h-16 rounded-full bg-[#efdada]/20 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-500">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 17l-5 3 2-5-4-3 5-1 2-5 2 5 5 1-4 3 2 5-5-3z" /></svg>
-            </div>
+                </div>
                 <h3 className="font-heading text-2xl text-stone-900 mb-2">For Good Luck</h3>
                 <p className="text-sm text-stone-500 font-light leading-relaxed">
                   To invite prosperity and open doors to new opportunities.
@@ -136,33 +136,33 @@ export default function JadeBarPage() {
               <h2 className="font-heading text-4xl md:text-5xl text-stone-900">
                 The Jade Bar Experience
               </h2>
-        </div>
+            </div>
 
             <div className="relative">
               {/* Central Line (Hidden on Mobile) */}
               <div className="absolute left-1/2 top-0 bottom-0 w-px bg-stone-300 -translate-x-1/2 hidden md:block" />
 
               <div className="space-y-20 md:space-y-32">
-            {jadeProcessSteps.map((step, index) => {
+                {jadeProcessSteps.map((step, index) => {
                   const isEven = index % 2 === 0
                   return (
                     <div key={index} className={`relative flex flex-col md:flex-row items-center ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
-                      
+
                       {/* Timeline Dot (Center) */}
                       <div className="absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-white border-2 border-primary rounded-full z-10 hidden md:block shadow-[0_0_0_8px_#F9F8F6]" />
 
                       {/* Image Side */}
                       <div className="w-full md:w-1/2 px-6 md:px-12 mb-8 md:mb-0">
                         <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-stone-200 shadow-md group">
-                      <Image
-                        src={step.imageSrc}
-                        alt={step.imageAlt}
+                          <Image
+                            src={step.imageSrc}
+                            alt={step.imageAlt}
                             fill
                             className="object-cover transition-transform duration-700 group-hover:scale-105"
                             sizes="(max-width: 768px) 100vw, 50vw"
-                      />
-                    </div>
-                  </div>
+                          />
+                        </div>
+                      </div>
 
                       {/* Text Side */}
                       <div className="w-full md:w-1/2 px-6 md:px-12 text-center md:text-left">
@@ -177,21 +177,21 @@ export default function JadeBarPage() {
                             {step.description}
                           </p>
                         </div>
-                  </div>
+                      </div>
 
                     </div>
-              )
-            })}
-          </div>
+                  )
+                })}
+              </div>
             </div>
 
-        </div>
-      </section>
+          </div>
+        </section>
 
         {/* Sourcing & Grades */}
         <section className="py-24 bg-white">
           <div className="container mx-auto px-6 max-w-7xl">
-            
+
             {/* Sourcing Intro */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-24">
               <div>
@@ -207,26 +207,26 @@ export default function JadeBarPage() {
                 <div className="flex flex-wrap gap-3">
                   <span className="px-4 py-2 bg-[#F9F8F6] text-stone-600 text-xs font-bold uppercase tracking-wider rounded-full">Myanmar (Burma)</span>
                   <span className="px-4 py-2 bg-[#F9F8F6] text-stone-600 text-xs font-bold uppercase tracking-wider rounded-full">Trusted Suppliers</span>
-        </div>
+                </div>
               </div>
               <div className="relative aspect-[4/3] bg-stone-100 overflow-hidden rounded-lg">
                 <Image
                   src="/assets/source_jade.png"
-                    alt="Jade sourcing map"
+                  alt="Jade sourcing map"
                   fill
-                    className="object-cover"
+                  className="object-cover"
                 />
               </div>
             </div>
 
             {/* Grading Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              
+
               {/* Grade A */}
               <div className="bg-[#F9F8F6] p-8 border border-[#efdada] relative overflow-hidden group hover:shadow-md transition-shadow">
                 <div className="absolute top-0 right-0 bg-[#efdada] text-primary text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-bl-lg">
                   We Only Sell This
-          </div>
+                </div>
                 <h3 className="font-heading text-2xl text-stone-900 mb-4">Grade A</h3>
                 <p className="text-stone-600 font-light leading-relaxed text-sm">
                   100% natural jadeite, untreated and free from dyes or resin. Just pure, authentic stone that lasts generations.
@@ -263,14 +263,14 @@ export default function JadeBarPage() {
             <p className="text-lg text-stone-700 font-light mb-10">
               Visit us at our Houston studio to experience the Jade Bar in person.
             </p>
-            <Link 
+            <Link
               href="/visit?source=jadeBar"
               className="inline-flex items-center justify-center px-10 py-4 bg-stone-900 text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-stone-700 transition-colors"
             >
               Plan Your Visit
             </Link>
-        </div>
-      </section>
+          </div>
+        </section>
       </div>
 
       <Footer />

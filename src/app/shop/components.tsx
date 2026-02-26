@@ -67,7 +67,7 @@ export function ShopTabs({ active, onTabSelect }: { active: CatalogSlug; onTabSe
       const activeEl = trackRef.current.querySelector<HTMLElement>('[data-active="true"]')
       if (activeEl) {
         activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
-    }
+      }
     }
   }, [active])
 
@@ -106,43 +106,41 @@ export function ShopTabs({ active, onTabSelect }: { active: CatalogSlug; onTabSe
   return (
     <nav className="sticky top-[var(--header-offset,60px)] z-30 bg-white border-b border-stone-100 w-full">
       <div className="container mx-auto px-6">
-        <div 
+        <div
           className="flex overflow-x-auto scrollbar-hide gap-8 md:gap-12 py-4 md:py-5 items-center justify-start md:justify-center"
           ref={trackRef}
         >
-        {TAB_ENTRIES.map((entry) => {
-          const isAll = entry.slug === 'all'
-          const href = isAll ? '/shop' : `/shop/category/${entry.slug}`
-          const isActive = active === entry.slug
-          const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-            if (onTabSelect) {
-              event.preventDefault()
-              event.stopPropagation()
-              onTabSelect(entry.slug, href)
+          {TAB_ENTRIES.map((entry) => {
+            const isAll = entry.slug === 'all'
+            const href = isAll ? '/shop' : `/shop/category/${entry.slug}`
+            const isActive = active === entry.slug
+            const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+              if (onTabSelect) {
+                event.preventDefault()
+                event.stopPropagation()
+                onTabSelect(entry.slug, href)
+              }
             }
-          }
-          return (
-            <Link
-              key={entry.slug}
-              href={href}
-              onClick={handleClick}
-              data-shop-tab="true"
-              data-shop-tab-slug={entry.slug}
-              data-shop-tab-href={href}
-              data-active={isActive ? 'true' : 'false'}
-                className={`whitespace-nowrap text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 relative pb-1 ${
-                  isActive ? 'text-stone-900' : 'text-stone-400 hover:text-stone-600'
-                }`}
+            return (
+              <Link
+                key={entry.slug}
+                href={href}
+                onClick={handleClick}
+                data-shop-tab="true"
+                data-shop-tab-slug={entry.slug}
+                data-shop-tab-href={href}
+                data-active={isActive ? 'true' : 'false'}
+                className={`whitespace-nowrap text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 relative pb-1 ${isActive ? 'text-stone-900' : 'text-stone-400 hover:text-stone-600'
+                  }`}
               >
                 {entry.navLabel || entry.title}
-                <span 
-                  className={`absolute bottom-0 left-0 w-full h-[1px] bg-stone-900 transform transition-transform duration-300 ${
-                    isActive ? 'scale-x-100' : 'scale-x-0'
-                  }`} 
+                <span
+                  className={`absolute bottom-0 left-0 w-full h-[1px] bg-stone-900 transform transition-transform duration-300 ${isActive ? 'scale-x-100' : 'scale-x-0'
+                    }`}
                 />
-            </Link>
-          )
-        })}
+              </Link>
+            )
+          })}
         </div>
       </div>
     </nav>
@@ -208,17 +206,15 @@ export function ShopToolbar({
                     key={opt.value}
                     type="button"
                     onClick={() => onSubFilterChange(opt.value)}
-                    className={`text-xs font-bold uppercase tracking-[0.2em] transition-all relative pb-1 ${
-                      isActive
-                        ? 'text-stone-900'
-                        : 'text-stone-400 hover:text-stone-600'
-                    }`}
+                    className={`text-xs font-bold uppercase tracking-[0.2em] transition-all relative pb-1 ${isActive
+                      ? 'text-stone-900'
+                      : 'text-stone-400 hover:text-stone-600'
+                      }`}
                   >
                     {opt.label}
-                    <span 
-                      className={`absolute bottom-0 left-0 w-full h-[1px] bg-stone-900 transform transition-transform duration-300 ${
-                        isActive ? 'scale-x-100' : 'scale-x-0'
-                      }`} 
+                    <span
+                      className={`absolute bottom-0 left-0 w-full h-[1px] bg-stone-900 transform transition-transform duration-300 ${isActive ? 'scale-x-100' : 'scale-x-0'
+                        }`}
                     />
                   </button>
                 )
@@ -231,28 +227,28 @@ export function ShopToolbar({
           <div className={`text-xs font-bold uppercase tracking-widest text-stone-500 transition-opacity duration-300 ${isUpdating ? 'opacity-50' : 'opacity-100'}`}>
             {isUpdating ? 'Updating...' : label}
           </div>
-          
+
           <div className="relative group flex items-center gap-3">
-             <span className="text-xs font-bold uppercase tracking-widest text-stone-500">Sort By</span>
-             <div className="relative">
-               <select 
-                 id="shop-sort" 
-                 className="bg-transparent border-b border-stone-300 pr-8 pl-2 py-1 text-sm font-medium text-stone-900 focus:outline-none focus:border-stone-900 cursor-pointer"
-                 style={{ 
-                   appearance: 'none', 
-                   WebkitAppearance: 'none', 
-                   MozAppearance: 'none',
-                   backgroundImage: 'none'
-                 }}
-                 value={sort} 
-                 onChange={handleSortChange}
-               >
-            {SORT_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </select>
-               <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 pointer-events-none" />
-             </div>
+            <span className="text-xs font-bold uppercase tracking-widest text-stone-500">Sort By</span>
+            <div className="relative">
+              <select
+                id="shop-sort"
+                className="bg-transparent border-b border-stone-300 pr-8 pl-2 py-1 text-sm font-medium text-stone-900 focus:outline-none focus:border-stone-900 cursor-pointer"
+                style={{
+                  appearance: 'none',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none',
+                  backgroundImage: 'none'
+                }}
+                value={sort}
+                onChange={handleSortChange}
+              >
+                {SORT_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 pointer-events-none" />
+            </div>
           </div>
         </div>
       </div>
@@ -261,21 +257,43 @@ export function ShopToolbar({
 }
 
 export function ProductCard({ product, index, returnTo }: { product: ShopifyListProduct; index: number; returnTo?: string }) {
-  const primaryImage = product.images?.edges?.[0]?.node
-  const secondaryImage = product.images?.edges?.[1]?.node
+  // Detect products with a Color option that includes both Yellow Gold and White Gold
+  const colorOption = product.options?.find((opt) => {
+    const name = (opt.name || '').toLowerCase()
+    if (!name.includes('color')) return false
+    const vals = (
+      opt.values?.map((v) => v.toLowerCase()) ??
+      opt.optionValues?.map((v) => (v.name || '').toLowerCase()) ??
+      []
+    )
+    return vals.includes('yellow gold') && vals.includes('white gold')
+  })
+  const hasGoldToggle = Boolean(colorOption)
+
+  const [goldType, setGoldType] = React.useState<'yg' | 'wg'>('yg')
+
+  // Image mapping
+  const allImages = product.images?.edges?.map((e) => e.node) ?? []
+  const primaryImage = hasGoldToggle
+    ? (goldType === 'yg' ? allImages[0] : allImages[1]) ?? allImages[0]
+    : allImages[0]
+  const hoverImage = hasGoldToggle
+    ? allImages[2] // model photo for gold-toggle products
+    : allImages[1] // second image for non-toggle products
+
   const primaryVariant = product.variants?.nodes?.[0]
   const priceAmount = primaryVariant?.price?.amount
   const priceCurrency = primaryVariant?.price?.currencyCode
   const formattedPrice = priceAmount
     ? new Intl.NumberFormat(undefined, {
-        style: 'currency',
-        currency: priceCurrency,
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(parseFloat(priceAmount))
+      style: 'currency',
+      currency: priceCurrency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(parseFloat(priceAmount))
     : null
   const inStock = product.variants?.nodes?.some((v) => v?.availableForSale) ?? false
-  
+
   // Stagger animation delay
   const delay = (index % 12) * 50
 
@@ -284,26 +302,25 @@ export function ProductCard({ product, index, returnTo }: { product: ShopifyList
   return (
     <Link
       href={href}
-      className="group block animate-fade-in-up fill-mode-both"
+      className="block animate-fade-in-up fill-mode-both"
       style={{ animationDelay: `${delay}ms` }}
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-white mb-3">
+      <div className="group relative aspect-[4/5] overflow-hidden bg-white mb-3">
         {primaryImage?.url ? (
           <>
             <Image
               src={primaryImage.url}
               alt={primaryImage.altText || product.title}
               fill
-              className={`object-cover object-center transition-all duration-700 ease-out ${
-                secondaryImage?.url ? 'opacity-100 group-hover:opacity-0' : 'opacity-100'
-              } group-hover:scale-105`}
+              className={`object-cover object-center transition-all duration-700 ease-out ${hoverImage?.url ? 'opacity-100 group-hover:opacity-0' : 'opacity-100'
+                } group-hover:scale-105`}
               sizes="(max-width: 768px) 50vw, 25vw"
               quality={90}
             />
-            {secondaryImage?.url ? (
+            {hoverImage?.url ? (
               <Image
-                src={secondaryImage.url}
-                alt={secondaryImage.altText || product.title}
+                src={hoverImage.url}
+                alt={hoverImage.altText || product.title}
                 fill
                 className="object-cover object-center transition-all duration-700 ease-out opacity-0 group-hover:opacity-100 group-hover:scale-105"
                 sizes="(max-width: 768px) 50vw, 25vw"
@@ -316,13 +333,42 @@ export function ProductCard({ product, index, returnTo }: { product: ShopifyList
             <span className="text-xs uppercase tracking-widest">No Image</span>
           </div>
         )}
-        
-        {/* Quick Add / Hover Action could go here */}
+
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
       </div>
-      
+
+      {/* Gold type toggle — heart swatches */}
+      {hasGoldToggle ? (
+        <div className="flex justify-center items-center gap-1 mb-2 pt-1">
+          <button
+            type="button"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setGoldType('yg') }}
+            className={`p-1 transition-all duration-200 ${goldType === 'yg' ? 'scale-110' : 'opacity-60 hover:opacity-90'}`}
+            aria-label="Yellow Gold"
+            title="Yellow Gold"
+          >
+            <svg width="18" height="16" viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="yg-fill" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#f5d778" /><stop offset="100%" stopColor="#d4a843" /></linearGradient></defs>
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="url(#yg-fill)" stroke="#b8a070" strokeWidth="1" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setGoldType('wg') }}
+            className={`p-1 transition-all duration-200 ${goldType === 'wg' ? 'scale-110' : 'opacity-60 hover:opacity-90'}`}
+            aria-label="White Gold"
+            title="White Gold"
+          >
+            <svg width="18" height="16" viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="wg-fill" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stopColor="#d6d6d6" /><stop offset="100%" stopColor="#a3a3a3" /></linearGradient></defs>
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="url(#wg-fill)" stroke="#8a8a8a" strokeWidth="1" />
+            </svg>
+          </button>
+        </div>
+      ) : null}
+
       <div className="text-center space-y-1">
-        <h3 className="text-sm text-stone-900 font-medium group-hover:text-stone-600 transition-colors">
+        <h3 className="text-sm text-stone-900 font-medium hover:text-stone-600 transition-colors">
           {product.title}
         </h3>
         <p className="text-xs text-stone-500 tracking-wide">{formattedPrice}</p>
@@ -337,14 +383,14 @@ export function ProductCard({ product, index, returnTo }: { product: ShopifyList
 export function LoadMoreButton({ onClick, disabled }: { onClick: () => void; disabled?: boolean }) {
   return (
     <div className="flex justify-center pt-12 pb-20">
-      <button 
-        type="button" 
-        onClick={onClick} 
+      <button
+        type="button"
+        onClick={onClick}
         disabled={disabled}
         className="inline-flex items-center justify-center px-10 py-4 border border-stone-900 text-stone-900 text-xs font-bold uppercase tracking-[0.2em] hover:bg-stone-900 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {disabled ? 'Loading...' : 'Load More'}
-    </button>
+      </button>
     </div>
   )
 }

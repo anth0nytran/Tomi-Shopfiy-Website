@@ -4,6 +4,9 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import { Check, ArrowRight, ArrowLeft, Sparkles, MessageSquare } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import dynamic from 'next/dynamic'
+
+const JadeBarBuilderInline = dynamic(() => import('@/components/jade-bar/JadeBarBuilder'), { ssr: false })
 
 // --- Data Constants ---
 
@@ -41,12 +44,12 @@ export function JadeBuilder() {
 
   // Shared State
   const [jewelryType, setJewelryType] = useState<'necklace' | 'bracelet'>('necklace')
-  
+
   // Option 1 State
   const [chain, setChain] = useState<string>('14k Wheat')
   const [chainMetal, setChainMetal] = useState<string>('Yellow Gold')
   const [bailShape, setBailShape] = useState<string>('Round')
-  const [bailMetal, setBailMetal] = useState<string>('Yellow Gold') 
+  const [bailMetal, setBailMetal] = useState<string>('Yellow Gold')
   const [jadeColor, setJadeColor] = useState<string>('green')
 
   // Consultation form state
@@ -106,15 +109,15 @@ export function JadeBuilder() {
       const payload =
         consultationProfile === 'Familiar'
           ? {
-              ...basePayload,
-              desiredDate: consultDesiredDate,
-              jewelryType,
-              chainStyle: chain,
-              chainColor: chainMetal,
-              bailShape,
-              bailColor: bailMetal,
-              byoChain: consultByoChain.trim(),
-            }
+            ...basePayload,
+            desiredDate: consultDesiredDate,
+            jewelryType,
+            chainStyle: chain,
+            chainColor: chainMetal,
+            bailShape,
+            bailColor: bailMetal,
+            byoChain: consultByoChain.trim(),
+          }
           : basePayload
 
       const res = await fetch('/api/forms/submit', {
@@ -145,7 +148,7 @@ export function JadeBuilder() {
   return (
     <div className="w-full max-w-[1400px] mx-auto min-h-[600px]">
       <AnimatePresence mode="wait">
-        
+
         {/* --- Selection View --- */}
         {view === 'selection' && (
           <motion.div
@@ -169,73 +172,67 @@ export function JadeBuilder() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl px-4">
-              
-              {/* Card 1: Online Order (Disabled / Coming Soon) */}
-              <div 
-                className="group relative flex flex-col bg-white border border-stone-200 overflow-hidden text-left h-[500px] cursor-not-allowed select-none"
-              >
-                {/* Subtle overlay only on hover to indicate disabled state */}
-                <div className="absolute inset-0 z-20 bg-white/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="bg-stone-900 text-white px-5 py-2 text-[10px] font-bold uppercase tracking-[0.2em] shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                    Coming Soon
-                  </span>
-                </div>
 
-                <div className="absolute top-0 left-0 w-full h-2 bg-stone-100" />
-                
-                <div className="relative h-64 w-full overflow-hidden bg-stone-50 group-hover:grayscale transition-all duration-500">
-                   <div className="absolute inset-0 bg-white flex items-center justify-center">
-                      <Sparkles className="w-16 h-16 text-stone-200" />
-                   </div>
-                   <Image 
-                      src="/assets/choosing_your_chain.jpg" 
-                      alt="Jade materials" 
-                      fill 
-                      className="object-cover opacity-80" 
-                    />
-                </div>
-
-                <div className="p-8 md:p-10 flex flex-col flex-1 group-hover:opacity-60 transition-opacity duration-300">
-                  <div className="flex items-center gap-3 mb-4">
-                     <span className="w-8 h-8 rounded-full bg-[#efdada] flex items-center justify-center text-primary text-xs font-bold">01</span>
-                     <h3 className="font-heading text-2xl text-stone-900">Online Order</h3>
-                  </div>
-                  
-                  <p className="text-stone-500 font-light leading-relaxed mb-6">
-                    Perfect if you trust our styling. Select your preferences (color, metal, chain) and we will hand-pick a beautiful jade piece that matches your vibe.
-                  </p>
-
-                  <div className="mt-auto flex items-center text-stone-400 text-xs font-bold uppercase tracking-[0.2em]">
-                    Start Order <ArrowRight className="w-4 h-4 ml-2" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 2: Consultation */}
-              <button 
-                onClick={() => setView('consultation-choice')}
+              {/* Card 1: Online Order */}
+              <button
+                onClick={() => setView('online-order')}
                 className="group relative flex flex-col bg-white border border-stone-200 hover:border-primary/30 hover:shadow-xl transition-all duration-500 overflow-hidden text-left h-[500px]"
               >
                 <div className="absolute top-0 left-0 w-full h-2 bg-stone-100 group-hover:bg-primary transition-colors duration-500" />
-                
+
                 <div className="relative h-64 w-full overflow-hidden bg-stone-50">
-                    <div className="absolute inset-0 bg-white flex items-center justify-center group-hover:scale-105 transition-transform duration-700">
-                      <MessageSquare className="w-16 h-16 text-stone-200 group-hover:text-primary/20 transition-colors" />
-                   </div>
-                   <Image 
-                      src="/assets/select_your_jade.JPG" 
-                      alt="Consultation" 
-                      fill 
-                      className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500" 
-                    />
+                  <div className="absolute inset-0 bg-white flex items-center justify-center group-hover:scale-105 transition-transform duration-700">
+                    <Sparkles className="w-16 h-16 text-stone-200 group-hover:text-primary/20 transition-colors" />
+                  </div>
+                  <Image
+                    src="/assets/choosing_your_chain.jpg"
+                    alt="Jade materials"
+                    fill
+                    className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
+                  />
                 </div>
 
                 <div className="p-8 md:p-10 flex flex-col flex-1">
                   <div className="flex items-center gap-3 mb-4">
-                     <span className="w-8 h-8 rounded-full bg-[#efdada] flex items-center justify-center text-primary text-xs font-bold">02</span>
-                     <h3 className="font-heading text-2xl text-stone-900">Consultation</h3>
+                    <span className="w-8 h-8 rounded-full bg-[#efdada] flex items-center justify-center text-primary text-xs font-bold">01</span>
+                    <h3 className="font-heading text-2xl text-stone-900">Online Order</h3>
                   </div>
-                  
+
+                  <p className="text-stone-500 font-light leading-relaxed mb-6">
+                    Perfect if you trust our styling. Select your preferences (color, metal, chain) and we will hand-pick a beautiful jade piece that matches your vibe.
+                  </p>
+
+                  <div className="mt-auto flex items-center text-primary text-xs font-bold uppercase tracking-[0.2em] group-hover:translate-x-2 transition-transform">
+                    Start Order <ArrowRight className="w-4 h-4 ml-2" />
+                  </div>
+                </div>
+              </button>
+
+              {/* Card 2: Consultation */}
+              <button
+                onClick={() => setView('consultation-choice')}
+                className="group relative flex flex-col bg-white border border-stone-200 hover:border-primary/30 hover:shadow-xl transition-all duration-500 overflow-hidden text-left h-[500px]"
+              >
+                <div className="absolute top-0 left-0 w-full h-2 bg-stone-100 group-hover:bg-primary transition-colors duration-500" />
+
+                <div className="relative h-64 w-full overflow-hidden bg-stone-50">
+                  <div className="absolute inset-0 bg-white flex items-center justify-center group-hover:scale-105 transition-transform duration-700">
+                    <MessageSquare className="w-16 h-16 text-stone-200 group-hover:text-primary/20 transition-colors" />
+                  </div>
+                  <Image
+                    src="/assets/select_your_jade.JPG"
+                    alt="Consultation"
+                    fill
+                    className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
+                  />
+                </div>
+
+                <div className="p-8 md:p-10 flex flex-col flex-1">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="w-8 h-8 rounded-full bg-[#efdada] flex items-center justify-center text-primary text-xs font-bold">02</span>
+                    <h3 className="font-heading text-2xl text-stone-900">Consultation</h3>
+                  </div>
+
                   <p className="text-stone-500 font-light leading-relaxed mb-6">
                     Work one-on-one with our team. Sourcing specific stones, custom carvings, or unique settings? Let&apos;s discuss your vision directly.
                   </p>
@@ -250,7 +247,7 @@ export function JadeBuilder() {
           </motion.div>
         )}
 
-        {/* --- Online Order View --- */}
+        {/* --- Online Order View (Interactive Builder) --- */}
         {view === 'online-order' && (
           <motion.div
             key="online-order"
@@ -258,176 +255,17 @@ export function JadeBuilder() {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="max-w-4xl mx-auto"
+            className="w-full"
           >
-            <button 
+            <button
               onClick={() => setView('selection')}
-              className="group flex items-center text-stone-400 hover:text-primary transition-colors mb-8 text-xs font-bold uppercase tracking-widest"
+              className="group flex items-center text-stone-400 hover:text-primary transition-colors mb-4 text-xs font-bold uppercase tracking-widest px-4"
             >
               <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
               Back to Selection
             </button>
 
-            <div className="bg-white p-8 md:p-12 border border-stone-100 shadow-sm">
-              <div className="mb-10 text-center">
-                <h2 className="font-heading text-3xl md:text-4xl text-primary mb-3">Online Order</h2>
-                <p className="text-stone-500 font-light">Tell us what you love, and we&apos;ll find the perfect match.</p>
-              </div>
-
-              {/* Type Tabs */}
-              <div className="flex justify-center border-b border-stone-200 mb-12">
-                <div className="flex w-full max-w-md">
-                    <button
-                    onClick={() => setJewelryType('necklace')}
-                    className={`flex-1 py-4 text-center text-xs font-bold uppercase tracking-[0.2em] transition-all border-b-2 ${
-                        jewelryType === 'necklace' ? 'border-primary text-primary' : 'border-transparent text-stone-400 hover:text-stone-600'
-                    }`}
-                    >
-                    Necklace
-                    </button>
-                    <button
-                    onClick={() => setJewelryType('bracelet')}
-                    className={`flex-1 py-4 text-center text-xs font-bold uppercase tracking-[0.2em] transition-all border-b-2 ${
-                        jewelryType === 'bracelet' ? 'border-primary text-primary' : 'border-transparent text-stone-400 hover:text-stone-600'
-                    }`}
-                    >
-                    Bracelet
-                    </button>
-                </div>
-              </div>
-
-              <div className="space-y-12 max-w-2xl mx-auto">
-                
-                {/* 1. Chain Style */}
-                <div className="space-y-4">
-                  <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary text-center">
-                    1. Choose Chain Style
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {CHAIN_STYLES.map((opt) => (
-                      <button
-                        key={opt}
-                        onClick={() => setChain(opt)}
-                        className={`px-4 py-4 text-sm border transition-all text-center ${
-                          chain === opt 
-                            ? 'border-[#efdada] bg-[#efdada] text-primary ring-1 ring-[#efdada]' 
-                            : 'border-stone-100 text-stone-500 hover:border-primary/30'
-                        }`}
-                      >
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 2. Chain Metal */}
-                <div className="space-y-4">
-                  <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary text-center">
-                    2. Chain Metal
-                  </h3>
-                  <div className="flex gap-3 max-w-md mx-auto w-full">
-                    {CHAIN_METALS.map((metal) => (
-                      <button
-                        key={metal}
-                        onClick={() => setChainMetal(metal)}
-                        className={`flex-1 py-3 text-sm border transition-all ${
-                          chainMetal === metal 
-                            ? 'border-[#efdada] bg-[#efdada] text-primary' 
-                            : 'border-stone-100 text-stone-500 hover:border-primary/30'
-                        }`}
-                      >
-                        {metal}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 3. Bail Selection (Only for Necklace) */}
-                {jewelryType === 'necklace' && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-4">
-                      <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary text-center">3. Bail Shape</h3>
-                      <div className="flex gap-3">
-                        {BAIL_SHAPES.map(shape => (
-                          <button
-                            key={shape}
-                            onClick={() => setBailShape(shape)}
-                            className={`flex-1 py-3 text-sm border transition-all ${
-                              bailShape === shape 
-                                ? 'border-[#efdada] bg-[#efdada] text-primary' 
-                                : 'border-stone-100 text-stone-500 hover:border-primary/30'
-                            }`}
-                          >
-                            {shape}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary text-center">4. Bail Metal</h3>
-                      <div className="flex gap-3">
-                        {BAIL_METALS.map(metal => (
-                          <button
-                            key={metal}
-                            onClick={() => setBailMetal(metal)}
-                            className={`flex-1 py-3 text-sm border transition-all ${
-                              bailMetal === metal 
-                                ? 'border-[#efdada] bg-[#efdada] text-primary' 
-                                : 'border-stone-100 text-stone-500 hover:border-primary/30'
-                            }`}
-                          >
-                            {metal}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* 4. Jade Color Preference */}
-                <div className="space-y-4 text-center">
-                  <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
-                     {jewelryType === 'necklace' ? '5.' : '3.'} Jade Color Preference
-                  </h3>
-                  <div className="flex flex-wrap gap-4 justify-center">
-                    {JADE_COLORS.map(color => (
-                      <button
-                        key={color.value}
-                        onClick={() => setJadeColor(color.value)}
-                        className={`group relative w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110 focus:outline-none`}
-                        title={color.label}
-                        style={{ backgroundColor: color.color }}
-                      >
-                        {jadeColor === color.value && (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-full h-full rounded-full border-2 border-white/50 flex items-center justify-center">
-                              <Check className="w-6 h-6 text-white drop-shadow-md" strokeWidth={3} />
-                            </div>
-                          </div>
-                        )}
-                        {/* Ring indicator for selection clarity */}
-                        {jadeColor === color.value && (
-                          <div className="absolute -inset-1 rounded-full border border-primary" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                  <p className="text-xs text-stone-400 italic mt-2">Note: You select the color, we select the unique stone.</p>
-                </div>
-
-                {/* Add to Cart Button */}
-                <div className="pt-8 border-t border-stone-100">
-                  <button 
-                    className="w-full bg-primary text-white text-xs font-bold uppercase tracking-[0.2em] py-5 hover:bg-stone-800 transition-colors disabled:opacity-70 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
-                    disabled={true}
-                  >
-                    Add to Cart (Coming Soon)
-                  </button>
-                </div>
-
-              </div>
-            </div>
+            <JadeBarBuilderInline />
           </motion.div>
         )}
 
@@ -442,7 +280,7 @@ export function JadeBuilder() {
             exit="exit"
             className="flex flex-col items-center justify-center py-10"
           >
-            <button 
+            <button
               onClick={() => setView('selection')}
               className="group flex items-center text-stone-400 hover:text-primary transition-colors mb-8 text-xs font-bold uppercase tracking-widest self-start md:self-center md:-ml-[800px]"
             >
@@ -457,9 +295,9 @@ export function JadeBuilder() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl px-4">
-              
+
               {/* Profile 1: Familiar */}
-              <button 
+              <button
                 onClick={() => {
                   setConsultationProfile('Familiar')
                   setView('consultation-familiar')
@@ -467,12 +305,12 @@ export function JadeBuilder() {
                 className="group relative flex flex-col bg-white border border-stone-200 hover:border-primary/30 hover:shadow-xl transition-all duration-500 overflow-hidden text-left min-h-[400px]"
               >
                 <div className="absolute top-0 left-0 w-full h-2 bg-stone-100 group-hover:bg-primary transition-colors duration-500" />
-                
+
                 <div className="p-8 md:p-10 flex flex-col flex-1">
                   <div className="flex items-center gap-3 mb-6">
-                     <span className="w-8 h-8 rounded-full bg-[#efdada] flex items-center justify-center text-primary text-xs font-bold">A</span>
+                    <span className="w-8 h-8 rounded-full bg-[#efdada] flex items-center justify-center text-primary text-xs font-bold">A</span>
                   </div>
-                  
+
                   <p className="text-stone-600 font-light leading-relaxed mb-6 text-lg">
                     &ldquo;I am familiar with the Jade Bar customizations (i.e., I know what chains are offered, and I know if I want a bail or not) and would like the additional assistance of a store team member to order my jade.&rdquo;
                   </p>
@@ -484,7 +322,7 @@ export function JadeBuilder() {
               </button>
 
               {/* Profile 2: Guidance */}
-              <button 
+              <button
                 onClick={() => {
                   setConsultationProfile('Guidance')
                   setView('consultation-guidance')
@@ -492,12 +330,12 @@ export function JadeBuilder() {
                 className="group relative flex flex-col bg-white border border-stone-200 hover:border-primary/30 hover:shadow-xl transition-all duration-500 overflow-hidden text-left min-h-[400px]"
               >
                 <div className="absolute top-0 left-0 w-full h-2 bg-stone-100 group-hover:bg-primary transition-colors duration-500" />
-                
+
                 <div className="p-8 md:p-10 flex flex-col flex-1">
                   <div className="flex items-center gap-3 mb-6">
-                     <span className="w-8 h-8 rounded-full bg-[#efdada] flex items-center justify-center text-primary text-xs font-bold">B</span>
+                    <span className="w-8 h-8 rounded-full bg-[#efdada] flex items-center justify-center text-primary text-xs font-bold">B</span>
                   </div>
-                  
+
                   <p className="text-stone-600 font-light leading-relaxed mb-6 text-lg">
                     &ldquo;I am interested in the Jade Bar, but I am not familiar with the options, and I would like a store team member to guide me through the customization process.&rdquo;
                   </p>
@@ -522,7 +360,7 @@ export function JadeBuilder() {
             exit="exit"
             className="max-w-3xl mx-auto"
           >
-             <button 
+            <button
               onClick={() => setView('consultation-choice')}
               className="group flex items-center text-stone-400 hover:text-primary transition-colors mb-8 text-xs font-bold uppercase tracking-widest"
             >
@@ -537,13 +375,13 @@ export function JadeBuilder() {
               </div>
 
               <form className="space-y-8" onSubmit={submitConsultation}>
-                
+
                 {/* Name Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">First Name</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={consultFirstName}
                       onChange={(e) => setConsultFirstName(e.target.value)}
                       className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
@@ -553,8 +391,8 @@ export function JadeBuilder() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Last Name</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={consultLastName}
                       onChange={(e) => setConsultLastName(e.target.value)}
                       className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
@@ -568,8 +406,8 @@ export function JadeBuilder() {
                   {/* Phone Field */}
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Phone</label>
-                    <input 
-                      type="tel" 
+                    <input
+                      type="tel"
                       value={consultPhone}
                       onChange={(e) => setConsultPhone(e.target.value)}
                       className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
@@ -593,116 +431,116 @@ export function JadeBuilder() {
 
                 {/* Chain Preference */}
                 <div className="space-y-6 pt-4 border-t border-stone-100">
-                    <div>
-                        <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Chain Selection</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Chain Style */}
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Style</label>
-                                <select
-                                  value={chain}
-                                  onChange={(e) => setChain(e.target.value)}
-                                  className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors cursor-pointer appearance-none rounded-none"
-                                >
-                                    <option value="">Select Chain Style</option>
-                                    {CHAIN_STYLES.map((style) => (
-                                      <option key={style} value={style}>
-                                        {style}
-                                      </option>
-                                    ))}
-                                </select>
-                            </div>
-                            
-                            {/* Chain Color */}
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Color</label>
-                                <div className="flex gap-4 pt-3">
-                                    {CHAIN_METALS.map(option => (
-                                        <label key={option} className="flex items-center gap-2 cursor-pointer group">
-                                            <input
-                                              type="radio"
-                                              name="chain_color"
-                                              value={option}
-                                              checked={chainMetal === option}
-                                              onChange={() => setChainMetal(option)}
-                                              className="w-4 h-4 text-primary focus:ring-primary border-stone-300 accent-primary"
-                                            />
-                                            <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">{option}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Chain Selection</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Chain Style */}
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Style</label>
+                        <select
+                          value={chain}
+                          onChange={(e) => setChain(e.target.value)}
+                          className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors cursor-pointer appearance-none rounded-none"
+                        >
+                          <option value="">Select Chain Style</option>
+                          {CHAIN_STYLES.map((style) => (
+                            <option key={style} value={style}>
+                              {style}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
-                    {/* Bail Preference */}
-                    <div>
-                        <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Bail Selection</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Bail Shape */}
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Shape</label>
-                                <div className="flex flex-wrap gap-4 pt-3">
-                                    {BAIL_SHAPES.map(option => (
-                                        <label key={option} className="flex items-center gap-2 cursor-pointer group">
-                                            <input
-                                              type="radio"
-                                              name="bail_shape"
-                                              value={option}
-                                              checked={bailShape === option}
-                                              onChange={() => setBailShape(option)}
-                                              className="w-4 h-4 text-primary focus:ring-primary border-stone-300 accent-primary"
-                                            />
-                                            <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">{option}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Bail Color */}
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Color</label>
-                                <div className="flex gap-4 pt-3">
-                                    {BAIL_METALS.map(option => (
-                                        <label key={option} className="flex items-center gap-2 cursor-pointer group">
-                                            <input
-                                              type="radio"
-                                              name="bail_color"
-                                              value={option}
-                                              checked={bailMetal === option}
-                                              onChange={() => setBailMetal(option)}
-                                              className="w-4 h-4 text-primary focus:ring-primary border-stone-300 accent-primary"
-                                            />
-                                            <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">{option}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
+                      {/* Chain Color */}
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Color</label>
+                        <div className="flex gap-4 pt-3">
+                          {CHAIN_METALS.map(option => (
+                            <label key={option} className="flex items-center gap-2 cursor-pointer group">
+                              <input
+                                type="radio"
+                                name="chain_color"
+                                value={option}
+                                checked={chainMetal === option}
+                                onChange={() => setChainMetal(option)}
+                                className="w-4 h-4 text-primary focus:ring-primary border-stone-300 accent-primary"
+                              />
+                              <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">{option}</span>
+                            </label>
+                          ))}
                         </div>
+                      </div>
                     </div>
+                  </div>
+
+                  {/* Bail Preference */}
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-4">Bail Selection</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Bail Shape */}
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Shape</label>
+                        <div className="flex flex-wrap gap-4 pt-3">
+                          {BAIL_SHAPES.map(option => (
+                            <label key={option} className="flex items-center gap-2 cursor-pointer group">
+                              <input
+                                type="radio"
+                                name="bail_shape"
+                                value={option}
+                                checked={bailShape === option}
+                                onChange={() => setBailShape(option)}
+                                className="w-4 h-4 text-primary focus:ring-primary border-stone-300 accent-primary"
+                              />
+                              <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">{option}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Bail Color */}
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Color</label>
+                        <div className="flex gap-4 pt-3">
+                          {BAIL_METALS.map(option => (
+                            <label key={option} className="flex items-center gap-2 cursor-pointer group">
+                              <input
+                                type="radio"
+                                name="bail_color"
+                                value={option}
+                                checked={bailMetal === option}
+                                onChange={() => setBailMetal(option)}
+                                className="w-4 h-4 text-primary focus:ring-primary border-stone-300 accent-primary"
+                              />
+                              <span className="text-sm text-stone-600 group-hover:text-primary transition-colors">{option}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* BYO Chain */}
                 <div className="space-y-2 pt-4 border-t border-stone-100">
-                   <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">BYO Chain</label>
-                   <input 
-                     type="text" 
-                     value={consultByoChain}
-                     onChange={(e) => setConsultByoChain(e.target.value)}
-                     className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
-                     placeholder="Type of chain & color (optional)"
-                   />
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">BYO Chain</label>
+                  <input
+                    type="text"
+                    value={consultByoChain}
+                    onChange={(e) => setConsultByoChain(e.target.value)}
+                    className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
+                    placeholder="Type of chain & color (optional)"
+                  />
                 </div>
 
                 {/* Notes */}
                 <div className="space-y-2">
-                   <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Notes</label>
-                   <textarea 
-                     value={consultNotes}
-                     onChange={(e) => setConsultNotes(e.target.value)}
-                     className="w-full min-h-[150px] bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors resize-none placeholder:text-stone-300 leading-relaxed"
-                     placeholder="Any additional details..."
-                   />
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Notes</label>
+                  <textarea
+                    value={consultNotes}
+                    onChange={(e) => setConsultNotes(e.target.value)}
+                    className="w-full min-h-[150px] bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors resize-none placeholder:text-stone-300 leading-relaxed"
+                    placeholder="Any additional details..."
+                  />
                 </div>
 
                 {consultError && <div className="text-sm text-red-700">{consultError}</div>}
@@ -710,7 +548,7 @@ export function JadeBuilder() {
 
                 {/* Submit Button */}
                 <div className="pt-6">
-                  <button 
+                  <button
                     type="submit"
                     disabled={consultSubmitting}
                     className="w-full bg-primary text-white text-xs font-bold uppercase tracking-[0.2em] py-5 hover:bg-stone-800 transition-colors shadow-lg hover:shadow-xl"
@@ -733,7 +571,7 @@ export function JadeBuilder() {
             exit="exit"
             className="max-w-3xl mx-auto"
           >
-             <button 
+            <button
               onClick={() => setView('consultation-choice')}
               className="group flex items-center text-stone-400 hover:text-primary transition-colors mb-8 text-xs font-bold uppercase tracking-widest"
             >
@@ -748,13 +586,13 @@ export function JadeBuilder() {
               </div>
 
               <form className="space-y-8" onSubmit={submitConsultation}>
-                
+
                 {/* Name Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">First Name</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={consultFirstName}
                       onChange={(e) => setConsultFirstName(e.target.value)}
                       className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
@@ -764,8 +602,8 @@ export function JadeBuilder() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Last Name</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       value={consultLastName}
                       onChange={(e) => setConsultLastName(e.target.value)}
                       className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
@@ -779,8 +617,8 @@ export function JadeBuilder() {
                   {/* Phone Field */}
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Phone</label>
-                    <input 
-                      type="tel" 
+                    <input
+                      type="tel"
                       value={consultPhone}
                       onChange={(e) => setConsultPhone(e.target.value)}
                       className="w-full bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors placeholder:text-stone-300"
@@ -804,13 +642,13 @@ export function JadeBuilder() {
 
                 {/* Notes */}
                 <div className="space-y-2">
-                   <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Notes</label>
-                   <textarea 
-                     value={consultNotes}
-                     onChange={(e) => setConsultNotes(e.target.value)}
-                     className="w-full min-h-[150px] bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors resize-none placeholder:text-stone-300 leading-relaxed"
-                     placeholder="Tell us a bit about what you're looking for..."
-                   />
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Notes</label>
+                  <textarea
+                    value={consultNotes}
+                    onChange={(e) => setConsultNotes(e.target.value)}
+                    className="w-full min-h-[150px] bg-stone-50 border-b border-stone-200 px-4 py-3 text-primary focus:outline-none focus:border-primary transition-colors resize-none placeholder:text-stone-300 leading-relaxed"
+                    placeholder="Tell us a bit about what you're looking for..."
+                  />
                 </div>
 
                 {consultError && <div className="text-sm text-red-700">{consultError}</div>}
@@ -818,7 +656,7 @@ export function JadeBuilder() {
 
                 {/* Submit Button */}
                 <div className="pt-6">
-                  <button 
+                  <button
                     type="submit"
                     disabled={consultSubmitting}
                     className="w-full bg-primary text-white text-xs font-bold uppercase tracking-[0.2em] py-5 hover:bg-stone-800 transition-colors shadow-lg hover:shadow-xl"
