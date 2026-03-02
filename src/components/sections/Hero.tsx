@@ -8,7 +8,7 @@ export function Hero() {
         <div className="hero-background" data-anim="scale-in" data-delay="80">
           <video
             className="hero-bg-video"
-            src="/tomi landing page update - LNY.mp4"
+            src="/assets/homepage video.mov"
             autoPlay
             muted
             loop

@@ -16,7 +16,9 @@ import {
     cordColors,
     getOptionById,
     formatPrice,
+    getCustomPieceImage,
 } from './builderData'
+import Image from 'next/image'
 
 /* ─── Animation variants ─── */
 const tileVariants = {
@@ -45,7 +47,7 @@ function BuildingAnimation({ pieceType, onComplete }: { pieceType: string; onCom
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <div className="flex flex-col items-center justify-center h-full min-h-[60vh]">
+        <div className="flex flex-col items-center justify-center w-full">
             {/* Living jade orb */}
             <div className="relative w-40 h-40 mb-10">
                 {/* Outer glow ring */}
@@ -187,10 +189,12 @@ function SelectionSummary({ selections, pieceType }: { selections: Selections; p
                     return (
                         <div key={slot.key} className="flex flex-col items-center gap-1.5">
                             <div
-                                className="w-16 h-16 rounded-2xl shadow-sm transition-all duration-300 flex items-center justify-center"
+                                className="w-16 h-16 rounded-2xl shadow-sm transition-all duration-300 flex items-center justify-center relative overflow-hidden"
                                 style={{ backgroundColor: option?.bgColor || '#e8e5e0', opacity: option ? 1 : 0.4 }}
                             >
-                                {option && (
+                                {option?.image ? (
+                                    <Image src={option.image} alt={option.label || slot.label} fill className="object-cover p-1 hover:scale-110 transition-transform duration-300 drop-shadow-sm" />
+                                ) : option && (
                                     <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-6 h-6 rounded-full bg-white/30" />
                                 )}
                             </div>
@@ -221,8 +225,10 @@ function SelectionGrid({
     activeFilters?: Record<string, string>
     onFilterChange?: (filterId: string, value: string) => void
 }) {
-    const [showAll, setShowAll] = useState(false)
-    const VISIBLE_COUNT = 6
+    const [currentPage, setCurrentPage] = useState(0)
+    const [direction, setDirection] = useState(1) // 1 for next, -1 for prev
+    const [zoomedImage, setZoomedImage] = useState<{ src: string, label: string } | null>(null)
+    const ITEMS_PER_PAGE = 4
 
     const filteredOptions = useMemo(() => {
         if (!activeFilters || !Object.keys(activeFilters).length) return options
@@ -234,81 +240,239 @@ function SelectionGrid({
         })
     }, [options, activeFilters])
 
-    const visibleOptions = showAll ? filteredOptions : filteredOptions.slice(0, VISIBLE_COUNT)
-    const hasMore = filteredOptions.length > VISIBLE_COUNT
+    // Reset page if filters change
+    useEffect(() => {
+        setCurrentPage(0)
+    }, [filteredOptions.length])
+
+    const totalPages = Math.ceil(filteredOptions.length / ITEMS_PER_PAGE)
+    const currentOptions = filteredOptions.slice(
+        currentPage * ITEMS_PER_PAGE,
+        (currentPage + 1) * ITEMS_PER_PAGE
+    )
+
+    const handleNext = () => {
+        if (currentPage < totalPages - 1) {
+            setDirection(1)
+            setCurrentPage((prev) => prev + 1)
+        }
+    }
+
+    const handlePrev = () => {
+        if (currentPage > 0) {
+            setDirection(-1)
+            setCurrentPage((prev) => prev - 1)
+        }
+    }
+
+    const slideVariants = {
+        enter: (dir: number) => ({
+            x: dir > 0 ? 400 : -400,
+            opacity: 0,
+        }),
+        center: {
+            x: 0,
+            opacity: 1,
+            transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] }
+        },
+        exit: (dir: number) => ({
+            x: dir < 0 ? 400 : -400,
+            opacity: 0,
+            transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1] }
+        }),
+    }
 
     return (
-        <div className="w-full max-w-5xl mx-auto px-6">
-            <h2 className="font-heading text-3xl md:text-4xl text-stone-900 text-center mb-8">{title}</h2>
+        <div className="w-full h-full flex flex-col justify-start pb-4 overflow-x-hidden">
+            <h2 className="font-heading text-3xl md:text-3xl text-stone-900 text-center mb-6">{title}</h2>
 
-            {/* Filters — large pill buttons */}
+            {/* Elegant Premium Filters */}
             {filters && filters.length > 0 && (
-                <div className="flex flex-wrap justify-center gap-3 mb-10">
+                <div className="flex flex-wrap justify-center gap-4 mb-8 relative z-20">
                     {filters.map((filter) => (
-                        <div key={filter.id} className="flex items-center gap-2">
-                            {filter.options.map((opt) => (
-                                <button
-                                    key={opt.id}
-                                    onClick={() => onFilterChange?.(filter.id, activeFilters?.[filter.id] === opt.id ? '' : opt.id)}
-                                    className={`px-6 py-3 rounded-full text-xs uppercase tracking-[0.18em] font-bold transition-all duration-300 border-2 ${activeFilters?.[filter.id] === opt.id
-                                            ? 'bg-[#38473b] text-white border-[#38473b] shadow-lg scale-105'
-                                            : 'bg-white text-stone-600 border-stone-200 hover:border-[#38473b]/40 hover:shadow-md'
-                                        }`}
-                                >
-                                    {opt.label}
-                                </button>
-                            ))}
+                        <div key={filter.id} className="inline-flex bg-stone-100/60 backdrop-blur-md rounded-full p-1 shadow-inner border border-stone-200/50">
+                            {filter.options.map((opt) => {
+                                const isActive = activeFilters?.[filter.id] === opt.id
+                                return (
+                                    <button
+                                        key={opt.id}
+                                        onClick={() => onFilterChange?.(filter.id, isActive ? '' : opt.id)}
+                                        className={`px-5 py-2 sm:px-6 sm:py-2.5 rounded-full text-[10px] sm:text-xs uppercase tracking-[0.2em] font-medium transition-all duration-300 relative ${isActive
+                                            ? 'text-stone-900 bg-white border border-stone-200/50 shadow-[0_2px_10px_-2px_rgba(0,0,0,0.1)]'
+                                            : 'text-stone-400 hover:text-stone-600 border border-transparent'
+                                            }`}
+                                    >
+                                        <span className="relative z-10">{opt.label}</span>
+                                    </button>
+                                )
+                            })}
                         </div>
                     ))}
                 </div>
             )}
 
-            {/* 3x2 Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-5 w-full">
-                {visibleOptions.map((option, i) => (
-                    <motion.button
-                        key={option.id}
-                        custom={i}
-                        variants={tileVariants}
-                        initial="initial"
-                        animate="animate"
-                        onClick={() => onSelect(option.id)}
-                        className={`relative group rounded-2xl overflow-hidden transition-all duration-300 ${selectedId === option.id
-                                ? 'ring-3 ring-[#38473b] ring-offset-2 shadow-xl scale-[1.02]'
-                                : 'shadow-md hover:shadow-xl hover:scale-[1.01]'
-                            }`}
-                    >
-                        <div
-                            className="aspect-[4/3] flex items-center justify-center relative"
-                            style={{ backgroundColor: option.bgColor || '#7BAE7F' }}
+            {/* Horizontal Pagination Carousel */}
+            <div className="relative flex-1 min-h-[460px] flex items-center justify-center w-full max-w-2xl mx-auto px-4 sm:px-12">
+
+                {/* Prev Button */}
+                <button
+                    onClick={handlePrev}
+                    disabled={currentPage === 0}
+                    className="absolute left-0 z-20 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] border border-stone-100 text-stone-400 hover:text-[#38473b] hover:shadow-[0_8px_25px_-4px_rgba(0,0,0,0.15)] disabled:opacity-0 disabled:cursor-not-allowed transition-all duration-300 transform -translate-x-1/2"
+                >
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none"><path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </button>
+
+                <div className="w-full relative h-[500px] sm:h-[600px]">
+                    <AnimatePresence initial={false} custom={direction}>
+                        <motion.div
+                            key={currentPage}
+                            custom={direction}
+                            variants={slideVariants}
+                            initial="enter"
+                            animate="center"
+                            exit="exit"
+                            className="absolute inset-0 w-full h-full"
                         >
-                            <div className={`w-10 h-10 rounded-full transition-all ${selectedId === option.id ? 'bg-white/50' : 'bg-white/20 group-hover:bg-white/35'
-                                }`} />
-                            {selectedId === option.id && (
-                                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="absolute top-3 right-3 w-7 h-7 bg-[#38473b] rounded-full flex items-center justify-center shadow-md">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                </motion.div>
-                            )}
-                        </div>
-                        <div className="bg-white px-4 py-3 text-left">
-                            <span className="text-sm text-stone-800 font-medium block truncate">{option.label}</span>
-                            {option.price !== undefined && <span className="text-xs text-stone-400">{formatPrice(option.price)}</span>}
-                        </div>
-                    </motion.button>
-                ))}
+                            <div className="w-full h-full grid grid-cols-2 grid-rows-2 gap-4 sm:gap-6 content-start">
+                                {currentOptions.map((option, i) => (
+                                    <button
+                                        key={option.id}
+                                        onClick={() => onSelect(option.id)}
+                                        className={`group flex flex-col bg-white rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-500 relative border text-left h-full ${selectedId === option.id
+                                            ? 'border-transparent shadow-[0_10px_40px_-10px_rgb(56,71,59,0.3)] -translate-y-1.5 ring-2 ring-[#38473b] ring-offset-2'
+                                            : 'border-stone-100 shadow-[0_4px_20px_-5px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_30px_-8px_rgba(0,0,0,0.1)] hover:-translate-y-1'
+                                            }`}
+                                    >
+                                        <div className="w-full relative bg-gradient-to-br from-stone-50 to-stone-100/50 flex items-center justify-center overflow-hidden flex-1 min-h-0">
+                                            {option.image ? (
+                                                <Image
+                                                    src={option.image}
+                                                    alt={option.label}
+                                                    fill
+                                                    sizes="(max-width: 768px) 50vw, 400px"
+                                                    priority={i < 4}
+                                                    quality={100}
+                                                    className={`object-contain p-2 sm:p-4 transition-transform duration-700 ease-out group-hover:scale-110 ${option.attributes?.size === 'mini' ? 'scale-[2.0]' :
+                                                        option.attributes?.size === 'big' ? 'scale-[1.5]' :
+                                                            option.attributes?.size === 'jumbo' ? 'scale-[1.2]' :
+                                                                'scale-125'
+                                                        }`}
+                                                />
+                                            ) : (
+                                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/5 group-hover:bg-black/10 transition-colors" />
+                                            )}
+
+                                            {/* Selection Checkmark */}
+                                            <AnimatePresence>
+                                                {selectedId === option.id && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
+                                                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                                                        exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
+                                                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                                        className="absolute top-3 right-3 sm:top-4 sm:right-4 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#38473b] text-white flex items-center justify-center shadow-lg z-20"
+                                                    >
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+
+                                            {/* Zoom Button */}
+                                            {option.image && (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        setZoomedImage({ src: option.image!, label: option.label })
+                                                    }}
+                                                    className={`absolute top-3 left-3 sm:top-4 sm:left-4 w-8 h-8 rounded-full bg-white/80 backdrop-blur-md text-stone-600 flex items-center justify-center shadow z-20 transition-all duration-300 ${selectedId === option.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 hover:bg-white hover:text-stone-900 hover:scale-110'}`}
+                                                >
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                                                </button>
+                                            )}
+                                        </div>
+                                        <div className="w-full px-4 py-3 sm:px-6 sm:py-5 bg-white flex flex-col justify-center gap-1 sm:gap-1.5 z-10 relative shrink-0">
+                                            <span className="text-[12px] sm:text-[14px] text-stone-900 font-bold tracking-wide leading-tight truncate">{option.label}</span>
+                                            {option.price !== undefined && option.price > 0 && (
+                                                <span className="text-[10px] sm:text-xs text-stone-400 font-semibold tracking-widest uppercase">{formatPrice(option.price)}</span>
+                                            )}
+                                        </div>
+                                        {/* Subtle overlay gradient on selected */}
+                                        {selectedId === option.id && (
+                                            <div className="absolute inset-0 bg-[#38473b]/[0.02] pointer-events-none z-0" />
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
+
+                {/* Next Button */}
+                <button
+                    onClick={handleNext}
+                    disabled={currentPage >= totalPages - 1}
+                    className="absolute right-0 z-20 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] border border-stone-100 text-stone-400 hover:text-[#38473b] hover:shadow-[0_8px_25px_-4px_rgba(0,0,0,0.15)] disabled:opacity-0 disabled:cursor-not-allowed transition-all duration-300 transform translate-x-1/2"
+                >
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </button>
             </div>
 
-            {/* Show More / Show Less toggle */}
-            {hasMore && (
-                <div className="flex justify-center mt-8">
-                    <button
-                        onClick={() => setShowAll(!showAll)}
-                        className="px-8 py-3 rounded-full text-xs uppercase tracking-[0.18em] font-bold border-2 border-stone-300 text-stone-500 bg-white hover:border-[#38473b]/40 hover:text-stone-700 hover:shadow-md transition-all duration-300"
-                    >
-                        {showAll ? 'Show Less' : `Show More (${filteredOptions.length - VISIBLE_COUNT} more)`}
-                    </button>
+            {/* Pagination Dots indicator */}
+            {totalPages > 1 && (
+                <div className="flex justify-center gap-2.5 mt-2 md:mt-4 pb-4">
+                    {Array.from({ length: totalPages }).map((_, i) => (
+                        <div
+                            key={i}
+                            className={`h-1.5 rounded-full transition-all duration-500 shadow-sm ${i === currentPage ? 'w-8 bg-[#38473b]' : 'w-2 bg-stone-200'}`}
+                        />
+                    ))}
                 </div>
             )}
+
+            {/* Zoom Modal */}
+            <AnimatePresence>
+                {zoomedImage && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-white/90 backdrop-blur-xl p-4 sm:p-8"
+                        onClick={() => setZoomedImage(null)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20, opacity: 0 }}
+                            animate={{ scale: 1, y: 0, opacity: 1 }}
+                            exit={{ scale: 0.9, y: 20, opacity: 0 }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                            className="relative w-full max-w-4xl max-h-[90vh] flex flex-col items-center bg-white rounded-3xl shadow-2xl border border-stone-100 overflow-hidden"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <button
+                                onClick={() => setZoomedImage(null)}
+                                className="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 bg-stone-100 hover:bg-stone-200 rounded-full flex items-center justify-center text-stone-500 hover:text-stone-900 transition-colors z-10"
+                            >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                            </button>
+
+                            <div className="w-full relative aspect-square sm:aspect-[4/3] bg-stone-50">
+                                <Image
+                                    src={zoomedImage.src}
+                                    alt={zoomedImage.label}
+                                    fill
+                                    quality={100}
+                                    className="object-contain p-8 sm:p-12 drop-shadow-2xl"
+                                />
+                            </div>
+
+                            <div className="w-full p-6 sm:p-8 bg-white text-center border-t border-stone-100">
+                                <h3 className="text-xl sm:text-2xl font-bold text-stone-900">{zoomedImage.label}</h3>
+                                <p className="text-sm text-stone-500 mt-2 uppercase tracking-widest">High Resolution Preview</p>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     )
 }
@@ -489,64 +653,109 @@ export default function JadeBarBuilder() {
                     </motion.div>
                 )}
 
-                {/* ─── NECKLACE: CHAIN ─── */}
-                {screen === 'necklace_chain' && (
-                    <motion.div key="necklace_chain" variants={animVariants} initial="initial" animate="animate" exit="exit"
-                        className="w-full flex flex-col items-center pt-4"
+                {/* ─── BUILDING SCENE (2-COLUMN LAYOUT) ─── */}
+                {['necklace_chain', 'necklace_bail', 'necklace_jade', 'bracelet_wrist', 'bracelet_cord', 'bracelet_jade'].includes(screen) && (
+                    <motion.div key="building_scene" variants={animVariants} initial="initial" animate="animate" exit="exit"
+                        className="w-full max-w-[1280px] mx-auto flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 pt-4 lg:pt-12 px-6"
                     >
-                        <SelectionSummary selections={selections} pieceType="necklace" />
-                        <SelectionGrid title="pick your desired chain" options={chains} selectedId={selections.chain}
-                            onSelect={(id) => updateSelection('chain', id)} filters={chainFilters} activeFilters={chainFilterState}
-                            onFilterChange={(fid, val) => setChainFilterState((p) => ({ ...p, [fid]: val }))} />
-                        <NavBar onBack={() => navigate('piece_type', -1)} onNext={() => navigate('necklace_bail')} nextEnabled={!!selections.chain} />
+                        {/* LEFT COLUMN: Summary Sticky View */}
+                        <div className="w-full lg:w-[380px] flex flex-col items-center bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-stone-100/50 flex-shrink-0 relative z-10 lg:sticky lg:top-1/2 lg:-translate-y-1/2 transition-transform duration-500">
+                            <SelectionSummary selections={selections} pieceType={screen.startsWith('necklace') ? 'necklace' : 'bracelet'} />
+                            <div className="mt-2 pt-6 border-t border-stone-100/80 w-full text-center">
+                                <div className="text-[10px] text-stone-400 font-bold uppercase tracking-[0.2em] mb-1">Estimated Total</div>
+                                <div className="text-4xl font-heading text-[#38473b]">{formatPrice(totalPrice)}</div>
+                            </div>
+                        </div>
+
+                        {/* RIGHT COLUMN: Rotating Options Grid */}
+                        <div className="w-full lg:w-[700px] flex flex-col justify-center relative min-h-[500px] lg:min-h-[600px]">
+                            <AnimatePresence mode="wait">
+                                {screen === 'necklace_chain' && (
+                                    <motion.div key="necklace_chain" variants={animVariants} initial="initial" animate="animate" exit="exit" className="w-full flex flex-col justify-center h-full">
+                                        <SelectionGrid title="pick your desired chain" options={chains} selectedId={selections.chain}
+                                            onSelect={(id) => updateSelection('chain', id)} filters={chainFilters} activeFilters={chainFilterState}
+                                            onFilterChange={(fid, val) => setChainFilterState((p) => ({ ...p, [fid]: val }))} />
+                                        <NavBar onBack={() => navigate('piece_type', -1)} onNext={() => navigate('necklace_bail')} nextEnabled={!!selections.chain} />
+                                    </motion.div>
+                                )}
+                                {screen === 'necklace_bail' && (
+                                    <motion.div key="necklace_bail" variants={animVariants} initial="initial" animate="animate" exit="exit" className="w-full flex flex-col justify-center h-full">
+                                        <SelectionGrid title="pick a bail option" options={bails} selectedId={selections.bail}
+                                            onSelect={(id) => updateSelection('bail', id)} />
+                                        <NavBar onBack={() => navigate('necklace_chain', -1)} onNext={() => navigate('necklace_jade')} nextEnabled={!!selections.bail} />
+                                    </motion.div>
+                                )}
+                                {screen === 'necklace_jade' && (
+                                    <motion.div key="necklace_jade" variants={animVariants} initial="initial" animate="animate" exit="exit" className="w-full flex flex-col justify-center h-full">
+                                        <SelectionGrid title="pick a jade" options={jades} selectedId={selections.jade}
+                                            onSelect={(id) => updateSelection('jade', id)} filters={jadeFilters} activeFilters={jadeFilterState}
+                                            onFilterChange={(fid, val) => setJadeFilterState((p) => ({ ...p, [fid]: val }))} />
+                                        <NavBar onBack={() => navigate('necklace_bail', -1)} onNext={() => goToReview('necklace_review')} nextEnabled={!!selections.jade} />
+                                    </motion.div>
+                                )}
+                                {screen === 'bracelet_wrist' && (
+                                    <motion.div key="bracelet_wrist" variants={animVariants} initial="initial" animate="animate" exit="exit" className="w-full flex flex-col items-center justify-center text-center h-full">
+                                        <h2 className="font-heading text-3xl lg:text-4xl text-stone-900 mb-3">measure your wrist and</h2>
+                                        <h2 className="font-heading text-3xl lg:text-4xl text-stone-900 mb-10">provide us the length in <span className="underline">inches</span></h2>
+                                        <div className="relative mb-8">
+                                            <input type="number" step="0.1" min="0" max="20" placeholder="e.g., 6.5"
+                                                value={selections.wristLength ?? ''}
+                                                onChange={(e) => updateSelection('wristLength', e.target.value ? parseFloat(e.target.value) : null)}
+                                                className="w-56 text-center py-4 px-6 border-2 border-stone-200 rounded-full text-xl font-medium text-stone-900 bg-white focus:outline-none focus:border-[#38473b] hover:border-stone-300 transition-colors shadow-sm placeholder:text-stone-300"
+                                            />
+                                            <span className="absolute right-6 top-1/2 -translate-y-1/2 text-sm font-bold text-stone-400">in</span>
+                                        </div>
+                                        <NavBar onBack={() => navigate('piece_type', -1)}
+                                            onNext={() => navigate('bracelet_cord')}
+                                            nextEnabled={!!selections.wristLength && selections.wristLength > 0 && selections.wristLength <= 20} />
+                                    </motion.div>
+                                )}
+                                {screen === 'bracelet_cord' && (
+                                    <motion.div key="bracelet_cord" variants={animVariants} initial="initial" animate="animate" exit="exit" className="w-full flex flex-col justify-center h-full">
+                                        <SelectionGrid title="pick your satin cord color" options={cordColors} selectedId={selections.cordColor}
+                                            onSelect={(id) => updateSelection('cordColor', id)} />
+                                        <NavBar onBack={() => navigate('bracelet_wrist', -1)} onNext={() => navigate('bracelet_jade')} nextEnabled={!!selections.cordColor} />
+                                    </motion.div>
+                                )}
+                                {screen === 'bracelet_jade' && (
+                                    <motion.div key="bracelet_jade" variants={animVariants} initial="initial" animate="animate" exit="exit" className="w-full flex flex-col justify-center h-full">
+                                        <SelectionGrid title="pick a jade" options={jades} selectedId={selections.jade}
+                                            onSelect={(id) => updateSelection('jade', id)} filters={jadeFilters} activeFilters={jadeFilterState}
+                                            onFilterChange={(fid, val) => setJadeFilterState((p) => ({ ...p, [fid]: val }))} />
+                                        <NavBar onBack={() => navigate('bracelet_cord', -1)} onNext={() => goToReview('bracelet_review')} nextEnabled={!!selections.jade} />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     </motion.div>
                 )}
 
-                {/* ─── NECKLACE: BAIL ─── */}
-                {screen === 'necklace_bail' && (
-                    <motion.div key="necklace_bail" variants={animVariants} initial="initial" animate="animate" exit="exit"
-                        className="w-full flex flex-col items-center pt-4"
-                    >
-                        <SelectionSummary selections={selections} pieceType="necklace" />
-                        <SelectionGrid title="pick a bail option" options={bails} selectedId={selections.bail}
-                            onSelect={(id) => updateSelection('bail', id)} />
-                        <NavBar onBack={() => navigate('necklace_chain', -1)} onNext={() => navigate('necklace_jade')} nextEnabled={!!selections.bail} />
-                    </motion.div>
-                )}
-
-                {/* ─── NECKLACE: JADE ─── */}
-                {screen === 'necklace_jade' && (
-                    <motion.div key="necklace_jade" variants={animVariants} initial="initial" animate="animate" exit="exit"
-                        className="w-full flex flex-col items-center pt-4"
-                    >
-                        <SelectionSummary selections={selections} pieceType="necklace" />
-                        <SelectionGrid title="pick a jade" options={jades} selectedId={selections.jade}
-                            onSelect={(id) => updateSelection('jade', id)} filters={jadeFilters} activeFilters={jadeFilterState}
-                            onFilterChange={(fid, val) => setJadeFilterState((p) => ({ ...p, [fid]: val }))} />
-                        <NavBar onBack={() => navigate('necklace_bail', -1)} onNext={() => goToReview('necklace_review')} nextEnabled={!!selections.jade} />
-                    </motion.div>
-                )}
-
-                {/* ─── NECKLACE: REVIEW ─── */}
+                {/* ─── REVIEW SCREENS ─── */}
                 {screen === 'necklace_review' && (
                     <motion.div key="necklace_review" variants={animVariants} initial="initial" animate="animate" exit="exit"
-                        className="w-full max-w-2xl mx-auto flex flex-col items-center pt-4"
+                        className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center min-h-[60vh] py-12"
                     >
                         {isBuilding ? (
                             <BuildingAnimation pieceType="necklace" onComplete={handleBuildComplete} />
                         ) : showReveal ? (
                             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} className="text-center w-full py-8"
+                                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} className="text-center w-full"
                             >
                                 <h3 className="font-heading text-4xl text-stone-900 mb-6">ta-da!</h3>
-                                <div className="w-56 h-56 mx-auto rounded-3xl shadow-xl flex items-center justify-center mb-8"
+                                <div className="w-56 h-56 mx-auto rounded-3xl shadow-xl flex items-center justify-center mb-8 relative overflow-hidden"
                                     style={{ backgroundColor: getOptionById(jades, selections.jade)?.bgColor || '#7BAE7F' }}>
-                                    <div className="w-16 h-16 rounded-full bg-white/40" />
+                                    {getCustomPieceImage(selections) ? (
+                                        <Image src={getCustomPieceImage(selections)!} alt="Your Custom Jade Piece" fill className="object-cover drop-shadow-2xl scale-[1.3] translate-y-2 hover:scale-[1.4] transition-transform duration-500" />
+                                    ) : getOptionById(jades, selections.jade)?.image ? (
+                                        <Image src={getOptionById(jades, selections.jade)!.image!} alt="Selected Jade" fill className="object-cover p-4" />
+                                    ) : (
+                                        <div className="w-16 h-16 rounded-full bg-white/40" />
+                                    )}
                                 </div>
                                 <SelectionSummary selections={selections} pieceType="necklace" />
                                 <div className="mb-6">
                                     <div className="text-xs text-stone-400 uppercase tracking-[0.15em] mb-1">Estimated Total</div>
-                                    <div className="text-3xl font-heading text-[#38473b]">{formatPrice(totalPrice)}</div>
+                                    <div className="text-4xl font-heading text-[#38473b]">{formatPrice(totalPrice)}</div>
                                 </div>
                                 <div className="flex flex-col items-center gap-3">
                                     <button onClick={handleAddToCart} disabled={isAddingToCart}
@@ -556,82 +765,41 @@ export default function JadeBarBuilder() {
                                     {cartFeedback && (
                                         <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-[#38473b] font-medium">{cartFeedback}</motion.span>
                                     )}
-                                    <button onClick={resetFlow} className="text-sm uppercase tracking-[0.15em] text-stone-400 hover:text-stone-700 transition-colors mt-2">
-                                        Start Over
-                                    </button>
+                                    <div className="flex flex-col items-center mt-4">
+                                        <button onClick={resetFlow} className="text-[10px] uppercase tracking-[0.15em] font-bold text-stone-400 hover:text-stone-700 transition-colors mb-2">
+                                            Start Over
+                                        </button>
+                                        <NavBar onBack={() => { setShowReveal(false); navigate('necklace_jade', -1) }} showBack={true} />
+                                    </div>
                                 </div>
-                                <NavBar onBack={() => { setShowReveal(false); navigate('necklace_jade', -1) }} showBack={true} />
                             </motion.div>
                         ) : null}
                     </motion.div>
                 )}
 
-                {/* ─── BRACELET: WRIST ─── */}
-                {screen === 'bracelet_wrist' && (
-                    <motion.div key="bracelet_wrist" variants={animVariants} initial="initial" animate="animate" exit="exit"
-                        className="flex flex-col items-center justify-center text-center py-16"
-                    >
-                        <h2 className="font-heading text-2xl md:text-3xl text-stone-900 mb-2">measure your wrist and</h2>
-                        <h2 className="font-heading text-2xl md:text-3xl text-stone-900 mb-8">provide us the length in <span className="underline">inches</span></h2>
-                        <div className="relative mb-4">
-                            <input type="number" step="0.1" min="0" max="20" placeholder="e.g., 6.5"
-                                value={selections.wristLength ?? ''}
-                                onChange={(e) => updateSelection('wristLength', e.target.value ? parseFloat(e.target.value) : null)}
-                                className="w-48 text-center py-3.5 px-6 border-2 border-stone-300 rounded-full text-lg font-medium text-stone-900 bg-white focus:outline-none focus:border-[#38473b] transition-colors placeholder:text-stone-300"
-                            />
-                            <span className="absolute right-6 top-1/2 -translate-y-1/2 text-sm text-stone-400">in</span>
-                        </div>
-                        <NavBar onBack={() => navigate('piece_type', -1)}
-                            onNext={() => navigate('bracelet_cord')}
-                            nextEnabled={!!selections.wristLength && selections.wristLength > 0 && selections.wristLength <= 20} />
-                    </motion.div>
-                )}
-
-                {/* ─── BRACELET: CORD ─── */}
-                {screen === 'bracelet_cord' && (
-                    <motion.div key="bracelet_cord" variants={animVariants} initial="initial" animate="animate" exit="exit"
-                        className="w-full flex flex-col items-center pt-4"
-                    >
-                        <SelectionSummary selections={selections} pieceType="bracelet" />
-                        <SelectionGrid title="pick your satin cord color" options={cordColors} selectedId={selections.cordColor}
-                            onSelect={(id) => updateSelection('cordColor', id)} />
-                        <NavBar onBack={() => navigate('bracelet_wrist', -1)} onNext={() => navigate('bracelet_jade')} nextEnabled={!!selections.cordColor} />
-                    </motion.div>
-                )}
-
-                {/* ─── BRACELET: JADE ─── */}
-                {screen === 'bracelet_jade' && (
-                    <motion.div key="bracelet_jade" variants={animVariants} initial="initial" animate="animate" exit="exit"
-                        className="w-full flex flex-col items-center pt-4"
-                    >
-                        <SelectionSummary selections={selections} pieceType="bracelet" />
-                        <SelectionGrid title="pick a jade" options={jades} selectedId={selections.jade}
-                            onSelect={(id) => updateSelection('jade', id)} filters={jadeFilters} activeFilters={jadeFilterState}
-                            onFilterChange={(fid, val) => setJadeFilterState((p) => ({ ...p, [fid]: val }))} />
-                        <NavBar onBack={() => navigate('bracelet_cord', -1)} onNext={() => goToReview('bracelet_review')} nextEnabled={!!selections.jade} />
-                    </motion.div>
-                )}
-
-                {/* ─── BRACELET: REVIEW ─── */}
                 {screen === 'bracelet_review' && (
                     <motion.div key="bracelet_review" variants={animVariants} initial="initial" animate="animate" exit="exit"
-                        className="w-full max-w-2xl mx-auto flex flex-col items-center pt-4"
+                        className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center min-h-[60vh] py-12"
                     >
                         {isBuilding ? (
                             <BuildingAnimation pieceType="bracelet" onComplete={handleBuildComplete} />
                         ) : showReveal ? (
                             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} className="text-center w-full py-8"
+                                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} className="text-center w-full"
                             >
                                 <h3 className="font-heading text-4xl text-stone-900 mb-6">ta-da!</h3>
-                                <div className="w-56 h-56 mx-auto rounded-3xl shadow-xl flex items-center justify-center mb-8"
+                                <div className="w-56 h-56 mx-auto rounded-3xl shadow-xl flex items-center justify-center mb-8 relative overflow-hidden"
                                     style={{ backgroundColor: getOptionById(jades, selections.jade)?.bgColor || '#7BAE7F' }}>
-                                    <div className="w-16 h-16 rounded-full bg-white/40" />
+                                    {getOptionById(jades, selections.jade)?.image ? (
+                                        <Image src={getOptionById(jades, selections.jade)!.image!} alt="Selected Jade" fill className="object-cover p-4" />
+                                    ) : (
+                                        <div className="w-16 h-16 rounded-full bg-white/40" />
+                                    )}
                                 </div>
                                 <SelectionSummary selections={selections} pieceType="bracelet" />
                                 <div className="mb-6">
                                     <div className="text-xs text-stone-400 uppercase tracking-[0.15em] mb-1">Estimated Total</div>
-                                    <div className="text-3xl font-heading text-[#38473b]">{formatPrice(totalPrice)}</div>
+                                    <div className="text-4xl font-heading text-[#38473b]">{formatPrice(totalPrice)}</div>
                                 </div>
                                 <div className="flex flex-col items-center gap-3">
                                     <button onClick={handleAddToCart} disabled={isAddingToCart}
@@ -641,11 +809,13 @@ export default function JadeBarBuilder() {
                                     {cartFeedback && (
                                         <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-[#38473b] font-medium">{cartFeedback}</motion.span>
                                     )}
-                                    <button onClick={resetFlow} className="text-sm uppercase tracking-[0.15em] text-stone-400 hover:text-stone-700 transition-colors mt-2">
-                                        Start Over
-                                    </button>
+                                    <div className="flex flex-col items-center mt-4">
+                                        <button onClick={resetFlow} className="text-[10px] uppercase tracking-[0.15em] font-bold text-stone-400 hover:text-stone-700 transition-colors mb-2">
+                                            Start Over
+                                        </button>
+                                        <NavBar onBack={() => { setShowReveal(false); navigate('bracelet_jade', -1) }} showBack={true} />
+                                    </div>
                                 </div>
-                                <NavBar onBack={() => { setShowReveal(false); navigate('bracelet_jade', -1) }} showBack={true} />
                             </motion.div>
                         ) : null}
                     </motion.div>

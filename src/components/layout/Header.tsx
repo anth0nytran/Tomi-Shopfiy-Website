@@ -79,38 +79,38 @@ export async function Header() {
           <div className="nav-left">
             <MobileNav links={mobileNavLinks} />
             <div className="nav-left-desktop">
-            <div className="nav-item nav-item--dropdown">
-              <Link href="/shop" className="nav-link nav-link--dropdown" aria-haspopup="true" aria-expanded="false">SHOP</Link>
-              <div className="nav-dropdown" role="menu" aria-label="Shop menu">
-                <div className="nav-dropdown-inner">
-                  {navGroups.map((group) => (
-                    <div className="nav-dd-group" key={group.key}>
-                      <h4 className="nav-dd-title">{group.title}</h4>
-                      {group.entries.map((entry) => (
-                        <Link
-                          key={entry.slug}
-                          href={toHref(entry)}
-                          className="nav-dd-link"
-                          role="menuitem"
-                        >
-                          {entry.navLabel || entry.title}
-                        </Link>
-                      ))}
-                    </div>
-                  ))}
+              <div className="nav-item nav-item--dropdown">
+                <Link href="/shop" className="nav-link nav-link--dropdown" aria-haspopup="true" aria-expanded="false">SHOP</Link>
+                <div className="nav-dropdown" role="menu" aria-label="Shop menu">
+                  <div className="nav-dropdown-inner">
+                    {navGroups.map((group) => (
+                      <div className="nav-dd-group" key={group.key}>
+                        <h4 className="nav-dd-title">{group.title}</h4>
+                        {group.entries.map((entry) => (
+                          <Link
+                            key={entry.slug}
+                            href={toHref(entry)}
+                            className="nav-dd-link"
+                            role="menuitem"
+                          >
+                            {entry.navLabel || entry.title}
+                          </Link>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-            <Link href="/about" className="nav-link">ABOUT US</Link>
-            <Link href="/visit" className="nav-link">VISIT US</Link>
-            <Link href="/jade-bar" className="nav-link">JADE BAR</Link>
+              <Link href="/about" className="nav-link">ABOUT US</Link>
+              <Link href="/visit" className="nav-link">VISIT US</Link>
+              <Link href="/jade-bar" className="nav-link">JADE BAR</Link>
             </div>
           </div>
 
           <div className="nav-center">
             <Link href="/" className="logo-link" aria-label="Tomi home">
               <Image
-                src="/tomi red logo.svg"
+                src="/assets/tomi_logo_green.svg"
                 alt="Tomi logo"
                 width={200}
                 height={250}
@@ -119,7 +119,7 @@ export async function Header() {
                 priority
               />
               <Image
-                src="/assets/white_tomi_logo.png"
+                src="/assets/tomi_logo_white.svg"
                 alt=""
                 aria-hidden="true"
                 width={200}
@@ -136,9 +136,9 @@ export async function Header() {
             <SearchLauncher />
             <button className="nav-icon js-cart-open" aria-label="Shopping Bag" data-cart-trigger type="button" title="Open cart">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M16 10a4 4 0 01-8 0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M16 10a4 4 0 01-8 0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
           </div>
@@ -150,7 +150,7 @@ export async function Header() {
           <header className="cart-drawer-header">
             <h3 className="cart-title">Your bag</h3>
             <button className="cart-close" aria-label="Close cart" data-cart-close>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
             </button>
           </header>
           <div className="cart-body" id="cart-body">

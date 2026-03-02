@@ -1125,8 +1125,7 @@
   left: 0;
   right: 0;
   z-index: 1001;
-  background: #7f0504;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--color-blush, #f1dcdc);
   padding: 0.55rem clamp(1.5rem, 4vw, 3rem);
   text-align: center;
   transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.45s ease, background 0.55s ease;
@@ -1151,9 +1150,9 @@
 
 .announcement-text {
   font-size: 0.62rem;
-  color: #ffffff;
+  color: var(--color-ink, #3c3b3a);
   margin: 0;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0.22em;
   text-transform: uppercase;
 }
