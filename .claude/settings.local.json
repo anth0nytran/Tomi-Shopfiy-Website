@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep:*)",
+      "Bash(grep -r \"Storefront\\\\|STOREFRONT\" '/c/Users/antho/Desktop/tomi jewerly shopify website/tomi-jewelry-react/src' --include=*.tsx --include=*.ts)",
+      "Bash(find '/c/Users/antho/Desktop/tomi jewerly shopify website/tomi-jewelry-react' -name *.tsx -path */app/* -type f)",
+      "Bash(grep -r \"cart-drawer\\\\|checkout\\\\|payment\" '/c/Users/antho/Desktop/tomi jewerly shopify website/tomi-jewelry-react/src' --include=*.tsx)",
+      "Bash(find '/c/Users/antho/Desktop/tomi jewerly shopify website/tomi-jewelry-react/src/app/api' -type f -name *.ts)"
+    ]
+  }
+}

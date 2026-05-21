@@ -264,10 +264,10 @@ export default function JadeBarPage() {
               Visit us at our Houston studio to experience the Jade Bar in person.
             </p>
             <Link
-              href="/visit?source=jadeBar"
+              href="/shop/jade-jewelry"
               className="inline-flex items-center justify-center px-10 py-4 bg-stone-900 text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-stone-700 transition-colors"
             >
-              Plan Your Visit
+              Custom Jade
             </Link>
           </div>
         </section>

@@ -35,6 +35,8 @@ function BuildingAnimation({ pieceType, onComplete }: { pieceType: string; onCom
     const [step, setStep] = useState(0)
     const steps = pieceType === 'necklace'
         ? ['selecting your chain...', 'attaching the bail...', 'placing your jade...', 'almost there...']
+        : pieceType === 'charm'
+        ? ['preparing the bail...', 'attaching your jade...', 'getting it ready...', 'almost there...']
         : ['measuring the cord...', 'threading the jade...', 'tying the knot...', 'almost there...']
 
     useEffect(() => {
@@ -60,7 +62,7 @@ function BuildingAnimation({ pieceType, onComplete }: { pieceType: string; onCom
 
                 {/* Orbiting particle 1 */}
                 <motion.div
-                    className="absolute w-3 h-3 rounded-full bg-[#7BAE7F]/60 blur-[1px]"
+                    className="absolute w-3 h-3 rounded-full bg-[#f4f3f1]/60 blur-[1px]"
                     style={{ top: '50%', left: '50%' }}
                     animate={{
                         x: [0, 60, 0, -60, 0],
@@ -95,7 +97,7 @@ function BuildingAnimation({ pieceType, onComplete }: { pieceType: string; onCom
                 <motion.div
                     className="absolute inset-6 rounded-full shadow-2xl"
                     style={{
-                        background: 'radial-gradient(circle at 35% 35%, #a8d4ac, #7BAE7F 40%, #5A9E5F 75%, #3d7a44)',
+                        background: 'radial-gradient(circle at 35% 35%, #a8d4ac, #f4f3f1 40%, #5A9E5F 75%, #3d7a44)',
                     }}
                     animate={{
                         scale: [1, 1.08, 1, 1.05, 1],
@@ -145,7 +147,7 @@ function BuildingAnimation({ pieceType, onComplete }: { pieceType: string; onCom
             {/* Progress bar */}
             <div className="w-48 h-1.5 bg-stone-200 rounded-full mt-8 overflow-hidden">
                 <motion.div
-                    className="h-full rounded-full bg-gradient-to-r from-[#7BAE7F] to-[#38473b]"
+                    className="h-full rounded-full bg-gradient-to-r from-[#f4f3f1] to-[#38473b]"
                     initial={{ width: '0%' }}
                     animate={{ width: `${((step + 1) / steps.length) * 100}%` }}
                     transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -156,7 +158,7 @@ function BuildingAnimation({ pieceType, onComplete }: { pieceType: string; onCom
 }
 
 /* ─── Selection Summary ─── */
-function SelectionSummary({ selections, pieceType }: { selections: Selections; pieceType: 'necklace' | 'bracelet' }) {
+function SelectionSummary({ selections, pieceType }: { selections: Selections; pieceType: 'necklace' | 'bracelet' | 'charm' }) {
     const necklaceSlots = [
         { key: 'chain', label: 'chain', value: selections.chain, list: chains },
         { key: 'bail', label: 'bail', value: selections.bail, list: bails },
@@ -166,7 +168,11 @@ function SelectionSummary({ selections, pieceType }: { selections: Selections; p
         { key: 'cord', label: 'cord', value: selections.cordColor, list: cordColors },
         { key: 'jade', label: 'jade', value: selections.jade, list: jades },
     ]
-    const slots = pieceType === 'necklace' ? necklaceSlots : braceletSlots
+    const charmSlots = [
+        { key: 'bail', label: 'bail', value: selections.bail, list: bails },
+        { key: 'jade', label: 'jade', value: selections.jade, list: jades },
+    ]
+    const slots = pieceType === 'necklace' ? necklaceSlots : pieceType === 'charm' ? charmSlots : braceletSlots
 
     return (
         <div className="w-full mb-8">
@@ -318,7 +324,7 @@ function SelectionGrid({
                 <button
                     onClick={handlePrev}
                     disabled={currentPage === 0}
-                    className="absolute left-0 z-20 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] border border-stone-100 text-stone-400 hover:text-[#38473b] hover:shadow-[0_8px_25px_-4px_rgba(0,0,0,0.15)] disabled:opacity-0 disabled:cursor-not-allowed transition-all duration-300 transform -translate-x-1/2"
+                    className="absolute left-2 sm:-left-6 z-20 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] border border-stone-100 text-stone-400 hover:text-[#38473b] hover:shadow-[0_8px_25px_-4px_rgba(0,0,0,0.15)] disabled:opacity-0 disabled:cursor-not-allowed transition-all duration-300"
                 >
                     <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none"><path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </button>
@@ -412,7 +418,7 @@ function SelectionGrid({
                 <button
                     onClick={handleNext}
                     disabled={currentPage >= totalPages - 1}
-                    className="absolute right-0 z-20 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] border border-stone-100 text-stone-400 hover:text-[#38473b] hover:shadow-[0_8px_25px_-4px_rgba(0,0,0,0.15)] disabled:opacity-0 disabled:cursor-not-allowed transition-all duration-300 transform translate-x-1/2"
+                    className="absolute right-2 sm:-right-6 z-20 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] border border-stone-100 text-stone-400 hover:text-[#38473b] hover:shadow-[0_8px_25px_-4px_rgba(0,0,0,0.15)] disabled:opacity-0 disabled:cursor-not-allowed transition-all duration-300"
                 >
                     <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </button>
@@ -514,6 +520,8 @@ export default function JadeBarBuilder() {
     const [showReveal, setShowReveal] = useState(false)
     const [isAddingToCart, setIsAddingToCart] = useState(false)
     const [cartFeedback, setCartFeedback] = useState<string | null>(null)
+    const [acknowledged, setAcknowledged] = useState(false)
+    const [variantMap, setVariantMap] = useState<Record<string, Record<string, string>>>({})
 
     const containerRef = useRef<HTMLDivElement>(null)
 
@@ -533,6 +541,17 @@ export default function JadeBarBuilder() {
         }
     }, [screen])
 
+    // Fetch Shopify variant IDs on mount so we can add to cart later
+    useEffect(() => {
+        const allOptions = [...chains, ...bails, ...jades, ...cordColors]
+        const handles = Array.from(new Set(allOptions.map((o) => o.shopifyHandle).filter(Boolean))) as string[]
+        if (!handles.length) return
+        fetch(`/api/jade-bar/variants?handles=${encodeURIComponent(handles.join(','))}`)
+            .then((r) => r.json())
+            .then((data) => { if (data && !data.error) setVariantMap(data) })
+            .catch(() => {})
+    }, [])
+
     const navigate = useCallback((target: ScreenId, dir: number = 1) => {
         setDirection(dir)
         setScreen(target)
@@ -547,6 +566,7 @@ export default function JadeBarBuilder() {
         setChainFilterState({})
         setJadeFilterState({})
         setCartFeedback(null)
+        setAcknowledged(false)
         setShowReveal(false)
         setIsBuilding(false)
         navigate('piece_type', -1)
@@ -564,13 +584,96 @@ export default function JadeBarBuilder() {
         setShowReveal(true)
     }, [])
 
+    /** Resolve a builder option to its Shopify variant GID */
+    const resolveVariantId = useCallback((option: BuilderOption | undefined): string | null => {
+        if (!option?.shopifyHandle) return null
+        const productVariants = variantMap[option.shopifyHandle]
+        if (!productVariants) return null
+        // If the option specifies a variant title, use it; otherwise grab "Default Title"
+        const title = option.shopifyVariantTitle || 'Default Title'
+        return productVariants[title] ?? Object.values(productVariants)[0] ?? null
+    }, [variantMap])
+
     const handleAddToCart = useCallback(async () => {
         setIsAddingToCart(true)
         setCartFeedback(null)
-        await new Promise((r) => setTimeout(r, 1200))
-        setCartFeedback('Added to your bag!')
-        setIsAddingToCart(false)
-    }, [])
+
+        try {
+            // Gather selected options based on piece type
+            const selectedOptions: BuilderOption[] = []
+            if (selections.pieceType === 'necklace') {
+                const chain = getOptionById(chains, selections.chain)
+                const bail = getOptionById(bails, selections.bail)
+                const jade = getOptionById(jades, selections.jade)
+                if (chain) selectedOptions.push(chain)
+                if (bail && bail.id !== 'no_bail') selectedOptions.push(bail)
+                if (jade) selectedOptions.push(jade)
+            } else if (selections.pieceType === 'bracelet') {
+                const cord = getOptionById(cordColors, selections.cordColor)
+                const jade = getOptionById(jades, selections.jade)
+                if (cord) selectedOptions.push(cord)
+                if (jade) selectedOptions.push(jade)
+            } else if (selections.pieceType === 'charm') {
+                const bail = getOptionById(bails, selections.bail)
+                const jade = getOptionById(jades, selections.jade)
+                if (bail && bail.id !== 'no_bail') selectedOptions.push(bail)
+                if (jade) selectedOptions.push(jade)
+            }
+
+            // Resolve each option to a Shopify variant GID
+            const lines: Array<{ merchandiseId: string; quantity: number; attributes: Array<{ key: string; value: string }> }> = []
+            const missing: string[] = []
+
+            for (const opt of selectedOptions) {
+                const variantId = resolveVariantId(opt)
+                if (!variantId) {
+                    missing.push(opt.label)
+                    continue
+                }
+                lines.push({
+                    merchandiseId: variantId,
+                    quantity: 1,
+                    attributes: [
+                        { key: 'Custom Piece Type', value: selections.pieceType || '' },
+                        { key: 'Component', value: opt.label },
+                        ...(selections.pieceType === 'bracelet' && selections.wristLength
+                            ? [{ key: 'Wrist Length', value: `${selections.wristLength} in` }]
+                            : []),
+                    ],
+                })
+            }
+
+            if (missing.length) {
+                setCartFeedback(`Could not find Shopify products for: ${missing.join(', ')}. Please contact support.`)
+                setIsAddingToCart(false)
+                return
+            }
+
+            if (!lines.length) {
+                setCartFeedback('No items to add. Please make your selections.')
+                setIsAddingToCart(false)
+                return
+            }
+
+            const res = await fetch('/api/cart/lines', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lines }),
+            })
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}))
+                throw new Error(err.error || 'Failed to add to cart')
+            }
+
+            setCartFeedback('Added to your bag!')
+            window.dispatchEvent(new CustomEvent('tomi:cart:open'))
+        } catch (err: any) {
+            setCartFeedback(err?.message || 'Something went wrong. Please try again.')
+        } finally {
+            setIsAddingToCart(false)
+        }
+    }, [selections, variantMap, resolveVariantId])
 
     const totalPrice = useMemo(() => {
         let total = 0
@@ -622,8 +725,8 @@ export default function JadeBarBuilder() {
                     <motion.div key="piece_type" variants={animVariants} initial="initial" animate="animate" exit="exit"
                         className="flex flex-col items-center justify-center text-center py-16"
                     >
-                        <h2 className="font-heading text-2xl md:text-3xl text-stone-900 mb-2">are you interested in building a</h2>
-                        <h2 className="font-heading text-2xl md:text-3xl text-stone-900 mb-10">jade necklace or bracelet?</h2>
+                        <h2 className="font-heading text-2xl md:text-3xl text-stone-900 mb-2">what jade piece would you</h2>
+                        <h2 className="font-heading text-2xl md:text-3xl text-stone-900 mb-10">like to build today?</h2>
                         <div className="flex flex-col gap-4 items-center">
                             <div className="relative">
                                 <button
@@ -637,7 +740,7 @@ export default function JadeBarBuilder() {
                                         <svg width="42" height="38" viewBox="0 0 48 44" fill="#E8BFC6">
                                             <path d="M24 44l-3.2-2.9C8.3 29.7 0 22.2 0 13.1 0 5.9 5.5 0 12.3 0c3.8 0 7.5 1.8 9.7 4.6C24.2 1.8 27.9 0 31.7 0 38.5 0 44 5.9 44 13.1c0 9.1-8.3 16.6-20.8 28L24 44z" transform="translate(2)" />
                                         </svg>
-                                        <span className="absolute inset-0 flex items-center justify-center text-[7px] font-bold uppercase tracking-wider text-[#38473b] pt-0.5">
+                                        <span className="absolute inset-0 flex items-center justify-center text-[5.5px] font-bold uppercase tracking-wider text-[#38473b] pt-0.5">
                                             most<br />popular
                                         </span>
                                     </div>
@@ -649,18 +752,24 @@ export default function JadeBarBuilder() {
                             >
                                 Bracelet
                             </button>
+                            <button
+                                onClick={() => { updateSelection('pieceType', 'charm'); navigate('charm_bail') }}
+                                className="bg-[#38473b] text-white text-xs font-bold uppercase tracking-[0.2em] px-12 py-4 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 w-56"
+                            >
+                                Charm
+                            </button>
                         </div>
                     </motion.div>
                 )}
 
                 {/* ─── BUILDING SCENE (2-COLUMN LAYOUT) ─── */}
-                {['necklace_chain', 'necklace_bail', 'necklace_jade', 'bracelet_wrist', 'bracelet_cord', 'bracelet_jade'].includes(screen) && (
+                {['necklace_chain', 'necklace_bail', 'necklace_jade', 'bracelet_wrist', 'bracelet_cord', 'bracelet_jade', 'charm_bail', 'charm_jade'].includes(screen) && (
                     <motion.div key="building_scene" variants={animVariants} initial="initial" animate="animate" exit="exit"
                         className="w-full max-w-[1280px] mx-auto flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 pt-4 lg:pt-12 px-6"
                     >
                         {/* LEFT COLUMN: Summary Sticky View */}
                         <div className="w-full lg:w-[380px] flex flex-col items-center bg-white p-8 lg:p-10 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-stone-100/50 flex-shrink-0 relative z-10 lg:sticky lg:top-1/2 lg:-translate-y-1/2 transition-transform duration-500">
-                            <SelectionSummary selections={selections} pieceType={screen.startsWith('necklace') ? 'necklace' : 'bracelet'} />
+                            <SelectionSummary selections={selections} pieceType={screen.startsWith('necklace') ? 'necklace' : screen.startsWith('charm') ? 'charm' : 'bracelet'} />
                             <div className="mt-2 pt-6 border-t border-stone-100/80 w-full text-center">
                                 <div className="text-[10px] text-stone-400 font-bold uppercase tracking-[0.2em] mb-1">Estimated Total</div>
                                 <div className="text-4xl font-heading text-[#38473b]">{formatPrice(totalPrice)}</div>
@@ -725,6 +834,21 @@ export default function JadeBarBuilder() {
                                         <NavBar onBack={() => navigate('bracelet_cord', -1)} onNext={() => goToReview('bracelet_review')} nextEnabled={!!selections.jade} />
                                     </motion.div>
                                 )}
+                                                            {screen === 'charm_bail' && (
+                                    <motion.div key="charm_bail" variants={animVariants} initial="initial" animate="animate" exit="exit" className="w-full flex flex-col justify-center h-full">
+                                        <SelectionGrid title="pick a bail option" options={bails} selectedId={selections.bail}
+                                            onSelect={(id) => updateSelection('bail', id)} />
+                                        <NavBar onBack={() => navigate('piece_type', -1)} onNext={() => navigate('charm_jade')} nextEnabled={!!selections.bail} />
+                                    </motion.div>
+                                )}
+                                {screen === 'charm_jade' && (
+                                    <motion.div key="charm_jade" variants={animVariants} initial="initial" animate="animate" exit="exit" className="w-full flex flex-col justify-center h-full">
+                                        <SelectionGrid title="pick a jade" options={jades} selectedId={selections.jade}
+                                            onSelect={(id) => updateSelection('jade', id)} filters={jadeFilters} activeFilters={jadeFilterState}
+                                            onFilterChange={(fid, val) => setJadeFilterState((p) => ({ ...p, [fid]: val }))} />
+                                        <NavBar onBack={() => navigate('charm_bail', -1)} onNext={() => goToReview('charm_review')} nextEnabled={!!selections.jade} />
+                                    </motion.div>
+                                )}
                             </AnimatePresence>
                         </div>
                     </motion.div>
@@ -743,7 +867,7 @@ export default function JadeBarBuilder() {
                             >
                                 <h3 className="font-heading text-4xl text-stone-900 mb-6">ta-da!</h3>
                                 <div className="w-56 h-56 mx-auto rounded-3xl shadow-xl flex items-center justify-center mb-8 relative overflow-hidden"
-                                    style={{ backgroundColor: getOptionById(jades, selections.jade)?.bgColor || '#7BAE7F' }}>
+                                    style={{ backgroundColor: getOptionById(jades, selections.jade)?.bgColor || '#f4f3f1' }}>
                                     {getCustomPieceImage(selections) ? (
                                         <Image src={getCustomPieceImage(selections)!} alt="Your Custom Jade Piece" fill className="object-cover drop-shadow-2xl scale-[1.3] translate-y-2 hover:scale-[1.4] transition-transform duration-500" />
                                     ) : getOptionById(jades, selections.jade)?.image ? (
@@ -757,8 +881,13 @@ export default function JadeBarBuilder() {
                                     <div className="text-xs text-stone-400 uppercase tracking-[0.15em] mb-1">Estimated Total</div>
                                     <div className="text-4xl font-heading text-[#38473b]">{formatPrice(totalPrice)}</div>
                                 </div>
+                                
+                                <div className="flex items-start gap-3 mb-6 max-w-sm mx-auto text-left">
+                                    <input type="checkbox" id={`jade-disclaimer-${screen}`} checked={acknowledged} onChange={(e) => setAcknowledged(e.target.checked)} className="mt-1 w-4 h-4 text-[#38473b] focus:ring-[#38473b] border-stone-300 rounded cursor-pointer" />
+                                    <label htmlFor={`jade-disclaimer-${screen}`} className="text-xs text-stone-500 leading-relaxed font-light cursor-pointer">I acknowledge that the store team will select the physical jade stone for my custom piece based on my preferences.</label>
+                                </div>
                                 <div className="flex flex-col items-center gap-3">
-                                    <button onClick={handleAddToCart} disabled={isAddingToCart}
+                                    <button onClick={handleAddToCart} disabled={isAddingToCart || !acknowledged}
                                         className="bg-[#38473b] text-white text-xs font-bold uppercase tracking-[0.2em] px-12 py-4 rounded-full shadow-lg hover:shadow-xl transition-all disabled:opacity-50 w-56">
                                         {isAddingToCart ? 'Adding...' : 'Add to Cart'}
                                     </button>
@@ -789,7 +918,7 @@ export default function JadeBarBuilder() {
                             >
                                 <h3 className="font-heading text-4xl text-stone-900 mb-6">ta-da!</h3>
                                 <div className="w-56 h-56 mx-auto rounded-3xl shadow-xl flex items-center justify-center mb-8 relative overflow-hidden"
-                                    style={{ backgroundColor: getOptionById(jades, selections.jade)?.bgColor || '#7BAE7F' }}>
+                                    style={{ backgroundColor: getOptionById(jades, selections.jade)?.bgColor || '#f4f3f1' }}>
                                     {getOptionById(jades, selections.jade)?.image ? (
                                         <Image src={getOptionById(jades, selections.jade)!.image!} alt="Selected Jade" fill className="object-cover p-4" />
                                     ) : (
@@ -801,8 +930,13 @@ export default function JadeBarBuilder() {
                                     <div className="text-xs text-stone-400 uppercase tracking-[0.15em] mb-1">Estimated Total</div>
                                     <div className="text-4xl font-heading text-[#38473b]">{formatPrice(totalPrice)}</div>
                                 </div>
+                                
+                                <div className="flex items-start gap-3 mb-6 max-w-sm mx-auto text-left">
+                                    <input type="checkbox" id={`jade-disclaimer-${screen}`} checked={acknowledged} onChange={(e) => setAcknowledged(e.target.checked)} className="mt-1 w-4 h-4 text-[#38473b] focus:ring-[#38473b] border-stone-300 rounded cursor-pointer" />
+                                    <label htmlFor={`jade-disclaimer-${screen}`} className="text-xs text-stone-500 leading-relaxed font-light cursor-pointer">I acknowledge that the store team will select the physical jade stone for my custom piece based on my preferences.</label>
+                                </div>
                                 <div className="flex flex-col items-center gap-3">
-                                    <button onClick={handleAddToCart} disabled={isAddingToCart}
+                                    <button onClick={handleAddToCart} disabled={isAddingToCart || !acknowledged}
                                         className="bg-[#38473b] text-white text-xs font-bold uppercase tracking-[0.2em] px-12 py-4 rounded-full shadow-lg hover:shadow-xl transition-all disabled:opacity-50 w-56">
                                         {isAddingToCart ? 'Adding...' : 'Add to Cart'}
                                     </button>
@@ -814,6 +948,55 @@ export default function JadeBarBuilder() {
                                             Start Over
                                         </button>
                                         <NavBar onBack={() => { setShowReveal(false); navigate('bracelet_jade', -1) }} showBack={true} />
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ) : null}
+                    </motion.div>
+                )}
+
+                {screen === 'charm_review' && (
+                    <motion.div key="charm_review" variants={animVariants} initial="initial" animate="animate" exit="exit"
+                        className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center min-h-[60vh] py-12"
+                    >
+                        {isBuilding ? (
+                            <BuildingAnimation pieceType="charm" onComplete={handleBuildComplete} />
+                        ) : showReveal ? (
+                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} className="text-center w-full"
+                            >
+                                <h3 className="font-heading text-4xl text-stone-900 mb-6">ta-da!</h3>
+                                <div className="w-56 h-56 mx-auto rounded-3xl shadow-xl flex items-center justify-center mb-8 relative overflow-hidden"
+                                    style={{ backgroundColor: getOptionById(jades, selections.jade)?.bgColor || '#f4f3f1' }}>
+                                    {getOptionById(jades, selections.jade)?.image ? (
+                                        <Image src={getOptionById(jades, selections.jade)!.image!} alt="Selected Jade" fill className="object-cover p-4 hover:scale-[1.1] transition-transform duration-500" />
+                                    ) : (
+                                        <div className="w-16 h-16 rounded-full bg-white/40" />
+                                    )}
+                                </div>
+                                <SelectionSummary selections={selections} pieceType="charm" />
+                                <div className="mb-6">
+                                    <div className="text-xs text-stone-400 uppercase tracking-[0.15em] mb-1">Estimated Total</div>
+                                    <div className="text-4xl font-heading text-[#38473b]">{formatPrice(totalPrice)}</div>
+                                </div>
+                                
+                                <div className="flex items-start gap-3 mb-6 max-w-sm mx-auto text-left">
+                                    <input type="checkbox" id={`jade-disclaimer-\${screen}`} checked={acknowledged} onChange={(e) => setAcknowledged(e.target.checked)} className="mt-1 w-4 h-4 text-[#38473b] focus:ring-[#38473b] border-stone-300 rounded cursor-pointer" />
+                                    <label htmlFor={`jade-disclaimer-\${screen}`} className="text-xs text-stone-500 leading-relaxed font-light cursor-pointer">I acknowledge that the store team will select the physical jade stone for my custom piece based on my preferences.</label>
+                                </div>
+                                <div className="flex flex-col items-center gap-3">
+                                    <button onClick={handleAddToCart} disabled={isAddingToCart || !acknowledged}
+                                        className="bg-[#38473b] text-white text-xs font-bold uppercase tracking-[0.2em] px-12 py-4 rounded-full shadow-lg hover:shadow-xl transition-all disabled:opacity-50 w-56">
+                                        {isAddingToCart ? 'Adding...' : 'Add to Cart'}
+                                    </button>
+                                    {cartFeedback && (
+                                        <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-[#38473b] font-medium">{cartFeedback}</motion.span>
+                                    )}
+                                    <div className="flex flex-col items-center mt-4">
+                                        <button onClick={resetFlow} className="text-[10px] uppercase tracking-[0.15em] font-bold text-stone-400 hover:text-stone-700 transition-colors mb-2">
+                                            Start Over
+                                        </button>
+                                        <NavBar onBack={() => { setShowReveal(false); navigate('charm_jade', -1) }} showBack={true} />
                                     </div>
                                 </div>
                             </motion.div>

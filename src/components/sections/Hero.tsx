@@ -18,9 +18,9 @@ export function Hero() {
         </div>
         <div className="hero-content">
           <h1 className="hero-title" data-anim="slide-up" data-delay="200">
-            <span className="hero-title-line">gift good fortune</span>
+            <span className="hero-title-line">timeless pieces</span>
           </h1>
-          <p className="hero-subtitle" data-anim="slide-up" data-delay="400">this Lunar New Year with our best-selling jade pieces</p>
+          <p className="hero-subtitle" data-anim="slide-up" data-delay="400">with a luxurious feel to everyday</p>
           <Link href="/shop/category/new-arrivals" className="btn btn--primary" data-anim="slide-up" data-delay="600">
             SHOP NOW
           </Link>

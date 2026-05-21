@@ -6,7 +6,7 @@ import { Check, ArrowRight, ArrowLeft, Sparkles, MessageSquare } from 'lucide-re
 import { motion, AnimatePresence } from 'framer-motion'
 import dynamic from 'next/dynamic'
 
-const JadeBarBuilderInline = dynamic(() => import('@/components/jade-bar/JadeBarBuilder'), { ssr: false })
+const JadeBarBuilderInline = dynamic(() => import('@/components/jade-bar/JadeBarGate'), { ssr: false })
 
 // --- Data Constants ---
 

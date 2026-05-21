@@ -1,7 +1,7 @@
 // Shopify Storefront API client configuration
 export const shopifyConfig = {
   storeDomain: process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN!,
-  apiVersion: '2024-01',
+  apiVersion: '2025-01',
   publicAccessToken: process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN!,
   serverAccessToken: process.env.SHOPIFY_STOREFRONT_TOKEN || process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN!,
   serverEndpoint: process.env.SHOPIFY_STOREFRONT_API_URL || '',
@@ -436,7 +436,9 @@ export type ShopifyCart = {
 
 export async function createCart(): Promise<ShopifyCart> {
   const client = getStorefrontClient()
-  const res = await client.request(CART_CREATE, { input: {} }) as any
+  const res = await client.request(CART_CREATE, {
+    input: { buyerIdentity: { countryCode: 'US' } }
+  }) as any
   const cart = res?.cartCreate?.cart
   if (!cart) throw new Error('Failed to create cart')
   return cart
